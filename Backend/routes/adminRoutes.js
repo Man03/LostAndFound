@@ -2,10 +2,14 @@ const express = require("express");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
 
-const { registerCoordinator } = require("../controllers/adminController");
+const {
+  registerCoordinator,
+  registerAdmin,
+  loginAdmin,
+} = require("../controllers/adminController");
 
 router.post(
-  "/",
+  "/createCoordinator",
   [
     check("firstName", "First Name is required").not().notEmpty(),
     check("lastName", "Last Name is required").not().notEmpty(),
@@ -18,5 +22,9 @@ router.post(
   ],
   registerCoordinator
 );
+
+router.post("/createAdmin", registerAdmin);
+
+router.post("/login", loginAdmin);
 
 module.exports = router;

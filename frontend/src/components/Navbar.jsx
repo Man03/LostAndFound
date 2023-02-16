@@ -1,25 +1,34 @@
 import React from "react";
+import logo from "../Assets/DDU.png";
 import { Link } from "react-router-dom";
 
-export default function Navbar() {
+function Header() {
   return (
-    <div className="header">
-      <div className="title">
-        <img src="DDU.png" alt="Girl in a jacket" width="50" height="50" />
-        <h2>Lost and Found</h2>
-      </div>
-      <ul>
-        <li>
-          <Link to="/Login">
-            <h4>Login</h4>
-          </Link>
-        </li>
-        <li>
-          <Link to="/Login">
-            <h4>Register</h4>
-          </Link>
-        </li>
-      </ul>
+    <div>
+      <header className="header">
+        <Link to="/">
+          <div id="left">
+            <div>
+              <img id="logo" src={logo} alt="PR" />
+            </div>
+            <div id="pr">
+              <p className="titleText">Lost and Found</p>
+            </div>
+          </div>
+        </Link>
+
+        <div id="right">
+          <ul className="nav-links">
+            <li>
+              <Link to="/login">
+                <button className="btn"> Login</button>
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </header>
     </div>
   );
 }
+
+export default Header;

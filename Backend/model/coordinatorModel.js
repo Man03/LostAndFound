@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const AdminSchema = mongoose.Schema(
+const CoordinatorSchema = mongoose.Schema(
   {
     firstName: {
       type: String,
@@ -15,9 +15,17 @@ const AdminSchema = mongoose.Schema(
       required: [true, "Please add a email"],
       unique: true,
     },
+    department: {
+      type: String,
+      required: [true, "Please add a email"],
+    },
     password: {
       type: String,
       required: [true, "Please add a password"],
+    },
+    conPassword: {
+      type: String,
+      required: [true, "Please add a confirm password"],
     },
   },
   {
@@ -25,4 +33,4 @@ const AdminSchema = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Admin", AdminSchema);
+module.exports = mongoose.model("Coordinator", CoordinatorSchema);
