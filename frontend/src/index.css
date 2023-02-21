@@ -24,7 +24,12 @@ code {
   justify-content: space-between;
   padding: 8px;
   font-family: 'KoHo', sans-serif;
+  align-items: center;
 } 
+
+.main-header{
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.788);
+}
 #logo {
   height: 50px;
 }
@@ -50,15 +55,17 @@ code {
   font-size: larger;
 }
 .btn {
-  background-color: #C0CCDC;
+  background-color: #36C6D3;
   padding: 10px 34px;
   border-radius: 8px;
   font-size: medium;
+  font-weight:bolder;
   border: 1px solid #04151f;
 }
 .getStartedText{
     color:#C0CCDC;
     font-family: 'KoHo', sans-serif;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.425);
 }
 .titleText{
     color: #C0CCDC;
@@ -133,53 +140,13 @@ code {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   z-index: 1;
   filter: blur(0px);
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
   border-radius: 10px;
   border-color: #000000;
   border-width: 1px;
   font-family: 'Actor', sans-serif;
 }
-
-/* body :not(#unblurred) {
-    -webkit-filter: blur(2px);
-    -moz-filter: blur(2px);
-    -o-filter: blur(2px);
-    -ms-filter: blur(2px);
-    filter: blur(2px);    
-} */
-
-/* .blurtop{
-  filter: blur(5px);
-  margin: 0 ;
-  padding: 0;
-}
-
-.blurmiddle{
-  filter: blur(5px);
-  margin-bottom: 20px;
-}
-
-.blurdgst{
-  filter: blur(5px);
-  width: 120px;
-  padding: 10px 20px;
-  background-color: #201F4D;
-  border-radius: 10px;
-  text-align: center;
-}
-
-.blurgetStartedText{
-  filter: blur(5px);
-  color:#C0CCDC;
-    font-family: 'KoHo', sans-serif;
-}
-
-.blurimage{
-  filter: blur(5px);
-  margin-top: 30px;
-  height: 550px;
-} */
 
 .SelectRole-Text{
   font-size:40px ;
@@ -218,16 +185,8 @@ code {
   font-weight: 600;
 }
 
-.main {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 100px;
-  align-items: center;
-  font-family: 'Actor', sans-serif;
-}
-
 .form-box {
-  background-color: #A4ADBA;
+  background-color: #a4adba91;
   text-align: center;
   border: 1px solid black;
   margin: 10px 0;
@@ -236,22 +195,31 @@ code {
   width: 320px;
 }
 
-.main {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 100px;
+.glogo-box{
+  text-align: center;
+  margin: 10px 10px 10px 25px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  width: 240px;
+  display:flex;
+  justify-content:space-around;
   align-items: center;
 }
+
 .main-left {
   border-radius: 14px;
   padding: 17px;
   margin-left: 150px;
+  font-family: 'Actor', sans-serif;
+  background-color:#DFEFFF;
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  align-items: center;
 }
 
 .box-grp {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 #form-text {
   color: #04151f;
@@ -259,9 +227,14 @@ code {
   font-weight: 500;
 }
 
-.login-text{
+.login-title{
   text-align: center;
   font-size: 35px;
+}
+.glogin-title{
+  text-align: center;
+  font-size: 35px;
+  margin: 30px ;
 }
 
 .img{
@@ -274,7 +247,8 @@ input:focus::placeholder {
 }
 
 .line{
-  width: 500px;
+  margin-top: 10px;
+  width: 400px;
 }
 
 .form{
@@ -292,6 +266,11 @@ input:focus::placeholder {
   color: white;
   /* width: fit-content; */
 }
+#glogin-btn {
+  background-color:white;
+  color: black;
+  /* width: fit-content; */
+}
 
 
 
@@ -306,4 +285,110 @@ input::placeholder {
 
 .login-text1{
   margin-bottom: 10px;
+}
+
+
+.notice-text{
+  font-size:medium;
+  color: red;
+}
+
+.Login-btn-text{
+  font-size: medium;
+}
+
+.glogo{
+  width: 35px;
+}
+
+.glogin-box{
+  border-radius: 14px;
+  padding: 17px;
+  margin-left: 200px;
+  font-family: 'Actor', sans-serif;
+  background-color:#DFEFFF;
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  align-items: center;
+}
+
+
+/* --------------------------------------------------- Select Role CSS ------------------------------------------------------------*/ 
+
+.Main{
+  justify-content: center;
+  padding: 30px 100px 30px 30px;
+  align-items: center;
+  font-family: 'Actor', sans-serif;
+  margin: 300px;
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+}
+
+.roleBox{
+  background-color: #201F4D;
+  margin-top: 50px;
+  display: flex;
+  justify-content:space-around;  
+  /* position: absolute; */
+  height: 300px;
+  width: 850px;
+  align-items: center;
+  border-radius: 10px;
+}
+
+.role1box{
+  background-color:#C1DAF3;
+  height: 220px;
+  width: 220px;
+  border-radius: 5px;
+  /* display: flex; */
+  flex-direction: column;
+}
+.role2box{
+  background-color:#C1DAF3;
+  height: 220px;
+  width: 220px;
+  border-radius: 5px;
+
+}
+.role3box{
+  background-color:#C1DAF3;
+  height: 220px;
+  width: 220px;
+  border-radius: 5px;
+
+}
+
+.nextbtn{
+  background-color: #36C6D3;
+  width: max-content;
+}
+
+.nbtn{
+  background-color: #36C6D3;
+  padding: 10px 34px;
+  border-radius: 8px;
+  font-size: medium;
+  font-weight:bolder;
+  border: 1px solid #04151f;
+  margin-top: 40px;
+}
+
+
+.askRole-text{
+  font-size: 60px;
+}
+
+#admin-img{
+  height: 150px;
+}
+
+#Coordi-img{
+  height: 150px;
+}
+
+#std-img{
+  height: 140px;
 }

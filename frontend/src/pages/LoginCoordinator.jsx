@@ -1,5 +1,5 @@
 import React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -46,48 +46,50 @@ function LoginCoordinator() {
   return (
     <div>
       <ToastContainer />
-      <div className="main">
-        <div className="main-left flex-box">
-          <div className="login-text">
-            <p className="login-text1">Login as Coordinator</p>
-            <hr className="line"></hr>
-          </div>
-          <div className="form">
-            <form action="" className="box-grp">
-              <input
-                className="form-box"
-                type="text"
-                name="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(event) => {
-                  setEmail(event.target.value);
-                }}
-              ></input>
-              <input
-                className="form-box"
-                type="password"
-                name="password"
-                placeholder="Enter password"
-                value={password}
-                onChange={(event) => {
-                  setPassword(event.target.value);
-                }}
-              ></input>
+      <div>
+        <div className="workspace">
+          <div className="main-left flex-box">
+            <div className="login-title">
+              <p>Login as Coordinator</p>
+              <hr className="line"></hr>
+            </div>
+            <div className="form">
+              <form action="" className="box-grp">
+                <input
+                  className="form-box"
+                  type="text"
+                  name="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(event) => {
+                    setEmail(event.target.value);
+                  }}
+                ></input>
+                <input
+                  className="form-box"
+                  type="password"
+                  name="password"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(event) => {
+                    setPassword(event.target.value);
+                  }}
+                ></input>
 
-              <button
-                type="submit"
-                className="form-box"
-                id="submit-btn"
-                onClick={handleLogin}
-              >
-                Login
-              </button>
-            </form>
+                <button
+                  type="submit"
+                  className="form-box"
+                  id="submit-btn"
+                  onClick={handleLogin}
+                >
+                  Login
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
-        <div className="main-right">
-          <img src={image} className="img" srcSet="" />
+          <div className="main-right">
+            <img src={image} className="img" alt="" srcSet="" />
+          </div>
         </div>
       </div>
     </div>

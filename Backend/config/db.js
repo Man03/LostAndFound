@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
+mongoose.Promise = global.Promise;
 
 const connectDB = async () => {
   mongoose.set("strictQuery", false);
+  
   try {
     const url =
       "mongodb+srv://db:db@cluster0.4seeh3x.mongodb.net/lostfound?retryWrites=true&w=majority";
