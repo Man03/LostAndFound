@@ -10,6 +10,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const Student = require("./model/studentModel");
 const config = require("./config/config");
 const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 require("./controllers/passportConfig")(passport);
 
 dotenv.config();
@@ -25,16 +26,22 @@ app.use(
     saveUninitialized: false,
   })
 );
+const corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true, //access-control-allow-credentials:true
+  optionSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 app.use(passport.initialize());
 app.use(passport.session());
 connectDB();
 
 app.use(express.json());
-app.use(cors());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/users/admin", require("./routes/adminRoutes"));
-app.use("/users/coordinator", require("./routes/coordinatorRoutes"));
+app.use("/admin", require("./routes/adminRoutes"));
+app.use("/coordinator", require("./routes/coordinatorRoutes"));
 
 passport.use(
   new GoogleStrategy(

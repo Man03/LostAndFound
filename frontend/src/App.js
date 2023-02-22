@@ -9,6 +9,8 @@ import StudentLogin from "./pages/StudentLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import StudentFounditems from "./pages/StudentFounditems";
 import SelectRole from "./pages/SelectRole";
+import AddCoordinator from "./pages/AddCoordinator";
+import CoordinatorFoundItems from "./pages/CoordinatorFoundItems";
 
 function App() {
   return (
@@ -16,6 +18,7 @@ function App() {
       <div className="App">
         <Navbar />
         <Routes>
+          {/* ------------------------------------Login------------------------------------------------- */}
           <Route path="/" element={<Home />}></Route>
           <Route path="/selectRole" element={<SelectRole />}></Route>
           <Route path="/admin/login" element={<LoginAdmin />}></Route>
@@ -24,17 +27,20 @@ function App() {
             element={<LoginCoordinator />}
           ></Route>
           <Route path="/student/login" element={<StudentLogin />}></Route>
-          <Route
-            path="/user/admin/dashboard"
-            element={<AdminDashboard />}
-          ></Route>
+
+          <Route path="/admin/dashboard" element={<AdminDashboard />}></Route>
           <Route
             path="/student/foundItems"
             element={<StudentFounditems />}
           ></Route>
           <Route
+            path="/coordinator/foundItems"
+            element={<CoordinatorFoundItems />}
+          ></Route>
+
+          <Route
             path="/admin/addCoordinator"
-            element={<StudentFounditems />}
+            element={<AddCoordinator />}
           ></Route>
         </Routes>
       </div>

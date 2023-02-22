@@ -1,27 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const { check, validationResult } = require("express-validator");
+// const { check, validationResult } = require("express-validator");
+const { protectCoordinator } = require("../middlewares/auth_coordinator");
 
 const {
   loginCoordinator,
-  registerCoordinator,
+  signupCoordinator,
 } = require("../controllers/coordinatorController");
 
 router.post("/login", loginCoordinator);
 
-router.post(
-  "/SignupCoordinator",
-  // [
-  //   check("firstName", "First Name is required").not().notEmpty(),
-  //   check("lastName", "Last Name is required").not().notEmpty(),
-  //   check("department", "department is required").not().notEmpty(),
-  //   check("email", "Please include a valid email").isEmail(),
-  //   check(
-  //     "password",
-  //     "Please enter a password with more than 6 characters"
-  //   ).isLength({ min: 6 }),
-  // ],
-  registerCoordinator
-);
+router.post("/signup", signupCoordinator);
+
+router.get("/founditems", protectCoordinator, (req, res) => {
+  res.json({ message: "Authorized" });
+});
 
 module.exports = router;

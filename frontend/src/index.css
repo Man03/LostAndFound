@@ -276,7 +276,7 @@ input:focus::placeholder {
 
 input:-webkit-autofill,
 input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 30px #A4ADBA inset !important;
+  -webkit-box-shadow: 0 0 0 30px #a4adba91 inset !important;
 }
 
 input::placeholder {

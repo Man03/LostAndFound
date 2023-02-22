@@ -24,14 +24,9 @@ const CoordinatorSchema = mongoose.Schema(
       type: String,
       required: [true, "Please add a password"],
     },
-    tokens: [
-      {
-        token: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
+    token: {
+      type: String,
+    },
   },
   {
     timestamps: true,
@@ -41,11 +36,10 @@ const CoordinatorSchema = mongoose.Schema(
 CoordinatorSchema.methods.generateAuthToken = async function () {
   try {
     const token_final = jwt.sign(
-      { username: this._id.toString() },
+      { _id: this._id.toString() },
       process.env.JWT_SECRET
     );
-    this.tokens = this.tokens.concat({ token: token_final });
-    console.log(token_final);
+    this.tokens = token_final;
     await this.save();
     return token_final;
   } catch (error) {

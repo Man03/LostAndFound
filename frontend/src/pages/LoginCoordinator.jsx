@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,14 @@ function LoginCoordinator() {
 
   const navigate = useNavigate();
 
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/coordinator/founditems", {
+        withCredentials: true,
+      })
+      .then((response) => navigate("/coordinator/founditems"));
+  });
+
   const handleLogin = async (event) => {
     event.preventDefault();
     if (email === "" || password === "") {
@@ -21,17 +29,18 @@ function LoginCoordinator() {
       // make a POST request to the login route on the back-end server
 
       await axios
-        .post("http://localhost:8000/users/coordinator/login", {
-          email: email,
-          password: password,
-        })
+        .post(
+          "http://localhost:8000/coordinator/login",
+          {
+            email: email,
+            password: password,
+          },
+          { withCredentials: true }
+        )
         .then((response) => {
           if (response.data.message === "Successfully logged in") {
             toast.success("Successfully logged in");
-            localStorage.setItem("isCoordinatorLogged", true);
-            navigate("/user/coordinator/dashboard", {
-              state: { user: response.data.user },
-            });
+            navigate("/coordinator/founditems");
           } else if (response.data.message === "Invalid Password") {
             toast.error("Invalid Password");
           } else if (response.data.message === "User not found") {
