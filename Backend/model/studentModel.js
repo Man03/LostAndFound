@@ -15,14 +15,9 @@ const StudentSchema = mongoose.Schema(
       email: {
         type: String,
       },
-      tokens: [
-        {
-          token: {
-            type: String,
-            required: true,
-          },
-        },
-      ],
+      token: {
+        type: String,
+      },
     },
   },
   {
@@ -33,17 +28,17 @@ const StudentSchema = mongoose.Schema(
 // StudentSchema.methods.generateAuthToken = async function () {
 //   try {
 //     const token_final = jwt.sign(
-//       { name: this._id.toString() },
+//       { _id: this._id.toString() },
 //       process.env.JWT_SECRET
 //     );
-//     this.tokens = this.tokens.concat({ token: token_final });
-//     console.log(token_final);
+//     this.tokens = token_final;
 //     await this.save();
 //     return token_final;
 //   } catch (error) {
 //     console.log(error);
 //   }
 // };
+
 
 StudentSchema.plugin(passportLocalMongoose);
 StudentSchema.plugin(findOrCreate);

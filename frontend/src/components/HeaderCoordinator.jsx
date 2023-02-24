@@ -1,8 +1,21 @@
 import React from "react";
+import axios from "axios";
 import logo from "../Assets/DDU.png";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
+  const navigate = useNavigate();
+
+  const handleLogout = async (event) => {
+    event.preventDefault();
+    await axios
+      .get("http://localhost:8000/coordinator/logout", {
+        withCredentials: true,
+      })
+      .then((response) => navigate("/coordinator/login"));
+  };
+
   return (
     <div className="main-header">
       <header className="header">
@@ -25,9 +38,9 @@ function Header() {
               </Link>
             </li> */}
             <li>
-              <Link to="/selectrole">
-                <button className="btn">Login</button>
-              </Link>
+              <button className="btn" onClick={handleLogout}>
+                Logout
+              </button>
             </li>
           </ul>
         </div>

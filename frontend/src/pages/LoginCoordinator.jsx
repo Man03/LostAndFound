@@ -4,8 +4,9 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import authCoordint from "../utils/authCoordint";
 import image from "../Assets/image.png";
+import BeforeLoginNavbar from "../components/Navbar";
+
 
 function LoginCoordinator() {
   const [email, setEmail] = useState("");
@@ -56,6 +57,7 @@ function LoginCoordinator() {
     <div>
       <ToastContainer />
       <div>
+        <BeforeLoginNavbar/>
         <div className="workspace">
           <div className="main-left flex-box">
             <div className="login-title">
@@ -105,4 +107,4 @@ function LoginCoordinator() {
   );
 }
 
-export default authCoordint(LoginCoordinator);
+export default LoginCoordinator;

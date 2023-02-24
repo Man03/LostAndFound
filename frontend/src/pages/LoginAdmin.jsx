@@ -1,17 +1,26 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import authAdmin from "../utils/authAdmin";
 import image from "../Assets/image.png";
+import BeforeLoginNavbar from "../components/Navbar";
+
 
 function LoginAdmin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/admin/dashboard", {
+        withCredentials: true,
+      })
+      .then((response) => navigate("/admin/dashboard"));
+  });
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -21,17 +30,18 @@ function LoginAdmin() {
       // make a POST request to the login route on the back-end server
 
       await axios
-        .post("http://localhost:8000/users/admin/login", {
-          email: email,
-          password: password,
-        })
+        .post(
+          "http://localhost:8000/admin/login",
+          {
+            email: email,
+            password: password,
+          },
+          { withCredentials: true }
+        )
         .then((response) => {
           if (response.data.message === "Successfully logged in") {
             toast.success("Successfully logged in");
-            localStorage.setItem("isAdminLogged", true);
-            navigate("/user/admin/dashboard", {
-              state: { user: response.data.user },
-            });
+            navigate("/admin/dashboard");
           } else if (response.data.message === "Invalid Password") {
             toast.error("Invalid Password");
           } else if (response.data.message === "User not found") {
@@ -47,6 +57,7 @@ function LoginAdmin() {
     <div>
       <ToastContainer />
       <div>
+        <BeforeLoginNavbar/>
         <div className="workspace">
           <div className="main-left flex-box">
             <div className="login-title">
@@ -96,4 +107,4 @@ function LoginAdmin() {
   );
 }
 
-export default authAdmin(LoginAdmin);
+export default LoginAdmin;

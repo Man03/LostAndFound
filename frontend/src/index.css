@@ -56,7 +56,7 @@ code {
 }
 .btn {
   background-color: #36C6D3;
-  padding: 10px 34px;
+  padding: 7px 25px;
   border-radius: 8px;
   font-size: medium;
   font-weight:bolder;
@@ -81,6 +81,7 @@ code {
   padding: 30px 100px 30px 30px;
   align-items: center;
   font-family: 'Akshar', sans-serif;
+  
 }
 .inner-rect p {
   color: white;
@@ -126,26 +127,6 @@ code {
 }
 #left-long-text {
   color: #000000;
-}
-
-
-
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 1rem;
-  background-color:#DFEFFF;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  z-index: 1;
-  filter: blur(0px);
-    backdrop-filter: blur(7px);
-    -webkit-backdrop-filter: blur(7px);
-  border-radius: 10px;
-  border-color: #000000;
-  border-width: 1px;
-  font-family: 'Actor', sans-serif;
 }
 
 .SelectRole-Text{
@@ -212,11 +193,27 @@ code {
   margin-left: 150px;
   font-family: 'Actor', sans-serif;
   background-color:#DFEFFF;
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
   align-items: center;
 }
 
+.add_Co-main-left {
+  border-radius: 14px;
+  padding: 17px;
+  margin: auto;
+  font-family: 'Actor', sans-serif;
+  background-color:#DFEFFF;
+  align-items: center;
+}
+
+.dropdown {
+  background-color: #BCC9D6;
+  text-align: center;
+  border: 1px solid black;
+  margin: 10px 0;
+  padding: 10px 20px;
+  border-radius: 8px;
+  width: 320px;
+}
 .box-grp {
   display: flex;
   flex-direction: column;
@@ -320,7 +317,6 @@ input::placeholder {
   padding: 30px 100px 30px 30px;
   align-items: center;
   font-family: 'Actor', sans-serif;
-  margin: 300px;
   margin-top: 50px;
   display: flex;
   flex-direction: column;
@@ -391,4 +387,13 @@ input::placeholder {
 
 #std-img{
   height: 140px;
+}
+
+.back-btn{
+  background-color: #36C6D3;
+  padding: 5px 34px;
+  border-radius: 3px;
+  font-size: medium;
+  font-weight:normal;
+  border: 1px solid #04151f;
 }

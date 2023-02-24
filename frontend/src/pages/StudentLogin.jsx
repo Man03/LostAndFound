@@ -2,10 +2,14 @@ import React from "react";
 import "react-toastify/dist/ReactToastify.css";
 import image from "../Assets/image.png";
 import Glogo from "../Assets/google 1.png";
+import BeforeLoginNavbar from "../components/Navbar";
+
+
 export default function StudentLogin() {
   return (
     <div>
       <div>
+        <BeforeLoginNavbar/>
         <div className="workspace">
           <div className="glogin-box flex-box">
             <div className="glogin-title">

@@ -2,14 +2,15 @@ const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const Student = require("../model/studentModel");
 const JwtStrategy = require("passport-jwt").Strategy;
 const { ExtractJwt } = require("passport-jwt");
-const config = require("../config/config");
+const dotenv = require("dotenv");
+dotenv.config();
 
 module.exports = (passport) => {
   passport.use(
     new GoogleStrategy(
       {
-        clientID: config.google.clientID,
-        clientSecret: config.google.clientSecret,
+        clientID: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
         callbackURL: "/auth/google/callback",
       },
       async (accessToken, refreshToken, profile, done) => {

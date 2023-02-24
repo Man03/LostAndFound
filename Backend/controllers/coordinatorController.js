@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const Coordinator = require("../model/coordinatorModel");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("../config/nodemailer.config");
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -12,10 +13,11 @@ const loginCoordinator = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Check for admin email
     const user = await Coordinator.findOne({ email });
     if (!user) {
       res.json({ message: "User not found" });
-    } else if (bcrypt.compare(user.password, password)) {
+    } else if (user && (await bcrypt.compare(password, user.password))) {
       const token = await user.generateAuthToken();
 
       res.cookie("jwtokenCoordinator", token, {
@@ -45,6 +47,8 @@ const signupCoordinator = asyncHandler(async (req, res) => {
     const { firstName, lastName, email, department, password, conPassword } =
       req.body;
 
+    //Check empty fields
+
     if (
       !firstName ||
       !lastName ||
@@ -53,16 +57,18 @@ const signupCoordinator = asyncHandler(async (req, res) => {
       !password ||
       !conPassword
     ) {
-      res.status(400);
+      res.status(400).json({ message: "Please add all fields" });
       throw new Error("Please add all field");
     }
     // Check if Coordinator exist
     const coordinatorExists = await Coordinator.findOne({ email });
 
     if (coordinatorExists) {
-      res.status(400);
+      res.status(400).json({ message: "User alreay exists" });
       throw new Error("User already exists");
     }
+
+    const forSendPassword = password;
 
     // Hash the Password
 
@@ -83,11 +89,6 @@ const signupCoordinator = asyncHandler(async (req, res) => {
       const token = await coordinator.generateAuthToken();
       console.log(token);
 
-      // res.cookie("jwtokenCoordinator", token, {
-      //   expires: new Date(Date.now() + 86400000),
-      //   httpOnly: true,
-      // });
-
       await coordinator.save((err) => {
         if (err) {
           res.status(500).send({ message: err });
@@ -102,6 +103,14 @@ const signupCoordinator = asyncHandler(async (req, res) => {
         console.log(coordinator.department);
         console.log(coordinator.token);
       });
+
+      nodemailer.sendPasswordMail(
+        coordinator.firstName,
+        coordinator.lastName,
+        forSendPassword,
+        coordinator.email,
+        coordinator.token
+      );
 
       res.status(200).json({
         message: "Register successfully",
@@ -120,14 +129,6 @@ const signupCoordinator = asyncHandler(async (req, res) => {
     console.log(error);
   }
 });
-
-// //-------------------------------->Generate JWT<------------------------------------------------------------------------------//
-
-// const generateToken = (id) => {
-//   return jwt.sign({ id }, `${process.env.JWT_SECRET}`, {
-//     expiresIn: "5d",
-//   });
-// };
 
 //----------------------------------------->  Logout - Coordinator <----------------------------------------------------------------//
 

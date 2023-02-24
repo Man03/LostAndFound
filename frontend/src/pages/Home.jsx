@@ -1,10 +1,12 @@
 import { React } from "react";
+import BeforeLoginNavbar from "../components/Navbar";
 
 import image from "../Assets/image.png";
 
 export default function Home() {
   return (
     <div>
+      <BeforeLoginNavbar />
       <div className="workspace">
         <div className="left-home">
           <div id="top">

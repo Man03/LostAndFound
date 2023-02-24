@@ -3,6 +3,7 @@ import logo from "../Assets/DDU.png";
 import { Link } from "react-router-dom";
 
 function Header() {
+
   return (
     <div className="main-header">
       <header className="header">
@@ -25,9 +26,9 @@ function Header() {
               </Link>
             </li> */}
             <li>
-              <Link to="/selectrole">
-                <button className="btn">Login</button>
-              </Link>
+              <a href="http://localhost:3000/student/login" className="btn">
+                Logout
+              </a>
             </li>
           </ul>
         </div>

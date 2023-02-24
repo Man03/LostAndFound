@@ -1,6 +1,6 @@
 import "./index.css";
 import React from "react";
-import Navbar from "./components/Navbar";
+// import Navbar from "./components/Navbar";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import LoginAdmin from "./pages/LoginAdmin";
@@ -16,7 +16,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="App">
-        <Navbar />
+        {/* <Navbar /> */}
         <Routes>
           {/* ------------------------------------Login------------------------------------------------- */}
           <Route path="/" element={<Home />}></Route>
@@ -28,6 +28,9 @@ function App() {
           ></Route>
           <Route path="/student/login" element={<StudentLogin />}></Route>
 
+
+
+
           <Route path="/admin/dashboard" element={<AdminDashboard />}></Route>
           <Route
             path="/student/foundItems"
@@ -37,6 +40,9 @@ function App() {
             path="/coordinator/foundItems"
             element={<CoordinatorFoundItems />}
           ></Route>
+
+
+
 
           <Route
             path="/admin/addCoordinator"
