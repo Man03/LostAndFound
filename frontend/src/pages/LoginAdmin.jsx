@@ -4,9 +4,8 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import image from "../Assets/image.png";
+import image from "../Assets/Ellipse 5.png";
 import BeforeLoginNavbar from "../components/Navbar";
-
 
 function LoginAdmin() {
   const [email, setEmail] = useState("");
@@ -57,7 +56,7 @@ function LoginAdmin() {
     <div>
       <ToastContainer />
       <div>
-        <BeforeLoginNavbar/>
+        <BeforeLoginNavbar />
         <div className="workspace">
           <div className="main-left flex-box">
             <div className="login-title">
@@ -99,7 +98,7 @@ function LoginAdmin() {
             </div>
           </div>
           <div className="main-right">
-            <img src={image} className="img" alt="" srcSet="" />
+            <img src={image} className="img2" alt="" srcSet="" />
           </div>
         </div>
       </div>

@@ -4,16 +4,17 @@ const Student = require("../model/studentModel");
 const protectStudent = async (req, res, next) => {
   try {
     const token = req.cookies.jwtokenStudent;
-
-    console.log("Token is from cookie" + token);
-
+    // console.log(token);
     const verify_token = jwt.verify(token, process.env.JWT_SECRET);
-    /*     console.log(verify_token._id); */
-    root_user = await Student.findOne({
+    // console.log(verify_token); 
+    const root_user = await Student.findOne({
       _id: verify_token._id,
-      token: token,
+      // token: token,
     });
-    req.user = root_user;
+
+    req.user = verify_token;
+    // res.json(verify_token);
+
     next();
   } catch (error) {
     res.status(401).send("unauthorized....");

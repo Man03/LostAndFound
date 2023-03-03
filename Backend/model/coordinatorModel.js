@@ -1,15 +1,19 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 
+const moment = require("moment");
+
+var createdAt = function () {
+  var d = new Date();
+  var formattedDate = moment(d).format("MM-DD-YYYY, h:mm:ss a");
+  return formattedDate;
+};
+
 const CoordinatorSchema = mongoose.Schema(
   {
-    firstName: {
+    userName: {
       type: String,
       required: [true, "Please add a first name"],
-    },
-    lastName: {
-      type: String,
-      required: [true, "Please add a last name"],
     },
     email: {
       type: String,
@@ -24,8 +28,15 @@ const CoordinatorSchema = mongoose.Schema(
       type: String,
       required: [true, "Please add a password"],
     },
+    status: {
+      type: String,
+    },
     token: {
       type: String,
+    },
+    createdAt: {
+      type: String,
+      default: createdAt,
     },
   },
   {

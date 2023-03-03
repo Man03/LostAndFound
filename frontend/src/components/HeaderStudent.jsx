@@ -3,7 +3,6 @@ import logo from "../Assets/DDU.png";
 import { Link } from "react-router-dom";
 
 function Header() {
-
   return (
     <div className="main-header">
       <header className="header">

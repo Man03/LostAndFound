@@ -44,19 +44,11 @@ const loginCoordinator = asyncHandler(async (req, res) => {
 
 const signupCoordinator = asyncHandler(async (req, res) => {
   try {
-    const { firstName, lastName, email, department, password, conPassword } =
-      req.body;
+    const { userName, email, department, password, conPassword } = req.body;
 
     //Check empty fields
 
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !department ||
-      !password ||
-      !conPassword
-    ) {
+    if (!userName || !email || !department || !password || !conPassword) {
       res.status(400).json({ message: "Please add all fields" });
       throw new Error("Please add all field");
     }
@@ -78,11 +70,11 @@ const signupCoordinator = asyncHandler(async (req, res) => {
     //Create Coordinator
 
     const coordinator = await Coordinator.create({
-      firstName,
-      lastName,
+      userName,
       email,
       department,
       password: hashedPassword,
+      status: "Active",
     });
 
     if (coordinator) {
@@ -97,16 +89,14 @@ const signupCoordinator = asyncHandler(async (req, res) => {
 
         console.log("information of user: ");
 
-        console.log(coordinator.firstName);
-        console.log(coordinator.lastName);
+        console.log(coordinator.userName);
         console.log(coordinator.email);
         console.log(coordinator.department);
         console.log(coordinator.token);
       });
 
       nodemailer.sendPasswordMail(
-        coordinator.firstName,
-        coordinator.lastName,
+        coordinator.userName,
         forSendPassword,
         coordinator.email,
         coordinator.token
@@ -115,8 +105,7 @@ const signupCoordinator = asyncHandler(async (req, res) => {
       res.status(200).json({
         message: "Register successfully",
         _id: coordinator.id,
-        firstName: coordinator.firstName,
-        lastName: coordinator.lastName,
+        firstName: coordinator.userName,
         email: coordinator.email,
         department: coordinator.department,
         token,
@@ -142,4 +131,63 @@ const logoutCoordinator = async (req, res) => {
   }
 };
 
-module.exports = { loginCoordinator, signupCoordinator, logoutCoordinator };
+//----------------------------------------->  Get Coordinator Info <----------------------------------------------------------------//
+
+const getCoordinatorInfo = async (req, res) => {
+  try {
+    const coordinator = await Coordinator.findById(req.user._id);
+    // console.log(coordinator.userName);
+    const userName = coordinator.userName;
+    res.status(200).json({
+      userName,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//----------------------------------------->  delete Coordinator <----------------------------------------------------------------//
+
+const deleteCoordinator = async (req, res) => {
+  try {
+    // res.clearCookie("jwtokenCoordinator", { path: "/" });
+    const { email } = req.body;
+
+    const coordinator = await Coordinator.findOne({ email });
+
+    if (!coordinator) {
+      res.status(400);
+      console.log("Coordinator not found to be deleted");
+    }
+    nodemailer.sendDeclineEmail(coordinator.email, coordinator.token);
+    await coordinator.remove();
+
+    return res.status(404).json({ message: "Coordinator deleted" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getAllUser = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const coordinator = await Coordinator.find({ status });
+    if (!coordinator) {
+      res.json({ message: "No Coordinator" });
+    } else {
+      res.json({ message: "Coordinator Details", coordinator: coordinator });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+module.exports = {
+  loginCoordinator,
+  signupCoordinator,
+  logoutCoordinator,
+  getCoordinatorInfo,
+  deleteCoordinator,
+  getAllUser,
+};

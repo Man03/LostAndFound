@@ -8,8 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import HeaderAdmin from "../components/HeaderAdmin";
 
 function AddCoordinator() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [userName, setuserName] = useState("");
   const [email, setEmail] = useState("");
   const [department, setDepartment] = useState("");
   const [password, setPassword] = useState("");
@@ -20,8 +19,7 @@ function AddCoordinator() {
   const handleSubmit = async (event, response) => {
     event.preventDefault();
     if (
-      firstName === "" ||
-      lastName === "" ||
+      userName === "" ||
       email === "" ||
       department === "" ||
       password === "" ||
@@ -30,15 +28,14 @@ function AddCoordinator() {
       toast.error("All fields are required");
     } else if (password !== conformPassword) {
       toast.error("Password and Confirm Password does not match");
-    } else if (response.data.message === "User alreay exists") {
-      toast.error("User alreay exists");
+      // } else if (response.data.message === "User alreay exists") {
+      //   toast.error("User alreay exists");
     } else {
       // make a POST request to the login route on the back-end server
 
       await axios
         .post("http://localhost:8000/coordinator/signup", {
-          firstName: firstName,
-          lastName: lastName,
+          userName: userName,
           email: email,
           department: department,
           password: password,
@@ -56,14 +53,8 @@ function AddCoordinator() {
   return (
     <div>
       <ToastContainer />
-      <HeaderAdmin />
       <div>
         <div className="workspace">
-        {/* <div className="backbtn">
-          <Link to="/coordinator/founditems">
-            <button className="back-btn">Back</button>
-          </Link>
-        </div> */}
           <div className="add_Co-main-left flex-box">
             <div className="login-title">
               <p>Add Coordinator</p>
@@ -74,21 +65,11 @@ function AddCoordinator() {
                 <input
                   className="form-box"
                   type="text"
-                  name="firstName"
-                  placeholder="Enter your First Name"
-                  value={firstName}
+                  name="userName"
+                  placeholder="Enter your User Name"
+                  value={userName}
                   onChange={(event) => {
-                    setFirstName(event.target.value);
-                  }}
-                ></input>
-                <input
-                  className="form-box"
-                  type="text"
-                  name="lastName"
-                  placeholder="Enter your last Name"
-                  value={lastName}
-                  onChange={(event) => {
-                    setLastName(event.target.value);
+                    setuserName(event.target.value);
                   }}
                 ></input>
                 <input

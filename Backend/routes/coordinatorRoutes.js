@@ -7,6 +7,9 @@ const {
   loginCoordinator,
   signupCoordinator,
   logoutCoordinator,
+  getCoordinatorInfo,
+  deleteCoordinator,
+  getAllUser,
 } = require("../controllers/coordinatorController");
 
 router.post("/login", loginCoordinator);
@@ -15,8 +18,14 @@ router.post("/signup", signupCoordinator);
 
 router.get("/logout", logoutCoordinator);
 
-router.get("/founditems", protectCoordinator, (req, res) => {
+router.get("/dashboard", protectCoordinator, (req, res) => {
   res.json({ message: "Authorized" });
 });
+
+router.get("/getme", protectCoordinator, getCoordinatorInfo);
+
+router.post("/delete", deleteCoordinator);
+
+router.post("/req", getAllUser);
 
 module.exports = router;

@@ -14,14 +14,8 @@ module.exports = (passport) => {
         callbackURL: "/auth/google/callback",
       },
       async (accessToken, refreshToken, profile, done) => {
-        const newUser = {
-          googleId: profile.id,
-          displayName: profile.displayName,
-          email: profile.emails[0].value,
-          // image: profile.photos[0].value,
-        };
         try {
-          let existingUser = await Student.findOne({ "google.id": profile.id });
+          let existingUser = await Student.findOne({ id: profile.id });
           // if user exists return the user
           if (existingUser) {
             return done(null, existingUser);
@@ -30,13 +24,14 @@ module.exports = (passport) => {
           console.log("Creating new user...");
           const newUser = new Student({
             method: "google",
-            google: {
-              id: profile.id,
-              name: profile.displayName,
-              email: profile.emails[0].value,
-            },
+            id: profile.id,
+            userName: profile.displayName,
+            email: profile.emails[0].value,
+            status: "Active",
+            // image: profile.photos[0].value,  
           });
           await newUser.save();
+
           return done(null, newUser);
         } catch (error) {
           return done(error, false);

@@ -6,9 +6,7 @@ const cors = require("cors");
 const cookieSession = require("cookie-session");
 const session = require("express-session");
 const passport = require("passport");
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const Student = require("./model/studentModel");
-// const config = require("./config/config");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 require("./controllers/passportConfig")(passport);
@@ -42,6 +40,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/admin", require("./routes/adminRoutes"));
 app.use("/coordinator", require("./routes/coordinatorRoutes"));
+app.use("/student", require("./routes/studentRoutes"));
+app.use("/items", require("./routes/itemRoutes"));
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -70,7 +70,7 @@ app.get(
 //     failureMessage: true,
 //   }),
 //   async (req, res) => {
-//     res.redirect("http://localhost:3000/student/foundItems");
+//     res.redirect("http://localhost:3000/student/dashboard");
 //   }
 // );
 
@@ -78,31 +78,25 @@ app.get(
   "/auth/google/callback",
   passport.authenticate("google", { session: false }),
   async (req, res) => {
-    jwt.sign(
-      { user: req.user },
-      "secretKey",
-      { expiresIn: "1h" },
-      (err, token) => {
-        if (err) {
-          return res.json({
-            token: null,
-          });
-        }
-        res.json({
-          token,
-        });
-      }
+    const token = jwt.sign(
+      { user : req.user},
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+      // (err, token) => res.cookie("jwtokenStudent", token).json({ token })
     );
-    res.redirect("http://localhost:3000/student/founditems");
+    console.log(token);
+    console.log(req.user);
+    res.cookie("jwtokenStudent", token, {
+      expires: new Date(Date.now() + 86400000),
+      httpOnly: true,
+    });
+    res.redirect("http://localhost:3000/student/dashboard");
   }
 );
 
-app.get(
-  "/student/founditems",
-  passport.authenticate("jwt", { session: false }),
-  (req, res, next) => {
-    res.send("Welcome");
-  }
-);
+app.post("/google-auth", passport.authenticate("google-token"), (req, res) => {
+  // the user is authenticated and a session is created
+  res.send(req.user);
+});
 
 app.listen(port, () => console.log(`Server started on port ${port}`));

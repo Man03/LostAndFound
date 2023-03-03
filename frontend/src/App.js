@@ -7,10 +7,11 @@ import LoginAdmin from "./pages/LoginAdmin";
 import LoginCoordinator from "./pages/LoginCoordinator";
 import StudentLogin from "./pages/StudentLogin";
 import AdminDashboard from "./pages/AdminDashboard";
-import StudentFounditems from "./pages/StudentFounditems";
+import StudentDashboard from "./pages/StudentDashboard";
 import SelectRole from "./pages/SelectRole";
 import AddCoordinator from "./pages/AddCoordinator";
-import CoordinatorFoundItems from "./pages/CoordinatorFoundItems";
+import CoordinatorDashboard from "./pages/CoordinatorDashboard";
+
 
 function App() {
   return (
@@ -28,21 +29,15 @@ function App() {
           ></Route>
           <Route path="/student/login" element={<StudentLogin />}></Route>
 
-
-
-
           <Route path="/admin/dashboard" element={<AdminDashboard />}></Route>
           <Route
-            path="/student/foundItems"
-            element={<StudentFounditems />}
+            path="/student/dashboard"
+            element={<StudentDashboard />}
           ></Route>
           <Route
-            path="/coordinator/foundItems"
-            element={<CoordinatorFoundItems />}
+            path="/coordinator/dashboard"
+            element={<CoordinatorDashboard />}
           ></Route>
-
-
-
 
           <Route
             path="/admin/addCoordinator"

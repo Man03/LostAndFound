@@ -5,7 +5,7 @@ const protectAdmin = async (req, res, next) => {
   try {
     const token = req.cookies.jwtokenAdmin;
 
-    console.log("Token is from cookie" + token);
+    // console.log("Token is from cookie" + token);
 
     const verify_token = jwt.verify(token, process.env.JWT_SECRET);
     /*     console.log(verify_token._id); */
