@@ -32,7 +32,7 @@ router.get("/getme", protectCoordinator, getCoordinatorInfo);
 
 router.get("/getMyListing", protectCoordinator, getMyListing);
 
-router.get("/getFoundItems", getFoundItems);
+router.post("/getFoundItems", getFoundItems);
 
 router.get("/getLostItems", getLostItems);
 

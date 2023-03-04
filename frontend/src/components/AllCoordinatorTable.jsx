@@ -26,14 +26,14 @@ function AllCoordinatorTable(coordinator) {
           </span>
         </td>
         <td className="py-3 px-6 text-center">
-          <span className="font-medium">{coordinator.coordinator.email}</span>
+          <span className="font-normal">{coordinator.coordinator.email}</span>
         </td>
         <td className="py-3 px-6 text-center">
-          <div>{coordinator.coordinator.department}</div>
+          <div className="font-normal">{coordinator.coordinator.department}</div>
         </td>
         <td className="py-3 px-6 text-center" style={{ cursor: "pointer" }}>
           <div
-            className="transform hover:text-red-500 hover:scale-110"
+            className="transform hover:text-red-500 hover:scale-110 font-normal"
             onClick={HandleDelete}
           >
             <RiDeleteBin6Line className="table-icons"></RiDeleteBin6Line>

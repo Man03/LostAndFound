@@ -109,10 +109,14 @@ const storeLostItem = asyncHandler(async (req, res) => {
 
 const getFoundItems = async (req, res) => {
   try {
-    const items = await Items.find({
+    const items = await Item.find({
       ItemType: "Founded",
     });
-    res.status(200).json(items);
+    if(!items){
+      res.json({ message: "No Items" });
+    } else {
+      res.json({ message: "Items Details", items: items }); 
+    }
   } catch (error) {
     console.log(error);
   }

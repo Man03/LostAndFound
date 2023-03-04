@@ -602,6 +602,14 @@ input::placeholder {
 
 .headings{
   font-weight: bold;
-  font-size: larger;
+  /* font-size: larger; */
   margin-top: 25px;
+}
+
+.container table{
+  font-family: 'Open Sans', sans-serif;
+}
+
+.bg-color{
+  background-color:#DFEFFF;
 }

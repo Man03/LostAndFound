@@ -174,7 +174,7 @@ const deleteCoordinator = async (req, res) => {
 const getAllUser = async (req, res) => {
   try {
     const { status } = req.body;
-
+    
     const coordinator = await Coordinator.find({ status });
     if (!coordinator) {
       res.json({ message: "No Coordinator" });
