@@ -18,7 +18,7 @@ function AllCoordinatorTable(coordinator) {
   };
 
   return (
-    <tbody className="text-gray-600 text-sm font-light">
+    <tbody className="text-Neutral-900 text-sm font-light">
       <tr className="border-b border-gray-200 hover:bg-gray-100">
         <td className="py-3 px-6 text-center">
           <span className="font-medium">
@@ -28,7 +28,7 @@ function AllCoordinatorTable(coordinator) {
         <td className="py-3 px-6 text-center">
           <span className="font-medium">{coordinator.coordinator.email}</span>
         </td>
-        <td className="py-3 px-6">
+        <td className="py-3 px-6 text-center">
           <div>{coordinator.coordinator.department}</div>
         </td>
         <td className="py-3 px-6 text-center" style={{ cursor: "pointer" }}>

@@ -15,7 +15,7 @@ const storeFoundItem = asyncHandler(async (req, res) => {
     }
 
     const item = await Item.create({
-      lostType: "Founded",
+      ItemType: "Founded",
       itemName,
       description,
       location,
@@ -37,7 +37,7 @@ const storeFoundItem = asyncHandler(async (req, res) => {
       res.status(200).json({
         message: "Posted successfully",
         _id: item.id,
-        lostType: item.lostType,
+        ItemType: item.lostType,
         itemName: item.itemName,
         description: item.description,
         location: item.location,
@@ -66,7 +66,7 @@ const storeLostItem = asyncHandler(async (req, res) => {
     }
 
     const item = await Item.create({
-      lostType: "Losted",
+      ItemType: "Losted",
       itemName: itemName,
       description: description,
       location: location,
@@ -88,7 +88,7 @@ const storeLostItem = asyncHandler(async (req, res) => {
       res.status(200).json({
         message: "Posted successfully",
         _id: item.id,
-        lostType: item.lostType,
+        ItemType: item.lostType,
         itemName: item.itemName,
         description: item.description,
         location: item.location,
@@ -105,7 +105,37 @@ const storeLostItem = asyncHandler(async (req, res) => {
   }
 });
 
+//-----------------------------------------> get- FoundItems <----------------------------------------------------------------//
+
+const getFoundItems = async (req, res) => {
+  try {
+    const items = await Items.find({
+      ItemType: "Founded",
+    });
+    res.status(200).json(items);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//-----------------------------------------> get-Lost-Items <----------------------------------------------------------------//
+
+const getLostItems = async (req, res) => {
+  try {
+    const items = await Item.find({
+      ItemType: "Losted",
+    });
+    res.status(200).json(items);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+
 module.exports = {
   storeFoundItem,
   storeLostItem,
+  getFoundItems,
+  getLostItems,
 };

@@ -7,14 +7,31 @@ import HeaderAdmin from "../components/HeaderAdmin";
 import { TiDelete } from "react-icons/ti";
 import AllUser from "./Alluser";
 import AddCoordinator from "../pages/AddCoordinator";
+import FoundItemsAdmin from "../pages/FoundItemsAdmin";
+import LostItems from "../pages/LostItemsAdmin";
+import Dasboard from "../pages/DashAdmin";
+import Summary from "../pages/Summary";
 import { BiUserCheck } from "react-icons/bi";
 import { IoAddCircleOutline } from "react-icons/io5";
-import {  faUserCircle } from "@fortawesome/free-solid-svg-icons";
+import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { MdOutlineDashboard } from "react-icons/md";
 import { AiOutlineFileText } from "react-icons/ai";
 import { RiEmotionHappyLine } from "react-icons/ri";
 import { RiEmotionUnhappyLine } from "react-icons/ri";
+
+// import { styled } from "@mui/material/styles";
+// import Box from "@mui/material/Box";
+// import Paper from "@mui/material/Paper";
+// import Grid from "@mui/material/Unstable_Grid2";
+
+// const Item = styled(Paper)(({ theme }) => ({
+//   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+//   ...theme.typography.body2,
+//   padding: theme.spacing(1),
+//   textAlign: "center",
+//   color: theme.palette.text.secondary,
+// }));
 
 export default function AdminDashboard() {
   const [dashboard, setDashboard] = useState(true);
@@ -70,9 +87,14 @@ export default function AdminDashboard() {
   return (
     <>
       <div className="d-main">
-        <div className="Header-in-page">
-          <HeaderAdmin />
-        </div>  
+        <div className="header-in-page">
+          <div>
+            <HeaderAdmin />
+          </div>
+        </div>
+        {/* <Box sx={{ display: "flex", flexDirection: "row", flexWrap: "nowrap" }}>
+          <Grid container spacing={6}>
+            <Grid> */}
         <div className="below-part">
           <div className="slidebar">
             <div className="navbar">
@@ -214,9 +236,15 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
+          {/* </Grid>
+            <Grid sx={12}> */}
           <div className="d-right">
             {user ? <AllUser /> : <></>}
             {addCoordinator ? <AddCoordinator /> : <></>}
+            {founditems ? <FoundItemsAdmin /> : <></>}
+            {lostitems ? <LostItems /> : <></>}
+            {dashboard ? <Dasboard /> : <></>}
+            {summary ? <Summary /> : <></>}
             {addDept ? (
               <>
                 <div className="main">
@@ -276,6 +304,9 @@ export default function AdminDashboard() {
             )}
           </div>
         </div>
+        {/* </Grid>
+          </Grid>
+        </Box> */}
       </div>
     </>
   );

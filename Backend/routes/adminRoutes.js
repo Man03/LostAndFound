@@ -6,6 +6,7 @@ const {
   signupAdmin,
   loginAdmin,
   logoutAdmin,
+  getCounts,
 } = require("../controllers/adminController");
 
 router.post("/signup", signupAdmin);
@@ -17,5 +18,7 @@ router.get("/logout", logoutAdmin);
 router.get("/dashboard", protectAdmin, (req, res) => {
   res.json({ message: "Authorized" });
 });
+
+router.get("/getCounts", getCounts);
 
 module.exports = router;

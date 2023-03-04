@@ -11,6 +11,10 @@ import { RiEmotionHappyLine } from "react-icons/ri";
 import { RiEmotionUnhappyLine } from "react-icons/ri";
 import { BsListUl } from "react-icons/bs";
 
+import LostItems from "../pages/LostItemsCoordinator";
+import FoundItems from "../pages/FoundItemsCoordinator";
+import MyListing from "../pages/MyListingCoordinator";
+
 import ListFounditems from "./ListFounditems";
 
 function CoordinatorDashboard() {
@@ -19,7 +23,7 @@ function CoordinatorDashboard() {
   const [lostitems, setlostitems] = useState(true);
   const [founditems, setfounditems] = useState(false);
   const [listfounditems, setlistfounditems] = useState(false);
-  const [mylisting, setmylisting] = useState(false);  
+  const [mylisting, setmylisting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -35,7 +39,7 @@ function CoordinatorDashboard() {
         withCredentials: true,
       })
       .then((response) => {
-        setUser(response.data.userName);  
+        setUser(response.data.userName);
       });
     // fetch("http://localhost:8000/coordinator/getme")
     //   .then((res) => res.json())
@@ -130,6 +134,9 @@ function CoordinatorDashboard() {
             </div>
             <div className="d-right">
               {listfounditems ? <ListFounditems /> : <></>}
+              {lostitems ? <LostItems /> : <></>}
+              {founditems ? <FoundItems /> : <></>}
+              {mylisting ? <MyListing /> : <></>}
             </div>
             <div className="below-right"></div>
           </div>

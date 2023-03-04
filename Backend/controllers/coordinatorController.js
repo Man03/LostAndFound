@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const Coordinator = require("../model/coordinatorModel");
+const Items = require("../model/ItemModel");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("../config/nodemailer.config");
 const dotenv = require("dotenv");
@@ -168,6 +169,8 @@ const deleteCoordinator = async (req, res) => {
   }
 };
 
+//----------------------------------------->  get all-Coordinator <----------------------------------------------------------------//
+
 const getAllUser = async (req, res) => {
   try {
     const { status } = req.body;
@@ -183,6 +186,21 @@ const getAllUser = async (req, res) => {
   }
 };
 
+//----------------------------------------->  My-Listing (Only posts that req by Coordinator) <----------------------------------------------------------------//
+
+const getMyListing = async (req, res) => {
+  try {
+    const coordinator = await Coordinator.findById(req.user._id);
+
+    const items = await Items.find({
+      listedBy: coordinator.userName,
+    });
+    res.status(200).json(items);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   loginCoordinator,
   signupCoordinator,
@@ -190,4 +208,5 @@ module.exports = {
   getCoordinatorInfo,
   deleteCoordinator,
   getAllUser,
+  getMyListing,
 };

@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Student = require("../model/studentModel");
+const Items = require("../model/ItemModel");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("../config/nodemailer.config");
 const dotenv = require("dotenv");
@@ -51,9 +52,24 @@ const getStudentInfo = async (req, res) => {
     // console.log(req.user);
     const userName = req.user.user.userName;
     // console.log(userName);
-    res.status(200).json({                                                                                          
+    res.status(200).json({
       userName,
     });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//----------------------------------------->  My-Listing (Only posts that req by Student) <----------------------------------------------------------------//
+
+const getMyListing = async (req, res) => {
+  try {
+    const student = await Student.findById(req.user._id);
+
+    const items = await Items.find({
+      listedBy: student.userName,
+    });
+    res.status(200).json(items);
   } catch (error) {
     console.log(error);
   }
@@ -63,4 +79,5 @@ module.exports = {
   deleteStudent,
   getAllUser,
   getStudentInfo,
+  getMyListing,
 };

@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AllCoordinatorTable from "../components/AllCoordinatorTable";
 import AllStudentTable from "../components/AllStudentTable";
+
+import * as React from "react";
+
 
 function AllUser() {
   const [coordinator, setCoordinator] = useState([]);
@@ -28,7 +31,7 @@ function AllUser() {
         })
       )
       .catch((err) => navigate("/admin/login"));
-  }, []);
+  }, []); 
 
   return (
     <>
@@ -39,13 +42,12 @@ function AllUser() {
         <div className="container table">
           <div className="overflow-x-auto">
             <div>
-              <div className="w-full">
+              <div>
                 <div className="shadow-md rounded my-5">
                   <table className="min-w-max bg-white w-full table-auto">
                     <thead>
-                      <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                        <th className="py-3 px-6 text-center">First Name</th>
-                        <th className="py-3 px-6 text-center">Last Name</th>
+                      <tr className="bg-gray-200 text-black-600 uppercase text-sm leading-normal">
+                        <th className="py-2 px-5 text-center">Username</th>
                         <th className="py-3 px-6 text-center">Email</th>
                         <th className="py-3 px-6 text-center">Department</th>
                         <th className="py-3 px-6 text-center">Actions</th>
@@ -61,7 +63,7 @@ function AllUser() {
           </div>
         </div>
         <div>
-          <p className="text-color headings">Active Student</p>
+          <p className="text-color headings">Active Students</p>
         </div>
         <div className="container table">
           <div className="overflow-x-auto">
@@ -70,7 +72,7 @@ function AllUser() {
                 <div className="shadow-md rounded my-5">
                   <table className="min-w-max bg-white w-full table-auto">
                     <thead>
-                      <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                      <tr className="bg-gray-200 text-black-600 uppercase text-sm leading-normal">
                         <th className="py-3 px-6 text-center">User Name</th>
                         <th className="py-3 px-6 text-center">Email</th>
                         <th className="py-3 px-6 text-center">Actions</th>
@@ -86,6 +88,7 @@ function AllUser() {
           </div>
         </div>
       </div>
+       
     </>
   );
 }

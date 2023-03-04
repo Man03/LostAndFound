@@ -8,9 +8,11 @@ import { Link } from "react-router-dom";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 import ListLostitems from "../pages/ListLostitems";
+import FoundItems from "../pages/FoundItemsStudent";
+import MyListing from "../pages/MyListingStudent";
 
 function StudentDashboard() {
   const [userName, setUser] = useState("null");
@@ -28,7 +30,7 @@ function StudentDashboard() {
       .then((response) => {});
     axios
       .get("http://localhost:8000/student/getme", {
-        withCredentials: true,    
+        withCredentials: true,
       })
       .then((response) => {
         setUser(response.data.userName);
@@ -104,6 +106,8 @@ function StudentDashboard() {
             </div>
             <div className="d-right">
               {listlostitems ? <ListLostitems /> : <></>}
+              {founditems ? <FoundItems /> : <></>}
+              {mylisting ? <MyListing /> : <></>}
             </div>
             <div className="below-right"></div>
           </div>

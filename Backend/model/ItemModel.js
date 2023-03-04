@@ -8,7 +8,7 @@ var ListedAt = function () {
 };
 
 const ItemSchema = mongoose.Schema({
-  lostType: {
+  ItemType: {
     type: String,
     require: [true, "Please add a lost type"],
   },

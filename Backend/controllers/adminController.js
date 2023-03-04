@@ -1,6 +1,9 @@
 const Admin = require("../model/adminModel");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
+const Item = require("../model/ItemModel");
+const Coordinator = require("../model/coordinatorModel");
+const Student = require("../model/studentModel");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
@@ -117,8 +120,67 @@ const logoutAdmin = async (req, res) => {
   }
 };
 
+//-----------------------------------------> get-CountsForDashboard <----------------------------------------------------------------//
+
+const getCounts = async (req, res) => {
+  try {
+    // Total Lost Items
+    const totalLostItems = await Item.countDocuments({
+      ItemType: "Losted",
+    });
+
+    // Total Found Items
+    const totalFoundItems = await Item.countDocuments({
+      ItemType: "Founded",
+    });
+
+    //Total Claimed Items
+    const totalClaimedItems = await Item.countDocuments({
+      status: "Claimed",
+    });
+
+    //Total Lost And Found Items
+    const totalLostAndFoundItems = totalFoundItems + totalLostItems;
+
+    //Total Users
+    const totalCoordinator = await Coordinator.countDocuments();
+    const totalStudent = await Student.countDocuments();
+    const totalUsers = totalCoordinator + totalStudent;
+
+    //Current Lost Items
+    const totalCurrentLostItems = await Item.countDocuments({
+      ItemType: "Losted",
+      status: "Not founded",
+    });
+
+    //Current Founded Items
+    const totalCurrentFoundedItems = await Item.countDocuments({
+      ItemType: "Founded",
+      status: "Not Claimed",
+    });
+
+    //Total Current Lost And Found Items
+    const totalCurrentLostandFoundItems =
+      totalCurrentFoundedItems + totalCurrentLostItems;
+
+    res.status(200).json({
+      totalUsers: totalUsers,
+      totalClaimedItems: totalClaimedItems,
+      totalLostAndFoundItems: totalLostAndFoundItems,
+      totalFoundItems: totalFoundItems,
+      totalLostItems: totalLostItems,
+      totalCurrentLostandFoundItems: totalCurrentLostandFoundItems,
+      totalCurrentFoundedItems: totalCurrentFoundedItems,
+      totalCurrentLostItems: totalCurrentLostItems,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   signupAdmin,
   loginAdmin,
-  logoutAdmin
+  logoutAdmin,
+  getCounts,
 };

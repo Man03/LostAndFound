@@ -1,13 +1,13 @@
 import React from "react";
 import axios from "axios";
-import { RiDeleteBin6Line } from "react-icons/ri";
+import { GrUpdate } from "react-icons/gr";
 
-function AllStudentTable(student) {
-  const HandleDelete = async (event) => {
+function FoundItemsCoordinator(item) {
+  const HandleUpdate = async (event) => {
     event.preventDefault();
     await axios
-      .post("http://localhost:8000/student/delete", {
-        email: student.student.email,
+      .post("http://localhost:8000/item/updateStatus", {
+        _id: item.item._id,
       })
       .then((res) => {
         window.location.reload("user/admin/dashboard");
@@ -21,17 +21,17 @@ function AllStudentTable(student) {
     <tbody className="text-black  -600 text-sm font-light">
       <tr className="border-b border-gray-200 hover:bg-gray-100">
         <td className="py-3 px-6 text-center">
-          <span className="font-medium">{student.student.userName}</span>
+          <span className="font-medium">{item.item.userName}</span>
         </td>
         <td className="py-3 px-6 text-center">
-          <div>{student.student.email}</div>
+          <div>{item.item.email}</div>
         </td>
         <td className="py-3 px-6 text-center" style={{ cursor: "pointer" }}>
           <div
             className="transform hover:text-red-500 hover:scale-110"
-            onClick={HandleDelete}
+            onClick={HandleUpdate}
           >
-            <RiDeleteBin6Line className="table-icons"></RiDeleteBin6Line>
+            <GrUpdate className="table-icons"></GrUpdate>
             Delete
           </div>
         </td>
@@ -40,4 +40,4 @@ function AllStudentTable(student) {
   );
 }
 
-export default AllStudentTable;
+export default FoundItemsCoordinator;
