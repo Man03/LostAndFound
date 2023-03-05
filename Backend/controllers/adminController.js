@@ -4,6 +4,7 @@ const asyncHandler = require("express-async-handler");
 const Item = require("../model/ItemModel");
 const Coordinator = require("../model/coordinatorModel");
 const Student = require("../model/studentModel");
+const Department = require("../model/departmentModel");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
@@ -178,9 +179,59 @@ const getCounts = async (req, res) => {
   }
 };
 
+const addDepartment = async (req, res) => {
+  try {
+    const { department } = req.body;
+
+    const ckeckDepartment = await Department.findOne({
+      department: department,
+    });
+
+    if (ckeckDepartment) {
+      res.json({ message: "Department already Exists" });
+    } else {
+      await Department.create({
+        department,
+      });
+      res.json({ message: `Department added + ${department}` });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const delDept = async (req, res) => {
+  try {
+    const { department } = req.body;
+    const dept = await Department.findOne({ department });
+    if (!dept) {
+      return res.status(400).json({ message: "Department not found" });
+    }
+    await dept.remove();
+
+    return res.status(404).json({ message: "Department deleted" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const getdept = async (req, res) => {
+  try {
+    const depts = await Department.find();
+    res.json({
+      depts: depts,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   signupAdmin,
   loginAdmin,
   logoutAdmin,
   getCounts,
+  addDepartment,
+  delDept,
+  getdept,
 };

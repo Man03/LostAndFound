@@ -1,5 +1,5 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 // import { Link } from "react-router-dom";
@@ -13,8 +13,15 @@ function AddCoordinator() {
   const [department, setDepartment] = useState("");
   const [password, setPassword] = useState("");
   const [conformPassword, setconformPassword] = useState("");
+  const [all, setAll] = useState([]);
 
   // const navigate = useNavigate();
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8000/admin/getdept")
+      .then((response) => setAll(response.data.depts));
+  });
 
   const handleSubmit = async (event, response) => {
     event.preventDefault();
@@ -90,14 +97,9 @@ function AddCoordinator() {
                     console.log(event.target.value);
                   }}
                 >
-                  <option>Computer engineering</option>
-                  <option>Information technology</option>
-                  <option>Chemical engineering</option>
-                  <option>Civil engineering</option>
-                  <option>Mechanical engineering</option>
-                  <option>
-                    Electronics & Communication engineering
-                  </option>
+                  {all.map((dept) => (
+                    <option>{dept.department}</option>
+                  ))}
                 </select>
                 <input
                   className="form-box"

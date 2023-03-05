@@ -1,22 +1,12 @@
-// import React from "react";
-
-// function FoundItemsStudent() {
-//   return <div>FoundItemsStudent</div>;
-// }
-
-// export default FoundItemsStudent;
-
 import React from "react";
 import axios from "axios";
-import { GrUpdate } from "react-icons/gr";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { BiSearch } from "react-icons/bi";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
 function FoundItemsStudent() {
-  const navigate = useNavigate();
 
   const [item, setItem] = useState([]);
   const [query, setQuery] = useState("");

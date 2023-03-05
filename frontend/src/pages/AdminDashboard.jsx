@@ -19,6 +19,8 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { AiOutlineFileText } from "react-icons/ai";
 import { RiEmotionHappyLine } from "react-icons/ri";
 import { RiEmotionUnhappyLine } from "react-icons/ri";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // import { styled } from "@mui/material/styles";
 // import Box from "@mui/material/Box";
@@ -53,19 +55,26 @@ export default function AdminDashboard() {
       })
       .then((response) => {})
       .catch((err) => navigate("/admin/login"));
+    axios
+      .get("http://localhost:8000/admin/getdept", { withCredentials: true })
+      .then((response) => setAll(response.data.depts));
   });
 
   const handleDept = async (event) => {
     event.preventDefault();
     await axios
       .post(
-        "http://localhost:5000/admin/adddept",
+        "http://localhost:8000/admin/adddept",
         {
           department: dept,
         },
         { withCredentials: true }
       )
-      .then((response) => {})
+      .then((response) => {
+        if (response.data.message === "Department already Exists") {
+          toast.error("Coordinator already exists");
+        }
+      })
       .catch((error) => {
         console.log("Error is " + error);
       });
@@ -73,14 +82,14 @@ export default function AdminDashboard() {
   const deptDelete = async (event, department) => {
     event.preventDefault();
     await axios
-      .post("http://localhost:5000/admin/deletedept", {
+      .post("http://localhost:8000/admin/deletedept", {
         department: department,
       })
       .then((res) => {
-        window.location.reload("user/admin/dashboard");
+        // window.location.reload("admin/dashboard");
       })
       .catch((err) => {
-        window.location.reload("user/admin/dashboard");
+        // window.location.reload("admin/dashboard");
       });
   };
 
@@ -247,53 +256,63 @@ export default function AdminDashboard() {
             {summary ? <Summary /> : <></>}
             {addDept ? (
               <>
-                <div className="main">
-                  <div className="main-left">
-                    <div className="innner-left">
-                      <p id="form-text">Add Department </p>
-                      <form action="" className="box-grp">
-                        <input
-                          className="form-box"
-                          type="text"
-                          name="dept"
-                          placeholder="Enter new department"
-                          value={dept}
-                          onChange={(event) => {
-                            setDept(event.target.value);
-                          }}
-                        ></input>
-
-                        <button
-                          type="submit"
-                          className="form-box"
-                          id="submit-btn"
-                          onClick={handleDept}
-                        >
-                          Add Department
-                        </button>
-                      </form>
+                <div>
+                  <ToastContainer />
+                  <div className="add-dep">
+                    <div className="add-dep-in">
+                      <div className="add_dep-main-left flex-box">
+                        <div className="login-title">
+                          <p>Add Department</p>
+                          <hr className="line"></hr>
+                        </div>
+                        <div className="form">
+                          <form action="" className="box-grp">
+                            <input
+                              className="form-box"
+                              type="text"
+                              name="dept"
+                              placeholder="Enter department"
+                              value={dept}
+                              onChange={(event) => {
+                                setDept(event.target.value);
+                              }}
+                            ></input>
+                            <button
+                              type="submit"
+                              className="form-box"
+                              id="submit-btn"
+                              onClick={handleDept}
+                            >
+                              Add Department
+                            </button>
+                          </form>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="main-right text-color">
-                    <div className="box">
-                      <div className="box-title">All Departments</div>
-                      <div className="box-inner">
-                        {all.map((dept) => (
-                          <>
-                            <div className="flex-row">
-                              <div>{dept.department}</div>
-                              <span>
-                                <TiDelete
-                                  className="icon"
-                                  size={20}
-                                  onClick={(event) =>
-                                    deptDelete(event, dept.department)
-                                  }
-                                />
-                              </span>
-                            </div>
-                          </>
-                        ))}
+                    <div className="add-dep-in">
+                      <div className="add_dep-main-right flex-box">
+                        <div className="login-title">
+                          <p>All Department</p>
+                          <hr className="line"></hr>
+                        </div>
+                        <div className="box-inner">
+                          {all.map((dept) => (
+                            <>
+                              <div className="flex-row">
+                                <div>{dept.department}</div>
+                                <span>
+                                  <TiDelete
+                                    className="cros-icon"
+                                    size={20}
+                                    onClick={(event) =>
+                                      deptDelete(event, dept.department)
+                                    }
+                                  />
+                                </span>
+                              </div>
+                            </>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>

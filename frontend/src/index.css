@@ -650,3 +650,63 @@ input::placeholder {
 .MuiInputBase-input  {
   background: black;
 }
+
+.box{
+    font-family: 'Actor', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.box-title{
+  text-align: center;
+  font-size: 30px;
+  /* margin: 30px ; */
+}
+
+.add-dep-in{
+  display: flex;
+  align-items: center;
+  margin: auto;
+  margin-top: 120px;
+}
+
+.add-dep{
+  display: flex;
+  align-items: center;
+  margin-left: 200px;
+}
+
+.add_dep-main-left {
+  border-radius: 14px;
+  padding: 17px;
+  font-family: 'Actor', sans-serif;
+  background-color:#DFEFFF;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.add_dep-main-right {
+  border-radius: 14px;
+  padding: 17px;
+  font-family: 'Actor', sans-serif;
+  background-color:#DFEFFF;
+  align-items: center;
+}
+.box-inner {
+  background-color:#c0dbf6;
+  padding: 30px;
+  border-radius: 10px;
+  border: 2px solid black;
+}
+
+.flex-row{
+  display: flex;
+  align-items: center;
+}
+
+.cros-icon{
+  margin-left: 5px;
+}
+

@@ -7,6 +7,9 @@ const {
   loginAdmin,
   logoutAdmin,
   getCounts,
+  addDepartment,
+  delDept,
+  getdept,
 } = require("../controllers/adminController");
 
 router.post("/signup", signupAdmin);
@@ -20,5 +23,11 @@ router.get("/dashboard", protectAdmin, (req, res) => {
 });
 
 router.get("/getCounts", getCounts);
+
+router.post("/adddept", protectAdmin, addDepartment);
+
+router.post("/deletedept", delDept);
+
+router.get("/getdept", getdept);
 
 module.exports = router;
