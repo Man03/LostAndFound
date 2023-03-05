@@ -95,7 +95,9 @@ function AddCoordinator() {
                   <option>Chemical engineering</option>
                   <option>Civil engineering</option>
                   <option>Mechanical engineering</option>
-                  <option>Electronics & Communication engineering</option>
+                  <option>
+                    Electronics & Communication engineering
+                  </option>
                 </select>
                 <input
                   className="form-box"

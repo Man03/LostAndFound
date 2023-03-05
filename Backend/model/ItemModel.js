@@ -38,7 +38,6 @@ const ItemSchema = mongoose.Schema({
   },
   department: {
     type: String,
-    require: [true, "Please add a department"],
   },
   status: {
     type: String,
@@ -48,6 +47,9 @@ const ItemSchema = mongoose.Schema({
     type: String,
     default: ListedAt,
   },
+  handedBy : {
+  type : String,
+  }
 });
 
 module.exports = mongoose.model("Item", ItemSchema);

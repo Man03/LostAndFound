@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import image from "../Assets/Ellipse 5.png";
 import BeforeLoginNavbar from "../components/Navbar";
 
+
 function LoginCoordinator() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

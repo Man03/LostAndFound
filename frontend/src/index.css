@@ -597,13 +597,14 @@ input::placeholder {
   flex-direction: column;
   align-items: center;
   font-family: 'Actor', sans-serif;
-  margin-left: 200px;
+  margin-left: 250px;
 }
 
 .headings{
   font-weight: bold;
   /* font-size: larger; */
   margin-top: 25px;
+  margin-right: 100px;
 }
 
 .container table{
@@ -612,4 +613,40 @@ input::placeholder {
 
 .bg-color{
   background-color:#DFEFFF;
+}
+
+/* ---------------------------------------------------------Search-btn-------------------------------------------------------> */
+
+.search-area{
+  display: flex;
+  justify-content: flex-end;
+  font-family: 'Actor', sans-serif;
+  align-items: center;
+}
+
+.search-icon{
+  height: 30px;
+  /* height: 25px; */
+  width: 30px;
+}
+.search-field{
+  border-radius: 5px;
+}
+ 
+
+.search-btn{
+  height: 40px;
+  background-color:#C0CCDC;
+  display: flex;
+  align-items: center;
+  border-radius: 5px;
+  margin-right: 5px;
+}
+
+.MuiTextField-root {
+  background:#DFEFFF;
+}
+
+.MuiInputBase-input  {
+  background: black;
 }

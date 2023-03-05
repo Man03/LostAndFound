@@ -2,6 +2,7 @@ const Item = require("../model/ItemModel");
 const Coordinator = require("../model/coordinatorModel");
 const Student = require("../model/studentModel");
 const asyncHandler = require("express-async-handler");
+const { findById } = require("../model/ItemModel");
 
 const storeFoundItem = asyncHandler(async (req, res) => {
   try {
@@ -111,35 +112,112 @@ const getFoundItems = async (req, res) => {
   try {
     const items = await Item.find({
       ItemType: "Founded",
+      status: "Not Claimed",
     });
-    if(!items){
+    if (!items) {
       res.json({ message: "No Items" });
     } else {
-      res.json({ message: "Items Details", items: items }); 
+      res.json({ message: "Items Details", items: items });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+//-----------------------------------------> get- FoundItems by search <----------------------------------------------------------------//
+
+const getFoundItemsBySearch = async (req, res) => {
+  try {
+    const query = req.query.q;
+    const items = await Item.find({
+      itemName: { $regex: new RegExp(query), $options: "i" },
+      ItemType: "Founded",
+      status: "Not Claimed",
+    });
+    if (!items) {
+      res.json({ message: "No Items" });
+    } else {
+      res.json({ message: "Items Details", items: items });
     }
   } catch (error) {
     console.log(error);
   }
 };
 
-//-----------------------------------------> get-Lost-Items <----------------------------------------------------------------//
+//-----------------------------------------> get Lost-Items <----------------------------------------------------------------//
 
 const getLostItems = async (req, res) => {
   try {
     const items = await Item.find({
       ItemType: "Losted",
+      status: { $in: ["Not Claimed", "Not founded"] },
     });
-    res.status(200).json(items);
+    if (!items) {
+      res.json({ message: "No Items" });
+    } else {
+      res.json({ message: "Items Details", items: items });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+//-----------------------------------------> get- LostItems by search <----------------------------------------------------------------//
+
+const getLostItemsBySearch = async (req, res) => {
+  try {
+    const query = req.query.q;
+    const items = await Item.find({
+      itemName: { $regex: new RegExp(query), $options: "i" },
+      ItemType: "Losted",
+      status: { $in: ["Not Claimed", "Not founded"] },
+    });
+    if (!items) {
+      res.json({ message: "No Items" });
+    } else {
+      res.json({ message: "Items Details", items: items });
+    }
   } catch (error) {
     console.log(error);
   }
 };
 
+//------------------------------------------------------ Update Found-Item Status ------------------------------------------------------------------------------>
 
+const updateFoundItemStatus = async (req, res) => {
+  try {
+    // const updatedItem = await Item.findByIdAndUpdate(
+    //   req.params.id,
+    //   { $set: { status: req.body.status } },
+    //   { new: true }
+    // );
+
+    const { _id } = req.body;
+
+    const item = await Item.findById(_id);
+
+    const coordinator = await Coordinator.findById(req.user._id); //Find Coordinator who updating Status
+
+    if (!item) {
+      res.status(400);
+      console.log("Item not found to be update status");
+    } else {
+      item.status = "Claimed";
+      updatedItem.handedBy = coordinator.userName;
+    }
+
+    return res.json({
+      message: "Item status updated to Claimed from Not Claimed",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 module.exports = {
   storeFoundItem,
   storeLostItem,
   getFoundItems,
   getLostItems,
+  getFoundItemsBySearch,
+  getLostItemsBySearch,
+  updateFoundItemStatus,
 };

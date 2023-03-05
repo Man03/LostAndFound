@@ -60,16 +60,44 @@ const getStudentInfo = async (req, res) => {
   }
 };
 
-//----------------------------------------->  My-Listing (Only posts that req by Student) <----------------------------------------------------------------//
+//----------------------------------------->  My-Listing (Only posts that req by Coordinator) <----------------------------------------------------------------//
 
 const getMyListing = async (req, res) => {
   try {
-    const student = await Student.findById(req.user._id);
+    const student = await Student.findById(req.user.user._id);
 
     const items = await Items.find({
+      ItemType: "Losted",
       listedBy: student.userName,
     });
-    res.status(200).json(items);
+
+    if (!items) {
+      res.json({ message: "No items !" });
+    } else {
+      res.status(200).json({
+        message: "List Items that List by Requested Student",
+        items: items,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//-----------------------------------------> Mt listing by search <----------------------------------------------------------------//
+
+const getMyLitingBySearch = async (req, res) => {
+  try {
+    const query = req.query.q;
+    const items = await Items.find({
+      itemName: { $regex: new RegExp(query), $options: "i" },
+      ItemType: "Losted",
+    });
+    if (!items) {
+      res.json({ message: "No Items" });
+    } else {
+      res.status(200).json({ message: "Items Details", items: items });
+    }
   } catch (error) {
     console.log(error);
   }
@@ -80,4 +108,5 @@ module.exports = {
   getAllUser,
   getStudentInfo,
   getMyListing,
+  getMyLitingBySearch,
 };

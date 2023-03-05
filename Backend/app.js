@@ -79,13 +79,13 @@ app.get(
   passport.authenticate("google", { session: false }),
   async (req, res) => {
     const token = jwt.sign(
-      { user : req.user},
+      { user: req.user },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
       // (err, token) => res.cookie("jwtokenStudent", token).json({ token })
     );
-    console.log(token);
-    console.log(req.user);
+    // console.log(token);
+    // console.log(req.user);
     res.cookie("jwtokenStudent", token, {
       expires: new Date(Date.now() + 86400000),
       httpOnly: true,

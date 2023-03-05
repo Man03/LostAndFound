@@ -11,11 +11,14 @@ const {
   deleteCoordinator,
   getAllUser,
   getMyListing,
+  getMyLitingBySearch,
 } = require("../controllers/coordinatorController");
 
 const {
   getFoundItems,
   getLostItems,
+  getFoundItemsBySearch,
+  getLostItemsBySearch,
 } = require("../controllers/itemController");
 
 router.post("/login", loginCoordinator);
@@ -32,9 +35,13 @@ router.get("/getme", protectCoordinator, getCoordinatorInfo);
 
 router.get("/getMyListing", protectCoordinator, getMyListing);
 
-router.post("/getFoundItems", getFoundItems);
+router.get("/getMyListingBySearch", protectCoordinator, getMyLitingBySearch);
+
+router.get("/getFoundItems", getFoundItems);
+router.get("/getFoundItemsBySearch", getFoundItemsBySearch);
 
 router.get("/getLostItems", getLostItems);
+router.get("/getLostItemsBySearch", getLostItemsBySearch);
 
 router.post("/delete", deleteCoordinator);
 

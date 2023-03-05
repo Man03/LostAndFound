@@ -174,7 +174,7 @@ const deleteCoordinator = async (req, res) => {
 const getAllUser = async (req, res) => {
   try {
     const { status } = req.body;
-    
+
     const coordinator = await Coordinator.find({ status });
     if (!coordinator) {
       res.json({ message: "No Coordinator" });
@@ -193,9 +193,37 @@ const getMyListing = async (req, res) => {
     const coordinator = await Coordinator.findById(req.user._id);
 
     const items = await Items.find({
+      ItemType: "Founded",
       listedBy: coordinator.userName,
     });
-    res.status(200).json(items);
+
+    if (!items) {
+      res.json({ message: "No items !" });
+    } else {
+      res.status(200).json({
+        message: "List Items that List by Requested Coordinator",
+        items: items,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//-----------------------------------------> Mt listing by search <----------------------------------------------------------------//
+
+const getMyLitingBySearch = async (req, res) => {
+  try {
+    const query = req.query.q;
+    const items = await Items.find({
+      itemName: { $regex: new RegExp(query), $options: "i" },
+      ItemType: "Founded",
+    });
+    if (!items) {
+      res.json({ message: "No Items" });
+    } else {
+      res.status(200).json({ message: "Items Details", items: items });
+    }
   } catch (error) {
     console.log(error);
   }
@@ -209,4 +237,5 @@ module.exports = {
   deleteCoordinator,
   getAllUser,
   getMyListing,
+  getMyLitingBySearch,
 };

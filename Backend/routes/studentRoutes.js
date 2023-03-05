@@ -7,6 +7,7 @@ const {
   getAllUser,
   getStudentInfo,
   getMyListing,
+  getMyLitingBySearch,
 } = require("../controllers/StudentControllers");
 
 const { getFoundItems } = require("../controllers/itemController");
@@ -22,6 +23,8 @@ router.post("/req", getAllUser);
 router.get("/getme", protectStudent, getStudentInfo);
 
 router.get("/getMyListing", protectStudent, getMyListing);
+
+router.get("/getMyListingBySearch", protectStudent, getMyLitingBySearch);
 
 router.get("/getFounditems", getFoundItems);
 
