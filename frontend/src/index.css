@@ -215,6 +215,11 @@ code {
   font-family: 'Actor', sans-serif;
   background-color:#DFEFFF;
   align-items: center;
+  border:#201F4D solid 1px;
+  border-left:#201F4D solid 4px;
+  border-right:#201F4D solid 4px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
 }
 
 .dropdown {
@@ -521,6 +526,8 @@ input::placeholder {
   padding: 10px;
   border: 3px solid black;
   border-radius: 10px;
+  height:fit-content;
+  overflow:;
 }
 
 .slidebar-text{
@@ -604,7 +611,7 @@ input::placeholder {
   font-weight: bold;
   /* font-size: larger; */
   margin-top: 25px;
-  margin-right: 100px;
+  /* margin-right: 40px; */
 }
 
 .container table{
@@ -685,6 +692,10 @@ input::placeholder {
   background-color:#DFEFFF;
   align-items: center;
   margin-right: 20px;
+  border: inset 1px #201F4D;
+  border-left:#201F4D solid 5px;
+  border-right:#201F4D solid 5px;
+
 }
 
 .add_dep-main-right {
@@ -693,12 +704,14 @@ input::placeholder {
   font-family: 'Actor', sans-serif;
   background-color:#DFEFFF;
   align-items: center;
+  border: inset 1px #201F4D;
 }
 .box-inner {
   background-color:#c0dbf6;
   padding: 30px;
   border-radius: 10px;
   border: 2px solid black;
+  border-left: #201F4D 7px solid;
 }
 
 .flex-row{
@@ -710,3 +723,73 @@ input::placeholder {
   margin-left: 5px;
 }
 
+.main-dashboard{
+  margin-left: 120px;
+  margin-top: 80px;
+}
+
+.dash{
+  display: flex;
+  /* justify-content: flex-end; */
+  align-items: center;
+  font-family: 'Actor', sans-serif;
+}
+
+.inner-count-box{
+  display: flex;
+  flex-direction: column;
+}
+
+.count-box1{
+  background-color: #19A1BB;
+  border-radius: 10px;
+  /* padding: 5px; */
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 10px;
+  border: solid 1px black;
+  border-left: solid black 4px;
+  height: 150px;
+  width : 250px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.count-box2{
+  background-color: #29A647;
+  border-radius: 10px;
+  /* padding: 5px; */
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 10px;
+  border: solid 1px black;
+  border-left: solid black 4px;
+  height: 150px;
+  width : 250px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.count-val{
+  font-size:60px;
+  color: white;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.box-title{
+  font-size:large;
+  font-weight:normal;
+  text-align:left;
+}
+
+.above-inner-box{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.below-inner-box{
+  margin-bottom: 30px;
+}
+
+.dasd-img{
+  height: 70px;
+  margin-top: 20px;
+  opacity: 70%;
+}

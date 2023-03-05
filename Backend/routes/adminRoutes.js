@@ -22,6 +22,8 @@ router.get("/dashboard", protectAdmin, (req, res) => {
   res.json({ message: "Authorized" });
 });
 
+router.get("/dash", getCounts);
+
 router.get("/getCounts", getCounts);
 
 router.post("/adddept", protectAdmin, addDepartment);

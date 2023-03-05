@@ -302,7 +302,8 @@ export default function AdminDashboard() {
                                 <div>{dept.department}</div>
                                 <span>
                                   <TiDelete
-                                    className="cros-icon"
+                                    className="cros-icon "
+                                    style={{ cursor: "pointer" }}
                                     size={20}
                                     onClick={(event) =>
                                       deptDelete(event, dept.department)

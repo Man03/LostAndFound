@@ -165,14 +165,14 @@ const getCounts = async (req, res) => {
       totalCurrentFoundedItems + totalCurrentLostItems;
 
     res.status(200).json({
-      totalUsers: totalUsers,
-      totalClaimedItems: totalClaimedItems,
-      totalLostAndFoundItems: totalLostAndFoundItems,
-      totalFoundItems: totalFoundItems,
-      totalLostItems: totalLostItems,
-      totalCurrentLostandFoundItems: totalCurrentLostandFoundItems,
-      totalCurrentFoundedItems: totalCurrentFoundedItems,
-      totalCurrentLostItems: totalCurrentLostItems,
+      totalUsers,
+      totalClaimedItems,
+      totalLostAndFoundItems,
+      totalFoundItems,
+      totalLostItems,
+      totalCurrentLostandFoundItems,
+      totalCurrentFoundedItems,
+      totalCurrentLostItems,
     });
   } catch (error) {
     console.log(error);
