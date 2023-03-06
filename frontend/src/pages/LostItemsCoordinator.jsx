@@ -15,6 +15,7 @@ function LostItemsCoordinator() {
   const [item, setItem] = useState([]);
   const [query, setQuery] = useState("");
   const [showClearIcon, setShowClearIcon] = useState("none");
+  const [itemId, setItemId] = useState("");
 
   useEffect(() => {
     axios
@@ -78,7 +79,7 @@ function LostItemsCoordinator() {
       .post(
         "http://localhost:8000/items/updateStatusOfLostItems",
         {
-          itemName: itemData.itemName,
+          _id: itemData._id,
         },
         { withCredentials: true }
       )
@@ -202,7 +203,7 @@ function LostItemsCoordinator() {
                               <GrUpdate
                                 className="table-icons transform hover:scale-110"
                                 style={{ cursor: "pointer" }}
-                                onClick={HandleUpdate}
+                                onClick={() => {HandleUpdate(itemData)}}
                               ></GrUpdate>
                               <p className="status-text font-normal text-red-600">
                                 {itemData.status}

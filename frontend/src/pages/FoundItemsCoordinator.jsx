@@ -73,11 +73,10 @@ function FoundItemsCoordinator() {
     }
   };
 
-  const HandleUpdate = async (event, itemData) => {
-    event.preventDefault();
+  const HandleUpdate = async (itemData) => {
     await axios
       .post(
-        "http://localhost:8000/items/updateStatus",
+        "http://localhost:8000/items/updateStatusOfFoundItems",
         {
           _id: itemData._id,
         },
@@ -203,7 +202,7 @@ function FoundItemsCoordinator() {
                               <GrUpdate
                                 className="table-icons transform hover:scale-110"
                                 style={{ cursor: "pointer" }}
-                                onClick={HandleUpdate}
+                                onClick={() => {HandleUpdate(itemData)}}
                               ></GrUpdate>
                               <p className="status-text font-normal text-red-600">
                                 {itemData.status}

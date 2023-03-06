@@ -190,9 +190,9 @@ const updateFoundItemStatus = async (req, res) => {
     //   { new: true }
     // );
 
-    const { userName } = req.body;
+    const { _id } = req.body;
 
-    const item = await Item.findById(userName);
+    const item = await Item.findById(_id);
 
     const coordinator = await Coordinator.findById(req.user._id); //Find Coordinator who updating Status
 
@@ -201,7 +201,8 @@ const updateFoundItemStatus = async (req, res) => {
       console.log("Item not found to be update status");
     } else {
       item.status = "Claimed";
-      updatedItem.handedBy = coordinator.userName;
+      item.handedBy = coordinator.userName;
+      item.save();
     }
 
     return res.json({
@@ -221,18 +222,25 @@ const updateLostItemStatus = async (req, res) => {
     //   { new: true }
     // );
 
-    const { userName } = req.body;
-
-    const item = await Item.findById(userName);
-
     const coordinator = await Coordinator.findById(req.user._id); //Find Coordinator who updating Status
+
+    const { _id } = req.body;
+    const item = await Item.findById(_id);
 
     if (!item) {
       res.status(400);
       console.log("Item not found to be update status");
     } else {
-      item.status = "Claimed";
-      updatedItem.handedBy = coordinator.userName;
+      if(item.status === "Not founded")
+      {
+        item.status = "Not Claimed";
+        item.handedBy = coordinator.userName;
+      }
+      else{
+        item.status = "Claimed";
+      }
+      
+      item.save();
     }
 
     return res.json({
