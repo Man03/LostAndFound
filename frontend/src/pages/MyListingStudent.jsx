@@ -3,14 +3,17 @@ import axios from "axios";
 // import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { BiSearch } from "react-icons/bi";
+import { ImCross } from "react-icons/im";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
+import InputAdornment from "@mui/material/InputAdornment";
 
 function MyListingStudent() {
   //const navigate = useNavigate();
 
   const [item, setItem] = useState([]);
   const [query, setQuery] = useState("");
+  const [showClearIcon, setShowClearIcon] = useState("none");
 
   useEffect(() => {
     axios
@@ -90,28 +93,40 @@ function MyListingStudent() {
       ></Box>
 
       <div className="search-area">
-        <div className="search-btn">
-          <BiSearch
-            onClick={handleSearch}
-            className="search-icon hover:scale-125"
-          ></BiSearch>
-        </div>
-        {/* <input
-          type="text"
-          className="search-field"
-          placeholder="Search by name..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        /> */}
         <TextField
           id="outlined-required"
-          label="Search by name"
+          // label="Search by name"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <BiSearch
+                  onClick={handleSearch}
+                  className="search-icon hover:scale-125"
+                ></BiSearch>{" "}
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end" style={{ display: showClearIcon }}>
+                <ImCross
+                  style={{ cursor: "pointer" }}
+                  onClick={(e) => {
+                    setQuery("");
+                    setShowClearIcon("none");
+                    ifQueryEmpty();
+                  }}
+                ></ImCross>
+              </InputAdornment>
+            ),
+          }}
           className="search-field"
-          // defaultValue="Search by name..."
           placeholder="Search by name.."
           size="small"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setShowClearIcon(e.target.value === "" ? "none" : "flex");
+            handleSearch();
+          }}
           onKeyPress={handleKeyPress}
         />
       </div>

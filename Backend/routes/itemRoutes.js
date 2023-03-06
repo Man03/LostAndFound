@@ -8,12 +8,15 @@ const {
   storeFoundItem,
   storeLostItem,
   updateFoundItemStatus,
+  updateLostItemStatus
 } = require("../controllers/itemController");
 
 router.post("/storeFounditems", protectCoordinator, storeFoundItem);
 
 router.post("/storeLostitems", protectStudent, storeLostItem);
 
-router.post("/updateStatus", protectCoordinator, updateFoundItemStatus);
+router.post("/updateStatusOfFoundItems", protectCoordinator, updateFoundItemStatus);
+
+router.post("/updateStatusOfLostItems", protectCoordinator, updateLostItemStatus);
 
 module.exports = router;

@@ -211,7 +211,7 @@ code {
 .add_Co-main-left {
   border-radius: 14px;
   padding: 17px;
-  margin-left: 400px;
+  margin-left: 270px;
   font-family: 'Actor', sans-serif;
   background-color:#DFEFFF;
   align-items: center;
@@ -495,7 +495,7 @@ input::placeholder {
   border-width: 4px;
   display: flex;
   flex-direction: column;
-  position: fixed;
+  /* position: fixed; */
   height: 100vh;
 }
 
@@ -527,7 +527,10 @@ input::placeholder {
   border: 3px solid black;
   border-radius: 10px;
   height:fit-content;
-  overflow:;
+}
+
+.slidebar{
+  height: 100vh;
 }
 
 .slidebar-text{
@@ -604,7 +607,7 @@ input::placeholder {
   flex-direction: column;
   align-items: center;
   font-family: 'Actor', sans-serif;
-  margin-left: 250px;
+  margin-left: 0;
 }
 
 .headings{
@@ -626,9 +629,9 @@ input::placeholder {
 
 .search-area{
   display: flex;
-  justify-content: flex-end;
+  /* justify-content: flex-end; */
   font-family: 'Actor', sans-serif;
-  align-items: center;
+  /* align-items: center; */
 }
 
 .search-icon{
@@ -645,7 +648,7 @@ input::placeholder {
   height: 40px;
   background-color:#C0CCDC;
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   border-radius: 5px;
   margin-right: 5px;
 }
@@ -682,7 +685,7 @@ input::placeholder {
 .add-dep{
   display: flex;
   align-items: center;
-  margin-left: 200px;
+  margin-left: 0px;
 }
 
 .add_dep-main-left {
@@ -724,7 +727,7 @@ input::placeholder {
 }
 
 .main-dashboard{
-  margin-left: 120px;
+  margin-left: 0px;
   margin-top: 80px;
 }
 
@@ -771,6 +774,9 @@ input::placeholder {
   font-size:60px;
   color: white;
   font-family: 'Open Sans', sans-serif;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: #000000;
+  stroke: #000000;font-weight: 700;
 }
 
 .box-title{
@@ -791,5 +797,20 @@ input::placeholder {
 .dasd-img{
   height: 70px;
   margin-top: 20px;
-  opacity: 70%;
+  opacity: 90%;
+  stroke-width: 1px;
+  -webkit-filter: drop-shadow(1px 1px 0 black)
+                  drop-shadow(-1px -1px 0 black);
+  filter: drop-shadow(1px 1px 0 black) 
+          drop-shadow(-1px -1px 0 black);
+}
+.dasd-img1{
+  height: 70px;
+  margin-top: 20px;
+  opacity: 100%;
+  stroke-width: 1px;
+}
+
+.status-text{
+  margin-top: 4px;
 }

@@ -1,8 +1,8 @@
 import * as React from "react";
 import axios from "axios";
-import { experimentalStyled as styled } from "@mui/material/styles";
+// import { experimentalStyled as styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
+// import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Unstable_Grid2";
 import { useState, useEffect } from "react";
 import FoundItemIcon from "../Assets/founditem.png";
@@ -11,10 +11,10 @@ import Alluser from "../Assets/totaluser.png";
 import Items from "../Assets/items.png";
 import ClaimedItem from "../Assets/claimed items.png";
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#19A1BB",
-  padding: theme.spacing(2),
-}));
+// const Item = styled(Paper)(({ theme }) => ({
+//   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#19A1BB",
+//   padding: theme.spacing(2),
+// }));
 
 function DashAdmin() {
   const [totalUsers, setTotalUsers] = useState("");
@@ -48,7 +48,7 @@ function DashAdmin() {
         <div className="main-dashboard">
           <div className="inner-dash">
             <Box sx={{ flexGrow: 1 }}>
-              <Grid className="dash" container spacing={12}>
+              <Grid className="dash" container spacing={6}>
                 <Grid xs={3}>
                   <div className="count-box1">
                     <div className="inner-count-box">
@@ -57,7 +57,7 @@ function DashAdmin() {
                         <img
                           className="dasd-img"
                           src={Alluser}
-                          alt="Found item image"
+                          alt="Found item"
                         />
                       </div>
                       <div className="below-inner-box">
@@ -72,7 +72,7 @@ function DashAdmin() {
                       <div className="above-inner-box">
                         <div className="count-val">{totalClaimedItems}</div>
                         <img
-                          className="dasd-img"
+                          className="dasd-img1"
                           src={ClaimedItem}
                           alt="Found item"
                         />
@@ -92,8 +92,8 @@ function DashAdmin() {
                           {totalLostAndFoundItems}
                         </div>
                         <img
-                          className="dasd-img"
-                          src={FoundItemIcon}
+                          className="dasd-img1"
+                          src={Items}
                           alt="Found item"
                         />
                       </div>
@@ -111,14 +111,14 @@ function DashAdmin() {
                           {totalCurrentLostandFoundItems}
                         </div>
                         <img
-                          className="dasd-img"
-                          src={FoundItemIcon}
+                          className="dasd-img1"
+                          src={Items}
                           alt="Found item"
                         />
                       </div>
                       <div className="below-inner-box">
                         <div className="box-title">Total current</div>
-                        <div className="box-title">and lost items</div>
+                        <div className="box-title">lost and found items</div>
                       </div>
                     </div>
                   </div>
@@ -130,7 +130,7 @@ function DashAdmin() {
                         <div className="count-val">{totalLostItems}</div>
                         <img
                           className="dasd-img"
-                          src={FoundItemIcon}
+                          src={LostItemLogo}
                           alt="Found item"
                         />
                       </div>
@@ -166,7 +166,7 @@ function DashAdmin() {
                         <div className="count-val">{totalCurrentLostItems}</div>
                         <img
                           className="dasd-img"
-                          src={FoundItemIcon}
+                          src={LostItemLogo}
                           alt="Lost item"
                         />
                       </div>

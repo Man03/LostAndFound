@@ -190,9 +190,40 @@ const updateFoundItemStatus = async (req, res) => {
     //   { new: true }
     // );
 
-    const { _id } = req.body;
+    const { userName } = req.body;
 
-    const item = await Item.findById(_id);
+    const item = await Item.findById(userName);
+
+    const coordinator = await Coordinator.findById(req.user._id); //Find Coordinator who updating Status
+
+    if (!item) {
+      res.status(400);
+      console.log("Item not found to be update status");
+    } else {
+      item.status = "Claimed";
+      updatedItem.handedBy = coordinator.userName;
+    }
+
+    return res.json({
+      message: "Item status updated to Claimed from Not Claimed",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+//------------------------------------------------------ Update Lost-Item Status ------------------------------------------------------------------------------>
+
+const updateLostItemStatus = async (req, res) => {
+  try {
+    // const updatedItem = await Item.findByIdAndUpdate(
+    //   req.params.id,
+    //   { $set: { status: req.body.status } },
+    //   { new: true }
+    // );
+
+    const { userName } = req.body;
+
+    const item = await Item.findById(userName);
 
     const coordinator = await Coordinator.findById(req.user._id); //Find Coordinator who updating Status
 
@@ -220,4 +251,5 @@ module.exports = {
   getFoundItemsBySearch,
   getLostItemsBySearch,
   updateFoundItemStatus,
+  updateLostItemStatus,
 };
