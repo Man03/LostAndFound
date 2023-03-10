@@ -14,6 +14,7 @@ function MyListingStudent() {
   const [item, setItem] = useState([]);
   const [query, setQuery] = useState("");
   const [showClearIcon, setShowClearIcon] = useState("none");
+  const [status, setStatus] = useState("");
 
   useEffect(() => {
     axios
@@ -80,6 +81,25 @@ function MyListingStudent() {
       handleSearch();
     }
   };
+
+  const getStatus = async (itemData) => {
+    if (itemData.status === "Not Claimed") {
+      setStatus("Founded");
+    } else {
+      setStatus("Not founded");
+    }
+    console.log(status);
+    return status;
+  };
+
+  function getclassName(status) {
+    if ((status = "Not founded")) {
+      return "notfounded";
+    }
+    if ((status = "Not Claimed")) {
+      return "founded";
+    }
+  }
 
   return (
     <>
@@ -186,9 +206,9 @@ function MyListingStudent() {
                           </td>
                           <td className="py-3 px-6 text-center">
                             <div>
-                              <p className="status-text font-normal text-red-600">
-                                {itemData.status}
-                              </p>
+                              <div className="status-text font-normal text-red-600">
+                                <p>{itemData.status}</p>
+                              </div>
                             </div>
                           </td>
                         </tr>

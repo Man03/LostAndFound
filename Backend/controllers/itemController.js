@@ -234,10 +234,10 @@ const updateLostItemStatus = async (req, res) => {
       if(item.status === "Not founded")
       {
         item.status = "Not Claimed";
-        item.handedBy = coordinator.userName;
       }
       else{
         item.status = "Claimed";
+        item.handedBy = coordinator.userName;
       }
       
       item.save();

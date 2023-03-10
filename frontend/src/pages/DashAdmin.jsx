@@ -48,7 +48,7 @@ function DashAdmin() {
         <div className="main-dashboard">
           <div className="inner-dash">
             <Box sx={{ flexGrow: 1 }}>
-              <Grid className="dash" container spacing={6}>
+              <Grid className="dash" container spacing={14}>
                 <Grid xs={3}>
                   <div className="count-box1">
                     <div className="inner-count-box">
