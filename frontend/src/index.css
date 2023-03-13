@@ -511,6 +511,8 @@ input::placeholder {
   color: #DAA520;
   font-size: x-large;
   font-weight: bolder;
+  /* max-width : 200px; */
+  align-items: center;
 }
 .user-icon{
   height: 100px;
@@ -530,6 +532,16 @@ input::placeholder {
   padding: 10px;
   border: 3px solid black;
   border-radius: 10px;
+}
+
+.loading{
+  margin-left: 650px;
+  margin-top: 250px;
+}
+
+.loading-1{
+  margin-left: 20px;
+  margin-top: 50px;
 }
 
 .slidebar{

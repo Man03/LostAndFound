@@ -7,6 +7,7 @@ import { ImCross } from "react-icons/im";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
+import { ColorRing } from "react-loader-spinner";
 
 function MyListingStudent() {
   //const navigate = useNavigate();
@@ -15,6 +16,7 @@ function MyListingStudent() {
   const [query, setQuery] = useState("");
   const [showClearIcon, setShowClearIcon] = useState("none");
   const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
@@ -30,7 +32,7 @@ function MyListingStudent() {
             index: index + 1,
           }));
           setItem(dataWithIndex);
-        })
+        }, setLoading(false))
       );
   }, []);
 
@@ -82,24 +84,24 @@ function MyListingStudent() {
     }
   };
 
-  const getStatus = async (itemData) => {
-    if (itemData.status === "Not Claimed") {
-      setStatus("Founded");
-    } else {
-      setStatus("Not founded");
-    }
-    console.log(status);
-    return status;
-  };
+  // const getStatus = async (itemData) => {
+  //   if (itemData.status === "Not Claimed") {
+  //     setStatus("Founded");
+  //   } else {
+  //     setStatus("Not founded");
+  //   }
+  //   console.log(status);
+  //   return status;
+  // };
 
-  function getclassName(status) {
-    if ((status = "Not founded")) {
-      return "notfounded";
-    }
-    if ((status = "Not Claimed")) {
-      return "founded";
-    }
-  }
+  // function getclassName(status) {
+  //   if ((status = "Not founded")) {
+  //     return "notfounded";
+  //   }
+  //   if ((status = "Not Claimed")) {
+  //     return "founded";
+  //   }
+  // }
 
   return (
     <>
@@ -154,72 +156,86 @@ function MyListingStudent() {
         <div className="table-heading">
           <p className="text-color headings text-3xl">My Listing</p>
         </div>
-        <div className="container table">
-          <div className="overflow-x-auto">
-            <div>
+        {loading ? (
+          <div className="loading-1">
+            <ColorRing
+              visible={true}
+              height="80"
+              width="80"
+              ariaLabel="blocks-loading"
+              wrapperStyle={{}}
+              wrapperClass="blocks-wrapper"
+              colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+            />
+          </div>
+        ) : (
+          <div className="container table">
+            <div className="overflow-x-auto">
               <div>
-                <div className="shadow-md rounded my-5">
-                  <table className="min-w-max bg-white w-full table-auto">
-                    <thead>
-                      <tr className="border-b bg-gray-200 text-black-600 uppercase text-sm leading-normal">
-                        <th className="py-2 px-5 text-center">Index</th>
-                        <th className="py-3 px-6 text-center">Item name</th>
-                        <th className="py-3 px-6 text-center">Description</th>
-                        <th className="py-3 px-6 text-center">Location</th>
-                        <th className="py-3 px-6 text-center">Lost-Date</th>
-                        <th className="py-3 px-6 text-center">Listed At</th>
-                        <th className="py-3 px-6 text-center">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-black-600 text-sm font-light">
-                      {item.map((itemData) => (
-                        <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
-                          <td className="py-3 px-6 text-center">
-                            <span className="font-semibold">
-                              {itemData.index}
-                            </span>
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div className="font-normal">
-                              {itemData.itemName}
-                            </div>
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div className="font-normal break-normal break-all max-w-[150px]">
-                              {itemData.description}
-                            </div>
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div className="font-normal">
-                              {itemData.location}
-                            </div>
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div className="font-normal">
-                              {itemData.lostDate}
-                            </div>
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div className="font-normal">
-                              {itemData.ListedAt}
-                            </div>
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div>
-                              <div className="status-text font-normal text-red-600">
-                                <p>{itemData.status}</p>
-                              </div>
-                            </div>
-                          </td>
+                <div>
+                  <div className="shadow-md rounded my-5">
+                    <table className="min-w-max bg-white w-full table-auto">
+                      <thead>
+                        <tr className="border-b bg-gray-200 text-black-600 uppercase text-sm leading-normal">
+                          <th className="py-2 px-5 text-center">Index</th>
+                          <th className="py-3 px-6 text-center">Item name</th>
+                          <th className="py-3 px-6 text-center">Description</th>
+                          <th className="py-3 px-6 text-center">Location</th>
+                          <th className="py-3 px-6 text-center">Lost-Date</th>
+                          <th className="py-3 px-6 text-center">Listed At</th>
+                          <th className="py-3 px-6 text-center">Status</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="text-black-600 text-sm font-light">
+                        {item.map((itemData) => (
+                          <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
+                            <td className="py-3 px-6 text-center">
+                              <span className="font-semibold">
+                                {itemData.index}
+                              </span>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.itemName}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal break-normal break-all max-w-[150px]">
+                                {itemData.description}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.location}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.lostDate}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.ListedAt}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div>
+                                <div className="status-text font-normal text-red-600">
+                                  <p>{itemData.status}</p>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

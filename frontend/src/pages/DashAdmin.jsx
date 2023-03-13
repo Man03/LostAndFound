@@ -10,6 +10,7 @@ import LostItemLogo from "../Assets/lostitem.png";
 import Alluser from "../Assets/totaluser.png";
 import Items from "../Assets/items.png";
 import ClaimedItem from "../Assets/claimed items.png";
+import { ColorRing } from "react-loader-spinner";
 
 // const Item = styled(Paper)(({ theme }) => ({
 //   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#19A1BB",
@@ -26,6 +27,7 @@ function DashAdmin() {
     useState("");
   const [totalCurrentFoundedItems, setTotalCurrentFoundedItems] = useState("");
   const [totalCurrentLostItems, setTotalCurrentLostItems] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios.get(`http://localhost:8000/admin/dash`).then((response) => {
@@ -39,169 +41,186 @@ function DashAdmin() {
       );
       setTotalCurrentFoundedItems(response.data.totalCurrentFoundedItems);
       setTotalCurrentLostItems(response.data.totalCurrentLostItems);
+      setLoading(false);
     });
   });
 
   return (
     <>
-      <div>
-        <div className="main-dashboard">
-          <div className="inner-dash">
-            <Box sx={{ flexGrow: 1 }}>
-              <Grid className="dash" container spacing={14}>
-                <Grid xs={3}>
-                  <div className="count-box1">
-                    <div className="inner-count-box">
-                      <div className="above-inner-box">
-                        <div className="count-val">{totalUsers}</div>
-                        <img
-                          className="dasd-img"
-                          src={Alluser}
-                          alt="Found item"
-                        />
-                      </div>
-                      <div className="below-inner-box">
-                        <div className="box-title">Total Users</div>
-                      </div>
-                    </div>
-                  </div>
-                </Grid>
-                <Grid xs={3}>
-                  <div className="count-box2">
-                    <div className="inner-count-box">
-                      <div className="above-inner-box">
-                        <div className="count-val">{totalClaimedItems}</div>
-                        <img
-                          className="dasd-img1"
-                          src={ClaimedItem}
-                          alt="Found item"
-                        />
-                      </div>
-                      <div className="below-inner-box">
-                        <div className="box-title">Total</div>
-                        <div className="box-title">Claimed items</div>
-                      </div>
-                    </div>
-                  </div>
-                </Grid>
-                <Grid xs={3}>
-                  <div className="count-box1">
-                    <div className="inner-count-box">
-                      <div className="above-inner-box">
-                        <div className="count-val">
-                          {totalLostAndFoundItems}
+      {loading ? (
+        <div className="loading">
+          <ColorRing
+            visible={true}
+            height="80"
+            width="80"
+            ariaLabel="blocks-loading"
+            wrapperStyle={{}}
+            wrapperClass="blocks-wrapper"
+            colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+          />
+        </div>
+      ) : (
+        <div>
+          <div className="main-dashboard">
+            <div className="inner-dash">
+              <Box sx={{ flexGrow: 1 }}>
+                <Grid className="dash" container spacing={14}>
+                  <Grid xs={3}>
+                    <div className="count-box1">
+                      <div className="inner-count-box">
+                        <div className="above-inner-box">
+                          <div className="count-val">{totalUsers}</div>
+                          <img
+                            className="dasd-img"
+                            src={Alluser}
+                            alt="Found item"
+                          />
                         </div>
-                        <img
-                          className="dasd-img1"
-                          src={Items}
-                          alt="Found item"
-                        />
-                      </div>
-                      <div className="below-inner-box">
-                        <div className="box-title">Total Items</div>
-                      </div>
-                    </div>
-                  </div>
-                </Grid>
-                <Grid xs={3}>
-                  <div className="count-box2">
-                    <div className="inner-count-box">
-                      <div className="above-inner-box">
-                        <div className="count-val">
-                          {totalCurrentLostandFoundItems}
+                        <div className="below-inner-box">
+                          <div className="box-title">Total Users</div>
                         </div>
-                        <img
-                          className="dasd-img1"
-                          src={Items}
-                          alt="Found item"
-                        />
-                      </div>
-                      <div className="below-inner-box">
-                        <div className="box-title">Total current</div>
-                        <div className="box-title">lost and found items</div>
                       </div>
                     </div>
-                  </div>
-                </Grid>
-                <Grid xs={3}>
-                  <div className="count-box1">
-                    <div className="inner-count-box">
-                      <div className="above-inner-box">
-                        <div className="count-val">{totalLostItems}</div>
-                        <img
-                          className="dasd-img"
-                          src={LostItemLogo}
-                          alt="Found item"
-                        />
-                      </div>
-                      <div className="below-inner-box">
-                        <div className="box-title">Total</div>
-                        <div className="box-title">Lost items</div>
-                      </div>
-                    </div>
-                  </div>
-                </Grid>
-                <Grid xs={3}>
-                  <div className="count-box2">
-                    <div className="inner-count-box">
-                      <div className="above-inner-box">
-                        <div className="count-val">{totalFoundItems}</div>
-                        <img
-                          className="dasd-img"
-                          src={FoundItemIcon}
-                          alt="Found item"
-                        />
-                      </div>
-                      <div className="below-inner-box">
-                        <div className="box-title">Total</div>
-                        <div className="box-title">Found items</div>
-                      </div>
-                    </div>
-                  </div>
-                </Grid>
-                <Grid xs={3}>
-                  <div className="count-box1">
-                    <div className="inner-count-box">
-                      <div className="above-inner-box">
-                        <div className="count-val">{totalCurrentLostItems}</div>
-                        <img
-                          className="dasd-img"
-                          src={LostItemLogo}
-                          alt="Lost item"
-                        />
-                      </div>
-                      <div className="below-inner-box">
-                        <div className="box-title">Current</div>
-                        <div className="box-title">Lost items</div>
-                      </div>
-                    </div>
-                  </div>
-                </Grid>
-                <Grid xs={3}>
-                  <div className="count-box2">
-                    <div className="inner-count-box">
-                      <div className="above-inner-box">
-                        <div className="count-val">
-                          {totalCurrentFoundedItems}
+                  </Grid>
+                  <Grid xs={3}>
+                    <div className="count-box2">
+                      <div className="inner-count-box">
+                        <div className="above-inner-box">
+                          <div className="count-val">{totalClaimedItems}</div>
+                          <img
+                            className="dasd-img1"
+                            src={ClaimedItem}
+                            alt="Found item"
+                          />
                         </div>
-                        <img
-                          className="dasd-img"
-                          src={FoundItemIcon}
-                          alt="Found item"
-                        />
-                      </div>
-                      <div className="below-inner-box">
-                        <div className="box-title">Current</div>
-                        <div className="box-title">Found items</div>
+                        <div className="below-inner-box">
+                          <div className="box-title">Total</div>
+                          <div className="box-title">Claimed items</div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </Grid>
+                  <Grid xs={3}>
+                    <div className="count-box1">
+                      <div className="inner-count-box">
+                        <div className="above-inner-box">
+                          <div className="count-val">
+                            {totalLostAndFoundItems}
+                          </div>
+                          <img
+                            className="dasd-img1"
+                            src={Items}
+                            alt="Found item"
+                          />
+                        </div>
+                        <div className="below-inner-box">
+                          <div className="box-title">Total Items</div>
+                        </div>
+                      </div>
+                    </div>
+                  </Grid>
+                  <Grid xs={3}>
+                    <div className="count-box2">
+                      <div className="inner-count-box">
+                        <div className="above-inner-box">
+                          <div className="count-val">
+                            {totalCurrentLostandFoundItems}
+                          </div>
+                          <img
+                            className="dasd-img1"
+                            src={Items}
+                            alt="Found item"
+                          />
+                        </div>
+                        <div className="below-inner-box">
+                          <div className="box-title">Total current</div>
+                          <div className="box-title">lost and found items</div>
+                        </div>
+                      </div>
+                    </div>
+                  </Grid>
+                  <Grid xs={3}>
+                    <div className="count-box1">
+                      <div className="inner-count-box">
+                        <div className="above-inner-box">
+                          <div className="count-val">{totalLostItems}</div>
+                          <img
+                            className="dasd-img"
+                            src={LostItemLogo}
+                            alt="Found item"
+                          />
+                        </div>
+                        <div className="below-inner-box">
+                          <div className="box-title">Total</div>
+                          <div className="box-title">Lost items</div>
+                        </div>
+                      </div>
+                    </div>
+                  </Grid>
+                  <Grid xs={3}>
+                    <div className="count-box2">
+                      <div className="inner-count-box">
+                        <div className="above-inner-box">
+                          <div className="count-val">{totalFoundItems}</div>
+                          <img
+                            className="dasd-img"
+                            src={FoundItemIcon}
+                            alt="Found item"
+                          />
+                        </div>
+                        <div className="below-inner-box">
+                          <div className="box-title">Total</div>
+                          <div className="box-title">Found items</div>
+                        </div>
+                      </div>
+                    </div>
+                  </Grid>
+                  <Grid xs={3}>
+                    <div className="count-box1">
+                      <div className="inner-count-box">
+                        <div className="above-inner-box">
+                          <div className="count-val">
+                            {totalCurrentLostItems}
+                          </div>
+                          <img
+                            className="dasd-img"
+                            src={LostItemLogo}
+                            alt="Lost item"
+                          />
+                        </div>
+                        <div className="below-inner-box">
+                          <div className="box-title">Current</div>
+                          <div className="box-title">Lost items</div>
+                        </div>
+                      </div>
+                    </div>
+                  </Grid>
+                  <Grid xs={3}>
+                    <div className="count-box2">
+                      <div className="inner-count-box">
+                        <div className="above-inner-box">
+                          <div className="count-val">
+                            {totalCurrentFoundedItems}
+                          </div>
+                          <img
+                            className="dasd-img"
+                            src={FoundItemIcon}
+                            alt="Found item"
+                          />
+                        </div>
+                        <div className="below-inner-box">
+                          <div className="box-title">Current</div>
+                          <div className="box-title">Found items</div>
+                        </div>
+                      </div>
+                    </div>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </Box>
+              </Box>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 }

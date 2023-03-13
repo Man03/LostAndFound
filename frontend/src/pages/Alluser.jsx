@@ -3,13 +3,14 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import AllCoordinatorTable from "../components/AllCoordinatorTable";
 import AllStudentTable from "../components/AllStudentTable";
+import { ColorRing } from "react-loader-spinner";
 
 import * as React from "react";
-
 
 function AllUser() {
   const [coordinator, setCoordinator] = useState([]);
   const [student, setStudent] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
 
@@ -28,67 +29,81 @@ function AllUser() {
         axios.spread((res1, res2, res3) => {
           setCoordinator(res2.data.coordinator);
           setStudent(res3.data.student);
-        })
+        }, setLoading(false))
       )
       .catch((err) => navigate("/admin/login"));
-  }, []); 
+  }, []);
 
   return (
     <>
-      <div className="min-h-screen">
-        <div>
-          <p className="text-color text-2xl headings">Active Coordinators</p>
+      {loading ? (
+        <div className="loading">
+          <ColorRing
+            visible={true}
+            height="80"
+            width="80"
+            ariaLabel="blocks-loading"
+            wrapperStyle={{}}
+            wrapperClass="blocks-wrapper"
+            colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+          />
         </div>
-        <div className="container table">
-          <div className="overflow-x-auto">
-            <div>
+      ) : (
+        <div className="min-h-screen">
+          <div>
+            <p className="text-color text-2xl headings">Active Coordinators</p>
+          </div>
+
+          <div className="container table">
+            <div className="overflow-x-auto">
               <div>
-                <div className="shadow-md rounded my-5">
-                  <table className="min-w-max bg-white w-full table-auto">
-                    <thead>
-                      <tr className="bg-gray-200 text-black-600 uppercase text-sm leading-normal">
-                        <th className="py-2 px-5 text-center">Username</th>
-                        <th className="py-3 px-6 text-center">Email</th>
-                        <th className="py-3 px-6 text-center">Department</th>
-                        <th className="py-3 px-6 text-center">Actions</th>
-                      </tr>
-                    </thead>
-                    {coordinator.map((coordinator) => (
-                      <AllCoordinatorTable coordinator={coordinator} />
-                    ))}
-                  </table>
+                <div>
+                  <div className="shadow-md rounded my-5">
+                    <table className="min-w-max bg-white w-full table-auto">
+                      <thead>
+                        <tr className="bg-gray-200 text-black-600 uppercase text-sm leading-normal">
+                          <th className="py-2 px-5 text-center">Username</th>
+                          <th className="py-3 px-6 text-center">Email</th>
+                          <th className="py-3 px-6 text-center">Department</th>
+                          <th className="py-3 px-6 text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      {coordinator.map((coordinator) => (
+                        <AllCoordinatorTable coordinator={coordinator} />
+                      ))}
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <p className="text-color text-2xl headings  ">Active Students</p>
+          </div>
+          <div className="container table">
+            <div className="overflow-x-auto">
+              <div>
+                <div className="w-full">
+                  <div className="shadow-md rounded my-5">
+                    <table className="min-w-max bg-white w-full table-auto">
+                      <thead>
+                        <tr className="bg-gray-200 text-black-600 uppercase text-sm leading-normal">
+                          <th className="py-3 px-6 text-center">User Name</th>
+                          <th className="py-3 px-6 text-center">Email</th>
+                          <th className="py-3 px-6 text-center">Actions</th>
+                        </tr>
+                      </thead>
+                      {student.map((student) => (
+                        <AllStudentTable student={student} />
+                      ))}
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div>
-          <p className="text-color text-2xl headings  ">Active Students</p>
-        </div>
-        <div className="container table">
-          <div className="overflow-x-auto">
-            <div>
-              <div className="w-full">
-                <div className="shadow-md rounded my-5">
-                  <table className="min-w-max bg-white w-full table-auto">
-                    <thead>
-                      <tr className="bg-gray-200 text-black-600 uppercase text-sm leading-normal">
-                        <th className="py-3 px-6 text-center">User Name</th>
-                        <th className="py-3 px-6 text-center">Email</th>
-                        <th className="py-3 px-6 text-center">Actions</th>
-                      </tr>
-                    </thead>
-                    {student.map((student) => (
-                      <AllStudentTable student={student} />
-                    ))}
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-       
+      )}
     </>
   );
 }
