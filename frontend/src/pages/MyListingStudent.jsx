@@ -15,7 +15,6 @@ function MyListingStudent() {
   const [item, setItem] = useState([]);
   const [query, setQuery] = useState("");
   const [showClearIcon, setShowClearIcon] = useState("none");
-  const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -59,23 +58,24 @@ function MyListingStudent() {
       // handle empty query
       ifQueryEmpty();
       return;
+    } else {
+      axios
+        .all([
+          axios.get(
+            `http://localhost:8000/student/getMyListingBySearch?q=${query}`,
+            { withCredentials: true }
+          ),
+        ])
+        .then(
+          axios.spread((res1) => {
+            const dataWithIndex = res1.data.items.map((itemData, index) => ({
+              ...itemData,
+              index: index + 1,
+            }));
+            setItem(dataWithIndex);
+          })
+        );
     }
-    axios
-      .all([
-        axios.get(
-          `http://localhost:8000/student/getMyListingBySearch?q=${query}`,
-          { withCredentials: true }
-        ),
-      ])
-      .then(
-        axios.spread((res1) => {
-          const dataWithIndex = res1.data.items.map((itemData, index) => ({
-            ...itemData,
-            index: index + 1,
-          }));
-          setItem(dataWithIndex);
-        })
-      );
   };
 
   const handleKeyPress = (event) => {
@@ -83,25 +83,6 @@ function MyListingStudent() {
       handleSearch();
     }
   };
-
-  // const getStatus = async (itemData) => {
-  //   if (itemData.status === "Not Claimed") {
-  //     setStatus("Founded");
-  //   } else {
-  //     setStatus("Not founded");
-  //   }
-  //   console.log(status);
-  //   return status;
-  // };
-
-  // function getclassName(status) {
-  //   if ((status = "Not founded")) {
-  //     return "notfounded";
-  //   }
-  //   if ((status = "Not Claimed")) {
-  //     return "founded";
-  //   }
-  // }
 
   return (
     <>
@@ -222,7 +203,18 @@ function MyListingStudent() {
                             <td className="py-3 px-6 text-center">
                               <div>
                                 <div className="status-text font-normal text-red-600">
-                                  <p>{itemData.status}</p>
+                                  <p
+                                    style={{
+                                      color:
+                                        itemData.status === "Not claimed"
+                                          ? "green"
+                                          : "red",
+                                    }}
+                                  >
+                                    {itemData.status === "Not claimed"
+                                      ? "Found"
+                                      : "Not found"}
+                                  </p>
                                 </div>
                               </div>
                             </td>

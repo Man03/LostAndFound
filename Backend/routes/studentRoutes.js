@@ -8,13 +8,17 @@ const {
   getStudentInfo,
   getMyListing,
   getMyLitingBySearch,
+  logoutStudent,
 } = require("../controllers/StudentControllers");
 
 const { getFoundItems } = require("../controllers/itemController");
+const { route } = require("./coordinatorRoutes");
 
 router.get("/dashboard", (req, res) => {
   res.json({ message: "Authorized" });
 });
+
+router.get("/logout",logoutStudent);
 
 router.post("/delete", deleteStudent);
 

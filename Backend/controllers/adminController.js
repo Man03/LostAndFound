@@ -132,12 +132,12 @@ const getCounts = async (req, res) => {
   try {
     // Total Lost Items
     const totalLostItems = await Item.countDocuments({
-      ItemType: "Losted",
+      ItemType: "Lost",
     });
 
     // Total Found Items
     const totalFoundItems = await Item.countDocuments({
-      ItemType: "Founded",
+      ItemType: "Found",
     });
 
     //Total Claimed Items
@@ -155,14 +155,14 @@ const getCounts = async (req, res) => {
 
     //Current Lost Items
     const totalCurrentLostItems = await Item.countDocuments({
-      ItemType: "Losted",
-      status: "Not founded",
+      ItemType: "Lost",
+      status: "Not found",
     });
 
     //Current Founded Items
     const totalCurrentFoundedItems = await Item.countDocuments({
-      ItemType: "Founded",
-      status: "Not Claimed",
+      ItemType: "Found",
+      status: "Not claimed",
     });
 
     //Total Current Lost And Found Items

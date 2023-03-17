@@ -1,8 +1,21 @@
 import React from "react";
 import logo from "../Assets/DDU.png";
+import axios from "axios";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
+  const navigate = useNavigate();
+
+  const handleLogout = async (event) => {
+    event.preventDefault();
+    await axios
+      .get("http://localhost:8000/student/logout", {
+        withCredentials: true,
+      })
+      .then((response) => navigate("/student/login"));
+  };
+
   return (
     <div className="main-header">
       <header className="header">
@@ -25,7 +38,11 @@ function Header() {
               </Link>
             </li> */}
             <li>
-              <a href="http://localhost:3000/student/login" className="btn">
+              <a
+                href="http://localhost:3000/student/login"
+                onClick={handleLogout}
+                className="btn"
+              >
                 Logout
               </a>
             </li>

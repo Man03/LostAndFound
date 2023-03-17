@@ -10,7 +10,7 @@ dotenv.config();
 
 const deleteStudent = async (req, res) => {
   try {
-    // res.clearCookie("jwtokenCoordinator", { path: "/" });
+    res.clearCookie("jwtokenStudent");
     const { email } = req.body;
 
     const student = await Student.findOne({ email });
@@ -23,6 +23,18 @@ const deleteStudent = async (req, res) => {
     await student.remove();
 
     return res.status(404).json({ message: "Student deleted" });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+//----------------------------------------->  Logout - Coordinator <----------------------------------------------------------------//
+
+const logoutStudent = async (req, res) => {
+  try {
+    res.clearCookie("jwtokenStudent")
+    res.status(200).send("user logout");
+    console.log("logout finish ");
   } catch (error) {
     console.log(error);
   }
@@ -67,7 +79,8 @@ const getMyListing = async (req, res) => {
     const student = await Student.findById(req.user.user._id);
 
     const items = await Items.find({
-      ItemType: "Losted",
+      ItemType: "Lost",
+      status: { $in: ["Not claimed", "Not found"] },
       listedBy: student.userName,
     });
 
@@ -88,10 +101,14 @@ const getMyListing = async (req, res) => {
 
 const getMyLitingBySearch = async (req, res) => {
   try {
+    const student = await Student.findById(req.user.user._id);
+
     const query = req.query.q;
     const items = await Items.find({
       itemName: { $regex: new RegExp(query), $options: "i" },
-      ItemType: "Losted",
+      ItemType: "Lost",
+      status: { $in: ["Not claimed", "Not found"] },
+      listedBy: student.userName,
     });
     if (!items) {
       res.json({ message: "No Items" });
@@ -109,4 +126,5 @@ module.exports = {
   getStudentInfo,
   getMyListing,
   getMyLitingBySearch,
+  logoutStudent,
 };

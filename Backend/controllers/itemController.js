@@ -16,7 +16,7 @@ const storeFoundItem = asyncHandler(async (req, res) => {
     }
 
     const item = await Item.create({
-      ItemType: "Founded",
+      ItemType: "Found",
       itemName,
       description,
       location,
@@ -24,7 +24,7 @@ const storeFoundItem = asyncHandler(async (req, res) => {
       foundDate,
       listedBy: coordinator.userName,
       department: coordinator.department,
-      status: "Not Claimed",
+      status: "Not claimed",
     });
 
     await item.save((err) => {
@@ -67,7 +67,7 @@ const storeLostItem = asyncHandler(async (req, res) => {
     }
 
     const item = await Item.create({
-      ItemType: "Losted",
+      ItemType: "Lost",
       itemName: itemName,
       description: description,
       location: location,
@@ -75,7 +75,7 @@ const storeLostItem = asyncHandler(async (req, res) => {
       foundDate: "-",
       listedBy: student.userName,
       department: student.department,
-      status: "Not founded",
+      status: "Not found",
     });
 
     await item.save((err) => {
@@ -111,8 +111,8 @@ const storeLostItem = asyncHandler(async (req, res) => {
 const getFoundItems = async (req, res) => {
   try {
     const items = await Item.find({
-      ItemType: "Founded",
-      status: "Not Claimed",
+      ItemType: "Found",
+      status: "Not claimed",
     });
     if (!items) {
       res.json({ message: "No Items" });
@@ -130,8 +130,8 @@ const getFoundItemsBySearch = async (req, res) => {
     const query = req.query.q;
     const items = await Item.find({
       itemName: { $regex: new RegExp(query), $options: "i" },
-      ItemType: "Founded",
-      status: "Not Claimed",
+      ItemType: "Found",
+      status: "Not claimed",
     });
     if (!items) {
       res.json({ message: "No Items" });
@@ -148,8 +148,8 @@ const getFoundItemsBySearch = async (req, res) => {
 const getLostItems = async (req, res) => {
   try {
     const items = await Item.find({
-      ItemType: "Losted",
-      status: { $in: ["Not Claimed", "Not founded"] },
+      ItemType: "Lost",
+      status: { $in: ["Not claimed", "Not found"] },
     });
     if (!items) {
       res.json({ message: "No Items" });
@@ -167,8 +167,8 @@ const getLostItemsBySearch = async (req, res) => {
     const query = req.query.q;
     const items = await Item.find({
       itemName: { $regex: new RegExp(query), $options: "i" },
-      ItemType: "Losted",
-      status: { $in: ["Not Claimed", "Not founded"] },
+      ItemType: "Lost",
+      status: { $in: ["Not claimed", "Not found"] },
     });
     if (!items) {
       res.json({ message: "No Items" });
@@ -231,9 +231,9 @@ const updateLostItemStatus = async (req, res) => {
       res.status(400);
       console.log("Item not found to be update status");
     } else {
-      if(item.status === "Not founded")
+      if(item.status === "Not found")
       {
-        item.status = "Not Claimed";
+        item.status = "Not claimed";
       }
       else{
         item.status = "Claimed";

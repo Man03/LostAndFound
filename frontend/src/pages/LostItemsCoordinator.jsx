@@ -9,15 +9,32 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import { ColorRing } from "react-loader-spinner";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+// import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 function LostItemsCoordinator() {
   //const navigate = useNavigate();
 
-  const [item, setItem] = useState([]);
-  const [query, setQuery] = useState("");
-  const [showClearIcon, setShowClearIcon] = useState("none");
-  const [itemId, setItemId] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [item, setItem] = useState([]); // Set item come from backend
+  const [query, setQuery] = useState(""); // Set Query for search
+  const [showClearIcon, setShowClearIcon] = useState("none"); // For clear searchFeild
+  const [loading, setLoading] = useState(true); // For loading
+  const [open, setOpen] = useState(false); // For set dialoge Box
+  const [deleteItem, setDeleteItem] = useState(false); // For set delete item which one is clicked
+
+  // When user click on updatestatus
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  // When user click on No in dialoge Box
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   useEffect(() => {
     axios
@@ -215,11 +232,62 @@ function LostItemsCoordinator() {
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div>
+                                <Dialog
+                                  open={open}
+                                  onClose={handleClose}
+                                  aria-labelledby="alert-dialog-title"
+                                  aria-describedby="alert-dialog-description"
+                                >
+                                  <DialogTitle
+                                    id="alert-dialog-title"
+                                    style={{ color: "black" }}
+                                  >
+                                    <div className="warning">
+                                      {`Are you sure want to `}
+                                      <p
+                                        className="warn_text-1"
+                                        style={{ color: "red" }}
+                                      >
+                                        Update status
+                                      </p>
+                                      <p>of</p>
+                                      <p
+                                        className="warn_text-2"
+                                        style={{ color: "red" }}
+                                      >
+                                        {deleteItem.itemName}
+                                      </p>{" "}
+                                      ?
+                                    </div>
+                                  </DialogTitle>
+                                  <DialogContent>
+                                    {/* <DialogContentText id="alert-dialog-description">
+                                      Let Google help apps determine location.
+                                      This means sending anonymous location data
+                                      to Google, even when no apps are running.
+                                    </DialogContentText> */}
+                                  </DialogContent>
+                                  <DialogActions>
+                                    <Button onClick={handleClose}>
+                                      <p
+                                        onClick={() => {
+                                          HandleUpdate(deleteItem);
+                                        }}
+                                      >
+                                        Yes
+                                      </p>
+                                    </Button>
+                                    <Button onClick={handleClose} autoFocus>
+                                      No
+                                    </Button>
+                                  </DialogActions>
+                                </Dialog>
                                 <GrUpdate
                                   className="table-icons transform hover:scale-110"
                                   style={{ cursor: "pointer" }}
                                   onClick={() => {
-                                    HandleUpdate(itemData);
+                                    setDeleteItem(itemData);
+                                    handleClickOpen();
                                   }}
                                 ></GrUpdate>
                                 <p className="status-text font-normal text-red-600">

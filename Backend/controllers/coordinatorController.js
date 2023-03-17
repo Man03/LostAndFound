@@ -160,7 +160,9 @@ const deleteCoordinator = async (req, res) => {
       res.status(400);
       console.log("Coordinator not found to be deleted");
     }
+    res.clearCookie("jwtokenCoordinator");
     nodemailer.sendDeclineEmail(coordinator.email, coordinator.token);
+
     await coordinator.remove();
 
     return res.status(404).json({ message: "Coordinator deleted" });
@@ -193,7 +195,8 @@ const getMyListing = async (req, res) => {
     const coordinator = await Coordinator.findById(req.user._id);
 
     const items = await Items.find({
-      ItemType: "Founded",
+      ItemType: "Found",
+      status: "Not found",
       listedBy: coordinator.userName,
     });
 
@@ -214,10 +217,13 @@ const getMyListing = async (req, res) => {
 
 const getMyLitingBySearch = async (req, res) => {
   try {
+    const coordinator = await Coordinator.findById(req.user._id);
     const query = req.query.q;
     const items = await Items.find({
       itemName: { $regex: new RegExp(query), $options: "i" },
-      ItemType: "Founded",
+      ItemType: "Found",
+      status: "Not found",
+      listedBy: coordinator.userName,
     });
     if (!items) {
       res.json({ message: "No Items" });
