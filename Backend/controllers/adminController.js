@@ -242,43 +242,7 @@ const getdept = async (req, res) => {
   }
 };
 
-//--------------------------------------------- define a generatePDF function that accepts a tickets argument-----------------------------------------------------------------
-
-const generatePDF = async (req, res) => {
-  try {
-    // initialize jsPDF
-    const doc = new jsPDF();
-
-    // define the columns we want and their titles
-    const tableColumn = ["Id", "Title", "Issue", "Status", "Closed on"];
-    // define an empty array of rows
-    const tableRows = [];
-
-    // for each ticket pass all its data into an array
-    tickets.forEach((ticket) => {
-      const ticketData = [
-        ticket.id,
-        ticket.title,
-        ticket.request,
-        ticket.status,
-        // called date-fns to format the date on the ticket
-        format(new Date(ticket.updated_at), "yyyy-MM-dd"),
-      ];
-      // push each tickcet's info into a row
-      tableRows.push(ticketData);
-    });
-
-    // startY is basically margin-top
-    doc.autoTable(tableColumn, tableRows, { startY: 20 });
-    const date = Date().split(" ");
-    // we use a date string to generate our filename.
-    const dateStr = date[0] + date[1] + date[2] + date[3] + date[4];
-    // ticket title. and margin-top + margin-left
-    doc.text("Closed tickets within the last one month.", 14, 15);
-    // we define the name of our PDF file.
-    doc.save(`report_${dateStr}.pdf`);
-  } catch (err) {}
-};
+// ---------------------------------------ExportAsExcel---------------------------------------------------------------->>>>>>>>>
 
 const exportfile = async (req, res) => {
   var wb = xlsx.utils.book_new();
@@ -305,6 +269,24 @@ const exportfile = async (req, res) => {
   });
 };
 
+// -------------------------------------------------------- GetItemsByFilter -------------------------------------------------------------------------
+
+const getItemsByFilter = async (req,res) => {
+  try{
+  const { filter } = req.body;
+    console.log(filter);
+    if(filter === "Lost Items"){
+      const items = await Item.findOne({
+        itemType : itemType,
+      })
+      console.log(items);
+    }
+  }
+  catch(error){
+    console.log(error);
+  }
+}
+
 
 module.exports = {
   signupAdmin,
@@ -314,6 +296,6 @@ module.exports = {
   addDepartment,
   delDept,
   getdept,
-  generatePDF,
-  exportfile
+  exportfile,
+  getItemsByFilter,
 };

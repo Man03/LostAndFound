@@ -32,11 +32,6 @@ function Header() {
 
         <div id="right">
           <ul className="nav-links">
-            {/* <li>
-              <Link to="/login">
-                <button className="btn">Sign-in</button>
-              </Link>
-            </li> */}
             <li>
               <button className="btn" onClick={handleLogout}>
                 Logout

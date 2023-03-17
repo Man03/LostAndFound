@@ -2,20 +2,78 @@ import React, { Component } from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { HiFilter } from "react-icons/hi";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
+// import jsPDF from "jspdf";
+// import "jspdf-autotable";
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 function Summary() {
   const [item, setItem] = useState([]);
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [filter, setFilter] = useState();
+  const [lostItem, setLostItem] = useState(false);
+  const [foundItem, setFoundItem] = useState(false);
+  const [claimedItem, setClaimedItem] = useState(false);
+  const [allItem, setAllItem] = useState(false);
+  const [relostItem, resetLostItem] = useState(false);
+  const [refoundItem, resetFoundItem] = useState(false);
+  const [reclaimedItem, resetClaimedItem] = useState(false);
+  const [reallItem, resetAllItem] = useState(true);
 
-  useEffect(() => {
+  const handleChange = (event) => {
+    setFilter(event.target.value);
+    if (event.target.value === "Lost Items") {
+      setLostItem(true);
+      setFoundItem(false);
+      setClaimedItem(false);
+      setAllItem(false);
+    } else if (event.target.value === "Found Items") {
+      setLostItem(false);
+      setFoundItem(true);
+      setClaimedItem(false);
+      setAllItem(false);
+    } else if (event.target.value === "Claimed Items") {
+      setLostItem(false);
+      setFoundItem(false);
+      setClaimedItem(true);
+      setAllItem(false);
+    } else {
+      setLostItem(false);
+      setFoundItem(false);
+      setClaimedItem(false);
+      setAllItem(true);
+    }
+  };
+
+  const handleFilter = async (event) => {
+    event.preventDefault();
+    if (lostItem) {
+      resetLostItem(true);
+      resetFoundItem(false);
+      resetClaimedItem(false);
+      resetAllItem(false);
+    } else if (foundItem) {
+      resetLostItem(false);
+      resetFoundItem(true);
+      resetClaimedItem(false);
+      resetAllItem(false);
+    } else if (claimedItem) {
+      resetLostItem(false);
+      resetFoundItem(false);
+      resetClaimedItem(true);
+      resetAllItem(false);
+    } else {
+      resetLostItem(false);
+      resetFoundItem(false);
+      resetClaimedItem(false);
+      resetAllItem(true);
+    }
     axios
-      .all([
-        axios.get(`http://localhost:8000/coordinator/getFoundItems`, {
-          withCredentials: true,
-        }),
-      ])
+      .get(`http://localhost:8000/admin/getFilterItems`, {
+        filter,
+      })
       .then(
         axios.spread((res1) => {
           const dataWithIndex = res1.data.items.map((itemData, index) => ({
@@ -25,7 +83,7 @@ function Summary() {
           setItem(dataWithIndex);
         })
       );
-  }, []);
+  };
 
   const exportExcel = async (event) => {
     event.preventDefault();
@@ -41,143 +99,365 @@ function Summary() {
     link.remove();
   };
 
-  // function exportPDF() {
-  //   const tableRows = [];
-
-  //   // Iterate over the table rows and store them in an array
-  //   document.querySelectorAll("table tbody tr").forEach((row) => {
-  //     const rowData = [];
-
-  //     // Iterate over the cells in each row and add their content to the `rowData` array
-  //     row.querySelectorAll("td").forEach((cell) => {
-  //       rowData.push(cell.textContent.trim());
-  //     });
-
-  //     tableRows.push(rowData);
-  //   });
-
-  //   var styles = {
-  //     cell: {
-  //       padding: 2,
-  //       fontSize: 10,
-  //       fontStyle: "normal",
-  //       alignment: "center",
-  //     },
-  //   };
-
-  //   const doc = new jsPDF();
-  //   doc.autoTable({
-  //     head: [tableHeaders],
-  //     body: tableRows,
-  //     styles: styles,
-  //     margin: { left: 3, right: 3 },
-  //     didParseCell: function (data) {
-  //       // Set a minimum width of 50 for the first column
-  //       if (data.column.index === 0) {
-  //         data.cell.styles.minCellWidth = 5;
-  //       }
-  //       if (data.column.index === 1) {
-  //         data.cell.styles.minCellWidth = 20;
-  //       }
-  //       if (data.column.index === 2) {
-  //         data.cell.styles.cellWidth = 30;
-  //       }
-  //       if (data.column.index === 3) {
-  //         data.cell.styles.minCellWidth = 20;
-  //       }
-  //       if (data.column.index === 4) {
-  //         data.cell.styles.minCellWidth = 20;
-  //       }
-  //       if (data.column.index === 5) {
-  //         data.cell.styles.minCellWidth = 15;
-  //       }
-  //       if (data.column.index === 6) {
-  //         data.cell.styles.minCellWidth = 10;
-  //       }
-  //     },
-  //   });
-  //   doc.save("Summary.pdf");
-  // }
-
-  // const tableHeaders = Array.from(document.querySelectorAll("table th")).map(
-  //   (th) => th.textContent
-  // );
-
   return (
     <>
       <div className="main-filter">
-        <div className="inner-filter"></div>
+        <div className="inner-filter">
+          <HiFilter className="filter-icon"></HiFilter>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="demo-simple-select-label">Filter</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={filter}
+                label="Filter"
+                onChange={handleChange}
+              >
+                <MenuItem value={"Lost Items"}>Lost Item</MenuItem>
+                <MenuItem value={"Found Items"}>Found Item</MenuItem>
+                <MenuItem value={"Claimed Items"}>Claimed Item</MenuItem>
+                <MenuItem value={"All Items"}>All Item</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </div>
+        <button className="filter-btn" onClick={handleFilter}>
+          Apply Filter
+        </button>
+        <button className="export-btn" onClick={exportExcel}>
+          Export
+        </button>
+        <h2>{filter}</h2>
       </div>
       <div className="min-h-screen">
-        <div className="export-btn">
-          <button className="btn" onClick={exportExcel}>
-            Export
-          </button>
-        </div>
         <div className="table-heading">
-          <p className="text-color headings text-3xl">My Listing</p>
+          {relostItem ? (
+            <p className="text-color headings text-3xl">Lost Item Data</p>
+          ) : (
+            <></>
+          )}
+          {refoundItem ? (
+            <p className="text-color headings text-3xl">Found Item Data</p>
+          ) : (
+            <></>
+          )}
+          {reclaimedItem ? (
+            <p className="text-color headings text-3xl">Claimed Item Data</p>
+          ) : (
+            <></>
+          )}
+          {reallItem ? (
+            <p className="text-color headings text-3xl">All Item Data</p>
+          ) : (
+            <></>
+          )}
         </div>
         <div className="container table">
           <div className="overflow-x-auto">
             <div>
               <div>
                 <div className="shadow-md rounded my-5">
-                  <table className="min-w-max bg-white w-full table-auto">
-                    <thead>
-                      <tr className="border-b bg-gray-200 text-black-600 uppercase text-sm leading-normal">
-                        <th className="py-2 px-5 text-center">Index</th>
-                        <th className="py-3 px-6 text-center">Item name</th>
-                        <th className="py-3 px-6 text-center">Description</th>
-                        <th className="py-3 px-6 text-center">Location</th>
-                        <th className="py-3 px-6 text-center">Lost-Date</th>
-                        <th className="py-3 px-6 text-center">Listed At</th>
-                        <th className="py-3 px-6 text-center">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-black-600 text-sm font-light">
-                      {item.map((itemData) => (
-                        <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
-                          <td className="py-3 px-6 text-center">
-                            <span className="font-semibold">
-                              {itemData.index}
-                            </span>
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div className="font-normal">
-                              {itemData.itemName}
-                            </div>
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div className="font-normal break-normal break-all max-w-[150px]">
-                              {itemData.description}
-                            </div>
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div className="font-normal">
-                              {itemData.location}
-                            </div>
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div className="font-normal">
-                              {itemData.lostDate}
-                            </div>
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div className="font-normal">
-                              {itemData.ListedAt}
-                            </div>
-                          </td>
-                          <td className="py-3 px-6 text-center">
-                            <div>
-                              <p className="status-text font-normal text-red-600">
-                                {itemData.status}
-                              </p>
-                            </div>
-                          </td>
+                  {relostItem ? (
+                    <table className="min-w-max bg-white w-full table-auto">
+                      <thead>
+                        <tr className="border-b bg-gray-200 text-black-600 uppercase text-sm leading-normal">
+                          <th className="py-2 px-5 text-center">Index</th>
+                          <th className="py-2 px-5 text-center">Item Type</th>
+                          <th className="py-3 px-6 text-center">Item name</th>
+                          <th className="py-3 px-6 text-center">Description</th>
+                          <th className="py-3 px-6 text-center">Location</th>
+                          <th className="py-3 px-6 text-center">Lost-Date</th>
+                          <th className="py-3 px-6 text-center">Listed By</th>
+                          <th className="py-3 px-6 text-center">Listed At</th>
+                          <th className="py-3 px-6 text-center">Status</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="text-black-600 text-sm font-light">
+                        {item.map((itemData) => (
+                          <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
+                            <td className="py-3 px-6 text-center">
+                              <span className="font-semibold">
+                                {itemData.index}
+                              </span>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.itemType}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.itemName}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal break-normal break-all max-w-[150px]">
+                                {itemData.description}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.location}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.lostDate}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.ListedBy}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.ListedAt}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div>
+                                <p className="status-text font-normal text-red-600">
+                                  {itemData.status}
+                                </p>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <></>
+                  )}
+                  {refoundItem ? (
+                    <table className="min-w-max bg-white w-full table-auto">
+                      <thead>
+                        <tr className="border-b bg-gray-200 text-black-600 uppercase text-sm leading-normal">
+                          <th className="py-2 px-5 text-center">Index</th>
+                          <th className="py-2 px-5 text-center">Item Type</th>
+                          <th className="py-3 px-6 text-center">Item name</th>
+                          <th className="py-3 px-6 text-center">Description</th>
+                          <th className="py-3 px-6 text-center">Location</th>
+                          <th className="py-3 px-6 text-center">found-Date</th>
+                          <th className="py-3 px-6 text-center">Listed By</th>
+                          <th className="py-3 px-6 text-center">Listed At</th>
+                          <th className="py-3 px-6 text-center">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-black-600 text-sm font-light">
+                        {item.map((itemData) => (
+                          <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
+                            <td className="py-3 px-6 text-center">
+                              <span className="font-semibold">
+                                {itemData.index}
+                              </span>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.itemType}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.itemName}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal break-normal break-all max-w-[150px]">
+                                {itemData.description}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.location}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.foundDate}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.ListedBy}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.ListedAt}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div>
+                                <p className="status-text font-normal text-red-600">
+                                  {itemData.status}
+                                </p>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <></>
+                  )}
+                  {reclaimedItem ? (
+                    <table className="min-w-max bg-white w-full table-auto">
+                      <thead>
+                        <tr className="border-b bg-gray-200 text-black-600 uppercase text-sm leading-normal">
+                          <th className="py-2 px-5 text-center">Index</th>
+                          <th className="py-2 px-5 text-center">Item Type</th>
+                          <th className="py-3 px-6 text-center">Item name</th>
+                          <th className="py-3 px-6 text-center">Description</th>
+                          <th className="py-3 px-6 text-center">Location</th>
+                          <th className="py-3 px-6 text-center">Lost-Date</th>
+                          <th className="py-3 px-6 text-center">found-Date</th>
+                          <th className="py-3 px-6 text-center">Listed By</th>
+                          <th className="py-3 px-6 text-center">Listed At</th>
+                          <th className="py-3 px-6 text-center">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-black-600 text-sm font-light">
+                        {item.map((itemData) => (
+                          <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
+                            <td className="py-3 px-6 text-center">
+                              <span className="font-semibold">
+                                {itemData.index}
+                              </span>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.itemType}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.itemName}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal break-normal break-all max-w-[150px]">
+                                {itemData.description}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.location}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.lostDate}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.foundDate}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.ListedBy}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.ListedAt}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div>
+                                <p className="status-text font-normal text-red-600">
+                                  {itemData.status}
+                                </p>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <></>
+                  )}
+                  {reallItem ? (
+                    <table className="min-w-max bg-white w-full table-auto">
+                      <thead>
+                        <tr className="border-b bg-gray-200 text-black-600 uppercase text-sm leading-normal">
+                          <th className="py-2 px-5 text-center">Index</th>
+                          <th className="py-2 px-5 text-center">Item Type</th>
+                          <th className="py-3 px-6 text-center">Item name</th>
+                          <th className="py-3 px-6 text-center">Description</th>
+                          <th className="py-3 px-6 text-center">Location</th>
+                          <th className="py-3 px-6 text-center">Lost-Date</th>
+                          <th className="py-3 px-6 text-center">found-Date</th>
+                          <th className="py-3 px-6 text-center">Listed By</th>
+                          <th className="py-3 px-6 text-center">Listed At</th>
+                          <th className="py-3 px-6 text-center">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="text-black-600 text-sm font-light">
+                        {item.map((itemData) => (
+                          <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
+                            <td className="py-3 px-6 text-center">
+                              <span className="font-semibold">
+                                {itemData.index}
+                              </span>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.itemType}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.itemName}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal break-normal break-all max-w-[150px]">
+                                {itemData.description}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.location}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.lostDate}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.foundDate}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.ListedBy}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.ListedAt}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div>
+                                <p className="status-text font-normal text-red-600">
+                                  {itemData.status}
+                                </p>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <></>
+                  )}
                 </div>
               </div>
             </div>

@@ -76,7 +76,7 @@ const getStudentInfo = async (req, res) => {
 
 const getMyListing = async (req, res) => {
   try {
-    const student = await Student.findById(req.user.user._id);
+    const student = await Student.findById(req.user.user._id);  
 
     const items = await Items.find({
       ItemType: "Lost",

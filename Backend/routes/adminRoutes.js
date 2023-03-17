@@ -10,7 +10,8 @@ const {
   addDepartment,
   delDept,
   getdept,
-  exportfile
+  exportfile,
+  getItemsByFilter,
 } = require("../controllers/adminController");
 
 router.post("/signup", signupAdmin);
@@ -34,5 +35,7 @@ router.post("/deletedept", delDept);
 router.get("/getdept", getdept);
 
 router.get("/exportFile",exportfile);
+
+router.get("/getFilterItems",getItemsByFilter);
 
 module.exports = router;
