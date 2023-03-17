@@ -1,18 +1,7 @@
-// import React from 'react'
-
-// function Summary() {
-//   return (
-//     <div>Summary</div>
-//   )
-// }
-
-// export default Summary
-
 import React, { Component } from "react";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { HiFilter } from "react-icons/hi";
-
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 
@@ -38,67 +27,81 @@ function Summary() {
       );
   }, []);
 
-  function exportPDF() {
-    const tableRows = [];
-
-    // Iterate over the table rows and store them in an array
-    document.querySelectorAll("table tbody tr").forEach((row) => {
-      const rowData = [];
-
-      // Iterate over the cells in each row and add their content to the `rowData` array
-      row.querySelectorAll("td").forEach((cell) => {
-        rowData.push(cell.textContent.trim());
-      });
-
-      tableRows.push(rowData);
+  const exportExcel = async (event) => {
+    event.preventDefault();
+    const response = await axios.get("http://localhost:8000/admin/exportFile", {
+      responseType: "blob",
     });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `${Date.now()}` + "test.xlsx");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  };
 
-    var styles = {
-      cell: {
-        padding: 2,
-        fontSize: 10,
-        fontStyle: "normal",
-        alignment: "center",
-      },
-    };
+  // function exportPDF() {
+  //   const tableRows = [];
 
-    const doc = new jsPDF();
-    doc.autoTable({
-      head: [tableHeaders],
-      body: tableRows,
-      styles: styles,
-      margin: { left: 3, right: 3 },
-      didParseCell: function (data) {
-        // Set a minimum width of 50 for the first column
-        if (data.column.index === 0) {
-          data.cell.styles.minCellWidth = 5;
-        }
-        if (data.column.index === 1) {
-          data.cell.styles.minCellWidth = 20;
-        }
-        if (data.column.index === 2) {
-          data.cell.styles.cellWidth = 30;
-        }
-        if (data.column.index === 3) {
-          data.cell.styles.minCellWidth = 20;
-        }
-        if (data.column.index === 4) {
-          data.cell.styles.minCellWidth = 20;
-        }
-        if (data.column.index === 5) {
-          data.cell.styles.minCellWidth = 15;
-        }
-        if (data.column.index === 6) {
-          data.cell.styles.minCellWidth = 10;
-        }
-      },
-    });
-    doc.save("Summary.pdf");
-  }
+  //   // Iterate over the table rows and store them in an array
+  //   document.querySelectorAll("table tbody tr").forEach((row) => {
+  //     const rowData = [];
 
-  const tableHeaders = Array.from(document.querySelectorAll("table th")).map(
-    (th) => th.textContent
-  );
+  //     // Iterate over the cells in each row and add their content to the `rowData` array
+  //     row.querySelectorAll("td").forEach((cell) => {
+  //       rowData.push(cell.textContent.trim());
+  //     });
+
+  //     tableRows.push(rowData);
+  //   });
+
+  //   var styles = {
+  //     cell: {
+  //       padding: 2,
+  //       fontSize: 10,
+  //       fontStyle: "normal",
+  //       alignment: "center",
+  //     },
+  //   };
+
+  //   const doc = new jsPDF();
+  //   doc.autoTable({
+  //     head: [tableHeaders],
+  //     body: tableRows,
+  //     styles: styles,
+  //     margin: { left: 3, right: 3 },
+  //     didParseCell: function (data) {
+  //       // Set a minimum width of 50 for the first column
+  //       if (data.column.index === 0) {
+  //         data.cell.styles.minCellWidth = 5;
+  //       }
+  //       if (data.column.index === 1) {
+  //         data.cell.styles.minCellWidth = 20;
+  //       }
+  //       if (data.column.index === 2) {
+  //         data.cell.styles.cellWidth = 30;
+  //       }
+  //       if (data.column.index === 3) {
+  //         data.cell.styles.minCellWidth = 20;
+  //       }
+  //       if (data.column.index === 4) {
+  //         data.cell.styles.minCellWidth = 20;
+  //       }
+  //       if (data.column.index === 5) {
+  //         data.cell.styles.minCellWidth = 15;
+  //       }
+  //       if (data.column.index === 6) {
+  //         data.cell.styles.minCellWidth = 10;
+  //       }
+  //     },
+  //   });
+  //   doc.save("Summary.pdf");
+  // }
+
+  // const tableHeaders = Array.from(document.querySelectorAll("table th")).map(
+  //   (th) => th.textContent
+  // );
 
   return (
     <>
@@ -106,9 +109,13 @@ function Summary() {
         <div className="inner-filter"></div>
       </div>
       <div className="min-h-screen">
+        <div className="export-btn">
+          <button className="btn" onClick={exportExcel}>
+            Export
+          </button>
+        </div>
         <div className="table-heading">
           <p className="text-color headings text-3xl">My Listing</p>
-          <button onClick={exportPDF}>Export as PDF</button>
         </div>
         <div className="container table">
           <div className="overflow-x-auto">

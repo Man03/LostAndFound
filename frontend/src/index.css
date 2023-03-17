@@ -291,7 +291,7 @@ input:focus::placeholder {
 }
 
 #submit-btn {
-  background-color: #201F4D;
+  background-color: #0b1d34;
   color: white;
   /* width: fit-content; */
 }
@@ -501,6 +501,7 @@ input::placeholder {
   flex-direction: column;
   /* position: fixed; */
   height: 100vh;
+  /* overflow-y: scroll; */
 }
 
 .nav-links{
@@ -625,7 +626,7 @@ input::placeholder {
   flex-direction: column;
   align-items: center;
   font-family: 'Actor', sans-serif;
-  margin-left: 220px;
+  margin-left: 260px;
 }
 
 .headings{
@@ -856,10 +857,7 @@ input::placeholder {
   margin-right: 6px;
 }
 
-.admin-img{
-  stroke-width: 1px;
-  -webkit-filter: drop-shadow(1px 1px 0 black)
-                  drop-shadow(-1px -1px 0 black);
-  filter: drop-shadow(1px 1px 0 black) 
-          drop-shadow(-1px -1px 0 black);
+/* --------------------------------------------------------Exportbtn-------------------------------------- */
+.export-btn{
+  margin-left: 800px;
 }

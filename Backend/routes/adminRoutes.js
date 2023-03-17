@@ -10,6 +10,7 @@ const {
   addDepartment,
   delDept,
   getdept,
+  exportfile
 } = require("../controllers/adminController");
 
 router.post("/signup", signupAdmin);
@@ -31,5 +32,7 @@ router.post("/adddept", protectAdmin, addDepartment);
 router.post("/deletedept", delDept);
 
 router.get("/getdept", getdept);
+
+router.get("/exportFile",exportfile);
 
 module.exports = router;
