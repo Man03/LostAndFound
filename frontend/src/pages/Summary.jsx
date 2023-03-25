@@ -49,6 +49,26 @@ function Summary() {
 
   const handleFilter = async (event) => {
     event.preventDefault();
+    axios
+      .post(`http://localhost:8000/admin/getFilterItems`, {
+        filter: filter,
+      })
+      .then(
+        (res) => {
+          console.log(res.data.items);
+          const data = res.data.items;
+          setItem(data);
+        }
+        // axios.spread((res1) => {
+        //   // const dataWithIndex = res1.data.items.map((itemData, index) => ({
+        //   //   ...itemData,
+        //   //   index: index + 1,
+        //   const data = res1.data.items;
+        //   // }));
+        //   console.log(data);
+        //   setItem(data);
+        // })
+      );
     if (lostItem) {
       resetLostItem(true);
       resetFoundItem(false);
@@ -70,19 +90,6 @@ function Summary() {
       resetClaimedItem(false);
       resetAllItem(true);
     }
-    axios
-      .get(`http://localhost:8000/admin/getFilterItems`, {
-        filter,
-      })
-      .then(
-        axios.spread((res1) => {
-          const dataWithIndex = res1.data.items.map((itemData, index) => ({
-            ...itemData,
-            index: index + 1,
-          }));
-          setItem(dataWithIndex);
-        })
-      );
   };
 
   const exportExcel = async (event) => {
@@ -128,7 +135,6 @@ function Summary() {
         <button className="export-btn" onClick={exportExcel}>
           Export
         </button>
-        <h2>{filter}</h2>
       </div>
       <div className="min-h-screen">
         <div className="table-heading">
@@ -174,16 +180,14 @@ function Summary() {
                         </tr>
                       </thead>
                       <tbody className="text-black-600 text-sm font-light">
-                        {item.map((itemData) => (
+                        {item.map((itemData, index) => (
                           <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
                             <td className="py-3 px-6 text-center">
-                              <span className="font-semibold">
-                                {itemData.index}
-                              </span>
+                              <span className="font-semibold">{index + 1}</span>
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
-                                {itemData.itemType}
+                                {itemData.ItemType}
                               </div>
                             </td>
                             <td className="py-3 px-6 text-center">
@@ -208,7 +212,7 @@ function Summary() {
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
-                                {itemData.ListedBy}
+                                {itemData.listedBy}
                               </div>
                             </td>
                             <td className="py-3 px-6 text-center">
@@ -246,16 +250,14 @@ function Summary() {
                         </tr>
                       </thead>
                       <tbody className="text-black-600 text-sm font-light">
-                        {item.map((itemData) => (
+                        {item.map((itemData, index) => (
                           <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
                             <td className="py-3 px-6 text-center">
-                              <span className="font-semibold">
-                                {itemData.index}
-                              </span>
+                              <span className="font-semibold">{index + 1}</span>
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
-                                {itemData.itemType}
+                                {itemData.ItemType}
                               </div>
                             </td>
                             <td className="py-3 px-6 text-center">
@@ -280,7 +282,7 @@ function Summary() {
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
-                                {itemData.ListedBy}
+                                {itemData.listedBy}
                               </div>
                             </td>
                             <td className="py-3 px-6 text-center">
@@ -319,16 +321,14 @@ function Summary() {
                         </tr>
                       </thead>
                       <tbody className="text-black-600 text-sm font-light">
-                        {item.map((itemData) => (
+                        {item.map((itemData, index) => (
                           <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
                             <td className="py-3 px-6 text-center">
-                              <span className="font-semibold">
-                                {itemData.index}
-                              </span>
+                              <span className="font-semibold">{index + 1}</span>
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
-                                {itemData.itemType}
+                                {itemData.ItemType}
                               </div>
                             </td>
                             <td className="py-3 px-6 text-center">
@@ -358,7 +358,7 @@ function Summary() {
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
-                                {itemData.ListedBy}
+                                {itemData.listedBy}
                               </div>
                             </td>
                             <td className="py-3 px-6 text-center">
@@ -397,16 +397,14 @@ function Summary() {
                         </tr>
                       </thead>
                       <tbody className="text-black-600 text-sm font-light">
-                        {item.map((itemData) => (
+                        {item.map((itemData, index) => (
                           <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
                             <td className="py-3 px-6 text-center">
-                              <span className="font-semibold">
-                                {itemData.index}
-                              </span>
+                              <span className="font-semibold">{index + 1}</span>
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
-                                {itemData.itemType}
+                                {itemData.ItemType}
                               </div>
                             </td>
                             <td className="py-3 px-6 text-center">
@@ -436,7 +434,7 @@ function Summary() {
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
-                                {itemData.ListedBy}
+                                {itemData.listedBy}
                               </div>
                             </td>
                             <td className="py-3 px-6 text-center">

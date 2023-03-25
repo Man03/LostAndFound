@@ -15,6 +15,11 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 // import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function LostItemsCoordinator() {
   //const navigate = useNavigate();
@@ -234,9 +239,10 @@ function LostItemsCoordinator() {
                               <div>
                                 <Dialog
                                   open={open}
+                                  TransitionComponent={Transition}
                                   onClose={handleClose}
                                   aria-labelledby="alert-dialog-title"
-                                  aria-describedby="alert-dialog-description"
+                                  aria-describedby="alert-dialog-slide-description"
                                 >
                                   <DialogTitle
                                     id="alert-dialog-title"

@@ -276,11 +276,39 @@ const getItemsByFilter = async (req,res) => {
   const { filter } = req.body;
     console.log(filter);
     if(filter === "Lost Items"){
-      const items = await Item.findOne({
-        itemType : itemType,
+      const items = await Item.find({
+        ItemType : "Lost",
       })
-      console.log(items);
-    }
+      // console.log(items);
+      res.status(200).json({
+        items: items,
+      });
+    } 
+    if(filter === "Found Items"){
+      const items = await Item.find({ 
+        ItemType : "Found",
+      })
+      // console.log(items);
+      res.status(200).json({
+        items: items,
+      });
+    } 
+    if(filter === "Claimed Items"){
+      const items = await Item.find({
+        status : "Claimed",
+      })
+      // console.log(items);
+      res.status(200).json({
+        items: items,
+      });
+    } 
+    if(filter === "All Items"){
+      const items = await Item.find();
+      // console.log(items);
+      res.status(200).json({
+        items: items,
+      });
+    } 
   }
   catch(error){
     console.log(error);

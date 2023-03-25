@@ -222,7 +222,7 @@ const getMyLitingBySearch = async (req, res) => {
     const items = await Items.find({
       itemName: { $regex: new RegExp(query), $options: "i" },
       ItemType: "Found",
-      status: "Not found",
+      status: "Not found",  
       listedBy: coordinator.userName,
     });
     if (!items) {

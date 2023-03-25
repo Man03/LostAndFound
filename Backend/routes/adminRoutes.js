@@ -36,6 +36,6 @@ router.get("/getdept", getdept);
 
 router.get("/exportFile",exportfile);
 
-router.get("/getFilterItems",getItemsByFilter);
+router.post("/getFilterItems",getItemsByFilter);
 
 module.exports = router;
