@@ -191,6 +191,7 @@ code {
   width: 320px;
 }
 
+
 .glogo-box{
   text-align: center;
   margin: 10px 10px 10px 25px;
@@ -870,6 +871,7 @@ input::placeholder {
   font-size: medium;
   font-weight:bolder;
   border: 1px solid #04151f;  
+  margin-right: 20px;
 }
 
 .filter-btn{
@@ -887,12 +889,20 @@ input::placeholder {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background-color:#DFEFFF;
+  width: 1100px;
+  border-radius: 10px;
 }
 
 .inner-filter{
-  margin-left: 100px;
+  margin-left: 20px;
+  justify-content:space-between;
   display:flex ;
   align-items: center;
+}
+
+.duration{
+  margin: 15px;
 }
 
 .filter-icon{
@@ -902,6 +912,30 @@ input::placeholder {
 
 .filter-select{
   background-color:#DFEFFF;
+}
+
+.duration-box {
+  background-color:#DFEFFF;
+  color:#717477 ;
+  text-align: center;
+  border: 1px solid;
+  border-color: #717477;
+  padding: 6px 6px;
+  border-radius: 8px;
+  width: 150px;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.manualy_duration{
+  display: flex;
+  margin-right: 15px;
+  align-items: center;
+}
+.vl {
+  border-left: 2px solid black;
+  height: 35px;
+  margin-left: 15px;
 }
 
 

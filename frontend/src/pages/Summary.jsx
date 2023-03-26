@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { HiFilter } from "react-icons/hi";
 // import jsPDF from "jspdf";
 // import "jspdf-autotable";
@@ -9,7 +9,6 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 
@@ -24,7 +23,11 @@ function Summary() {
   const [refoundItem, resetFoundItem] = useState(false);
   const [reclaimedItem, resetClaimedItem] = useState(false);
   const [reallItem, resetAllItem] = useState(true);
-  const [duration, setDuration] = useState("All time");
+  const [duration, setDuration] = useState();
+  const [startDate, setStartDate] = useState();
+  const [endDate, setEndDate] = useState();
+  const [manual, setManual] = useState(false);
+  const dateInputRef = useRef(null);
 
   const handleChange = (event) => {
     setFilter(event.target.value);
@@ -53,6 +56,11 @@ function Summary() {
 
   const handleDurationChange = (event) => {
     setFilter(event.target.value);
+    if (event.target.value === "Manually") {
+      setManual(true);
+    } else {
+      setManual(false);
+    }
   };
 
   const handleFilter = async (event) => {
@@ -60,6 +68,9 @@ function Summary() {
     axios
       .post(`http://localhost:8000/admin/getFilterItems`, {
         filter: filter,
+        duration: duration,
+        startDate: startDate,
+        endDate: endDate,
       })
       .then((res) => {
         console.log(res.data.items);
@@ -103,16 +114,6 @@ function Summary() {
     link.remove();
   };
 
-  const handleSelect = (date) => {
-    console.log(date);
-  };
-
-  const selectionRange = {
-    startDate: new Date(),
-    endDate: new Date(),
-    key: "selection",
-  };
-
   return (
     <>
       <div className="main-filter">
@@ -135,7 +136,8 @@ function Summary() {
               </Select>
             </FormControl>
           </Box>
-          <Box sx={{ minWidth: 120 }}>
+          <div class="vl"></div>
+          <Box className="duration" sx={{ minWidth: 120 }}>
             <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Duration</InputLabel>
               <Select
@@ -145,13 +147,53 @@ function Summary() {
                 label="Duration"
                 onChange={handleDurationChange}
               >
-                <MenuItem value={"Lost Items"}>Lost Item</MenuItem>
-                <MenuItem value={"Found Items"}>Found Item</MenuItem>
-                <MenuItem value={"Claimed Items"}>Claimed Item</MenuItem>
-                <MenuItem value={"All Items"}>All Item</MenuItem>
+                <MenuItem value={"This Wee"}>This Week</MenuItem>
+                <MenuItem value={"Last Week"}>Last Week</MenuItem>
+                <MenuItem value={"This Month"}>This Month</MenuItem>
+                <MenuItem value={"Last Month"}>Last Month</MenuItem>
+                <MenuItem value={"Last 6 Moth"}>Last 6 Month</MenuItem>
+                <MenuItem value={"This Year"}>This Year</MenuItem>
+                <MenuItem value={"Last Year"}>Last Year</MenuItem>
+                <MenuItem value={"Manually"}>Select Manually</MenuItem>
               </Select>
             </FormControl>
           </Box>
+          {manual ? (
+            <div className="manualy_duration">
+              <input
+                className="duration-box"
+                type="date"
+                name="date"
+                placeholder="Select found date"
+                value={startDate}
+                max={new Date().toISOString().split("T")[0]}
+                onChange={(event) => {
+                  setDuration("");
+                  setStartDate(event.target.value);
+                }}
+                ref={dateInputRef}
+              ></input>
+              <p>To</p>
+              <input
+                className="duration-box"
+                type="date"
+                name="date"
+                placeholder="Select found date"
+                value={endDate}
+                max={new Date().toISOString().split("T")[0]}
+                onChange={(event) => {
+                  setDuration("");
+                  setEndDate(event.target.value);
+                }}
+                ref={dateInputRef}
+              ></input>
+            </div>
+          ) : (
+            <></>
+          )}
+          <button className="export-btn" onClick={handleFilter}>
+            Apply Filter
+          </button>
           {/* <label>
             <DateRangePicker
               ranges={[selectionRange]}
@@ -159,9 +201,6 @@ function Summary() {
             />
           </label> */}
         </div>
-        <button className="filter-btn" onClick={handleFilter}>
-          Apply Filter
-        </button>
         <button className="export-btn" onClick={exportExcel}>
           Export
         </button>

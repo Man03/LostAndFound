@@ -18,9 +18,6 @@ const storeFoundItem = asyncHandler(async (req, res) => {
 
     var formattedDate = moment(foundDate).format("DD-MM-YYYY");
 
-    console.log(formattedDate);
-
-
     const item = await Item.create({
       ItemType: "Found",
       itemName,
@@ -72,12 +69,14 @@ const storeLostItem = asyncHandler(async (req, res) => {
       throw new Error("Please add all field");
     }
 
+    var formattedDate = moment(lostDate).format("DD-MM-YYYY");
+
     const item = await Item.create({
       ItemType: "Lost",
       itemName: itemName,
       description: description,
       location: location,
-      lostDate: lostDate,
+      lostDate: formattedDate,
       foundDate: "-",
       listedBy: student.userName,
       department: student.department,
