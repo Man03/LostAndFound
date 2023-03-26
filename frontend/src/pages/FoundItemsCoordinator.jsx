@@ -15,6 +15,11 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 // import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function FoundItemsCoordinator() {
   // const navigate = useNavigate();
@@ -234,6 +239,7 @@ function FoundItemsCoordinator() {
                               <div>
                                 <Dialog
                                   open={open}
+                                  TransitionComponent={Transition}
                                   onClose={handleClose}
                                   aria-labelledby="alert-dialog-title"
                                   aria-describedby="alert-dialog-description"
@@ -270,6 +276,7 @@ function FoundItemsCoordinator() {
                                   <DialogActions>
                                     <Button onClick={handleClose}>
                                       <p
+                                        className="yes_btn"
                                         onClick={() => {
                                           HandleUpdate(deleteItem);
                                         }}
@@ -278,7 +285,7 @@ function FoundItemsCoordinator() {
                                       </p>
                                     </Button>
                                     <Button onClick={handleClose} autoFocus>
-                                      No
+                                      <p className="no_btn">No</p>
                                     </Button>
                                   </DialogActions>
                                 </Dialog>

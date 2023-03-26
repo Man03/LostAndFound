@@ -903,3 +903,19 @@ input::placeholder {
 .filter-select{
   background-color:#DFEFFF;
 }
+
+
+/* ------------------------------------------------------------Confirmation DialoagBOX--------------------------> */
+.yes_btn{
+  background-color:red;
+  color: white;
+  padding: 7px 25px;
+  border-radius: 8px;
+}
+.no_btn{
+  background-color:#29A647;
+  color: white;
+  padding: 7px 25px;
+  border-radius: 8px;
+}
+/* ----------------------------------------------------------------------------------------------------------------------- */

@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { HiFilter } from "react-icons/hi";
 // import jsPDF from "jspdf";
 // import "jspdf-autotable";
@@ -9,6 +9,9 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import { DateRangePicker } from "react-date-range";
+import "react-date-range/dist/styles.css"; // main style file
+import "react-date-range/dist/theme/default.css"; // theme css file
 
 function Summary() {
   const [item, setItem] = useState([]);
@@ -21,6 +24,7 @@ function Summary() {
   const [refoundItem, resetFoundItem] = useState(false);
   const [reclaimedItem, resetClaimedItem] = useState(false);
   const [reallItem, resetAllItem] = useState(true);
+  const [duration, setDuration] = useState("All time");
 
   const handleChange = (event) => {
     setFilter(event.target.value);
@@ -47,28 +51,21 @@ function Summary() {
     }
   };
 
+  const handleDurationChange = (event) => {
+    setFilter(event.target.value);
+  };
+
   const handleFilter = async (event) => {
     event.preventDefault();
     axios
       .post(`http://localhost:8000/admin/getFilterItems`, {
         filter: filter,
       })
-      .then(
-        (res) => {
-          console.log(res.data.items);
-          const data = res.data.items;
-          setItem(data);
-        }
-        // axios.spread((res1) => {
-        //   // const dataWithIndex = res1.data.items.map((itemData, index) => ({
-        //   //   ...itemData,
-        //   //   index: index + 1,
-        //   const data = res1.data.items;
-        //   // }));
-        //   console.log(data);
-        //   setItem(data);
-        // })
-      );
+      .then((res) => {
+        console.log(res.data.items);
+        const data = res.data.items;
+        setItem(data);
+      });
     if (lostItem) {
       resetLostItem(true);
       resetFoundItem(false);
@@ -106,6 +103,16 @@ function Summary() {
     link.remove();
   };
 
+  const handleSelect = (date) => {
+    console.log(date);
+  };
+
+  const selectionRange = {
+    startDate: new Date(),
+    endDate: new Date(),
+    key: "selection",
+  };
+
   return (
     <>
       <div className="main-filter">
@@ -128,6 +135,29 @@ function Summary() {
               </Select>
             </FormControl>
           </Box>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="demo-simple-select-label">Duration</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={duration}
+                label="Duration"
+                onChange={handleDurationChange}
+              >
+                <MenuItem value={"Lost Items"}>Lost Item</MenuItem>
+                <MenuItem value={"Found Items"}>Found Item</MenuItem>
+                <MenuItem value={"Claimed Items"}>Claimed Item</MenuItem>
+                <MenuItem value={"All Items"}>All Item</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+          {/* <label>
+            <DateRangePicker
+              ranges={[selectionRange]}
+              onChange={handleSelect}
+            />
+          </label> */}
         </div>
         <button className="filter-btn" onClick={handleFilter}>
           Apply Filter
@@ -160,14 +190,14 @@ function Summary() {
           )}
         </div>
         <div className="container table">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-scroll max-w-[1100px]">
             <div>
               <div>
                 <div className="shadow-md rounded my-5">
                   {relostItem ? (
-                    <table className="min-w-max bg-white w-full table-auto">
+                    <table className="min-w-max bg-white table-auto">
                       <thead>
-                        <tr className="border-b bg-gray-200 text-black-600 uppercase text-sm leading-normal">
+                        <tr className="border-b bg-gray-200 text-black-600 uppercase text-xs leading-normal">
                           <th className="py-2 px-5 text-center">Index</th>
                           <th className="py-2 px-5 text-center">Item Type</th>
                           <th className="py-3 px-6 text-center">Item name</th>
@@ -179,7 +209,7 @@ function Summary() {
                           <th className="py-3 px-6 text-center">Status</th>
                         </tr>
                       </thead>
-                      <tbody className="text-black-600 text-sm font-light">
+                      <tbody className="text-black-600 text-xs font-light">
                         {item.map((itemData, index) => (
                           <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
                             <td className="py-3 px-6 text-center">

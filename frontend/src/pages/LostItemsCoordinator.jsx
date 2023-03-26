@@ -276,6 +276,7 @@ function LostItemsCoordinator() {
                                   <DialogActions>
                                     <Button onClick={handleClose}>
                                       <p
+                                        className="yes_btn"
                                         onClick={() => {
                                           HandleUpdate(deleteItem);
                                         }}
@@ -284,7 +285,7 @@ function LostItemsCoordinator() {
                                       </p>
                                     </Button>
                                     <Button onClick={handleClose} autoFocus>
-                                      No
+                                      <p className="no_btn">No</p>
                                     </Button>
                                   </DialogActions>
                                 </Dialog>

@@ -3,6 +3,7 @@ const Coordinator = require("../model/coordinatorModel");
 const Student = require("../model/studentModel");
 const asyncHandler = require("express-async-handler");
 const { findById } = require("../model/ItemModel");
+const moment = require("moment");
 
 const storeFoundItem = asyncHandler(async (req, res) => {
   try {
@@ -15,13 +16,18 @@ const storeFoundItem = asyncHandler(async (req, res) => {
       throw new Error("Please add all field");
     }
 
+    var formattedDate = moment(foundDate).format("DD-MM-YYYY");
+
+    console.log(formattedDate);
+
+
     const item = await Item.create({
       ItemType: "Found",
       itemName,
       description,
       location,
       lostDate: "-",
-      foundDate,
+      foundDate : formattedDate,
       listedBy: coordinator.userName,
       department: coordinator.department,
       status: "Not claimed",
