@@ -6,6 +6,7 @@ const Coordinator = require("../model/coordinatorModel");
 const Student = require("../model/studentModel");
 const Department = require("../model/departmentModel");
 const jwt = require("jsonwebtoken");
+const moment = require("moment");
 
 // For Excel
 const xlsx = require("xlsx");
@@ -273,41 +274,746 @@ const exportfile = async (req, res) => {
 
 const getItemsByFilter = async (req,res) => {
   try{
-  const { filter } = req.body;
-    console.log(filter);
+  const { filter,duration,startDate,endDate } = req.body;
+
+    // --------------------------------------------------- Lost Items ---------------------------------------------------------------------------------
+
     if(filter === "Lost Items"){
-      const items = await Item.find({
-        ItemType : "Lost",
-      })
-      // console.log(items);
-      res.status(200).json({
-        items: items,
-      });
+      if(duration === "All Time"){
+        const items = await Item.find({
+          ItemType : "Lost",
+        })
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last Week"){
+        const startOfLastWeek = moment().subtract(1, 'weeks').startOf('week').format('YYYY-MM-DD');
+        const endOfLastWeek = moment().subtract(1, 'weeks').endOf('week').format('YYYY-MM-DD');
+
+        console.log(startOfLastWeek);
+        console.log(endOfLastWeek);
+
+        const items = await Item.find({
+          ItemType : "Lost",
+          ListedAt: {
+            $gte: startOfLastWeek,
+            $lte: endOfLastWeek
+          }
+        })
+
+        // console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "This Week"){
+        const startOfThisWeek = moment().startOf('week').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfThisWeek);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ItemType : "Lost",
+          ListedAt: {
+            $gte: startOfThisWeek,
+            $lte: endOfToday,
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "This Month"){
+        const startOfThisMonth = moment().startOf('month').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfThisMonth);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ItemType : "Lost",
+          ListedAt: {
+            $gte: startOfThisMonth,
+            $lte: endOfToday
+          }
+        })
+
+        // console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last Month"){
+        const currentDate = moment();
+        const startOfLast30Days = moment(currentDate).subtract(30, 'days').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfLast30Days);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ItemType : "Lost",
+          ListedAt: {
+            $gte: startOfLast30Days,
+            $lte: endOfToday
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last 6 Month"){
+        const currentDate = moment();
+        const startOfLast180Days = moment(currentDate).subtract(180, 'days').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfLast180Days);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ItemType : "Lost",
+          ListedAt: {
+            $gte: startOfLast180Days,
+            $lte: endOfToday
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "This Year"){
+        const currentYear = moment().year();
+        const startOfCurrentYear = moment(`${currentYear}-01-01`).format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfCurrentYear);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ItemType : "Lost",
+          ListedAt: {
+            $gte: startOfCurrentYear,
+            $lte: endOfToday
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last Year"){
+        const currentYear = moment().year();
+        const startOfLastYear = moment(`${currentYear - 1}-01-01`).format('YYYY-MM-DD');
+        const endOfLastYear = moment(`${currentYear - 1}-12-31`).format('YYYY-MM-DD')
+
+        console.log(startOfLastYear);
+        console.log(endOfLastYear);
+
+        const items = await Item.find({
+          ItemType : "Lost",
+          ListedAt: {
+            $gte: startOfLastYear,
+            $lte: endOfLastYear
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Manually"){
+
+        var sd = moment(startDate).format("YYYY-MM-DD");
+        var ed = moment(endDate).format("YYYY-MM-DD");
+
+        console.log(sd);
+        console.log(ed);
+
+        const items = await Item.find({
+          ItemType : "Lost",
+          ListedAt : {
+            $gte : sd,
+            $lte : ed
+          }
+        })
+
+        res.status(200).json({
+          items: items,
+        });
+
+      }
     } 
+
+  // --------------------------------------------------- Found Items ---------------------------------------------------------------------------------
+
     if(filter === "Found Items"){
-      const items = await Item.find({ 
-        ItemType : "Found",
-      })
-      // console.log(items);
-      res.status(200).json({
-        items: items,
-      });
+      if(duration === "All Time"){
+        const items = await Item.find({
+          ItemType : "Found",
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last Week"){
+        const startOfLastWeek = moment().subtract(1, 'weeks').startOf('week').format('YYYY-MM-DD');
+        const endOfLastWeek = moment().subtract(1, 'weeks').endOf('week').format('YYYY-MM-DD');
+
+        console.log(startOfLastWeek);
+        console.log(endOfLastWeek);
+
+        const items = await Item.find({
+          ItemType : "Found",
+          ListedAt: {
+            $gte: startOfLastWeek,
+            $lte: endOfLastWeek
+          }
+        })
+
+        // console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "This Week"){
+        const startOfThisWeek = moment().startOf('week').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfThisWeek);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ItemType : "Found",
+          ListedAt: {
+            $gte: startOfThisWeek,
+            $lte: endOfToday,
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "This Month"){
+        const startOfThisMonth = moment().startOf('month').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfThisMonth);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ItemType : "Found",
+          ListedAt: {
+            $gte: startOfThisMonth,
+            $lte: endOfToday
+          }
+        })
+
+        // console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last Month"){
+        const currentDate = moment();
+        const startOfLast30Days = moment(currentDate).subtract(30, 'days').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfLast30Days);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ItemType : "Found",
+          ListedAt: {
+            $gte: startOfLast30Days,
+            $lte: endOfToday
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last 6 Month"){
+        const currentDate = moment();
+        const startOfLast180Days = moment(currentDate).subtract(180, 'days').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfLast180Days);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ItemType : "Found",
+          ListedAt: {
+            $gte: startOfLast180Days,
+            $lte: endOfToday
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "This Year"){
+        const currentYear = moment().year();
+        const startOfCurrentYear = moment(`${currentYear}-01-01`).format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfCurrentYear);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ItemType : "Found",
+          ListedAt: {
+            $gte: startOfCurrentYear,
+            $lte: endOfToday
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last Year"){
+        const currentYear = moment().year();
+        const startOfLastYear = moment(`${currentYear - 1}-01-01`).format('YYYY-MM-DD');
+        const endOfLastYear = moment(`${currentYear - 1}-12-31`).format('YYYY-MM-DD')
+
+        console.log(startOfLastYear);
+        console.log(endOfLastYear);
+
+        const items = await Item.find({
+          ItemType : "Found",
+          ListedAt: {
+            $gte: startOfLastYear,
+            $lte: endOfLastYear
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Manually"){
+
+        var sd = moment(startDate).format("YYYY-MM-DD");
+        var ed = moment(endDate).format("YYYY-MM-DD");
+
+        console.log(sd);
+        console.log(ed);
+
+        const items = await Item.find({
+          ItemType : "Found",
+          ListedAt : {
+            $gte : sd,
+            $lte : ed
+          }
+        })
+
+        res.status(200).json({
+          items: items,
+        });
+
+      }
     } 
+
+  // --------------------------------------------------- Claimed Items ---------------------------------------------------------------------------------
+
     if(filter === "Claimed Items"){
-      const items = await Item.find({
-        status : "Claimed",
-      })
-      // console.log(items);
-      res.status(200).json({
-        items: items,
-      });
+      if(duration === "All Time"){
+        const items = await Item.find({
+          status : "Claimed",
+        })
+
+        // console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last Week"){
+        const startOfLastWeek = moment().subtract(1, 'weeks').startOf('week').format('YYYY-MM-DD');
+        const endOfLastWeek = moment().subtract(1, 'weeks').endOf('week').format('YYYY-MM-DD');
+
+        console.log(startOfLastWeek);
+        console.log(endOfLastWeek);
+
+        const items = await Item.find({
+          status : "Claimed",
+          ListedAt: {
+            $gte: startOfLastWeek,
+            $lte: endOfLastWeek
+          }
+        })
+
+        // console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "This Week"){
+        const startOfThisWeek = moment().startOf('week').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfThisWeek);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          status : "Claimed",
+          ListedAt: {
+            $gte: startOfThisWeek,
+            $lte: endOfToday,
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "This Month"){
+        const startOfThisMonth = moment().startOf('month').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfThisMonth);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          status : "Claimed",
+          ListedAt: {
+            $gte: startOfThisMonth,
+            $lte: endOfToday
+          }
+        })
+
+        // console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last Month"){
+        const currentDate = moment();
+        const startOfLast30Days = moment(currentDate).subtract(30, 'days').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfLast30Days);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          status : "Claimed",
+          ListedAt: {
+            $gte: startOfLast30Days,
+            $lte: endOfToday
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last 6 Month"){
+        const currentDate = moment();
+        const startOfLast180Days = moment(currentDate).subtract(180, 'days').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfLast180Days);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          status : "Claimed",
+          ListedAt: {
+            $gte: startOfLast180Days,
+            $lte: endOfToday
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "This Year"){
+        const currentYear = moment().year();
+        const startOfCurrentYear = moment(`${currentYear}-01-01`).format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfCurrentYear);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          status : "Claimed",
+          ListedAt: {
+            $gte: startOfCurrentYear,
+            $lte: endOfToday
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last Year"){
+        const currentYear = moment().year();
+        const startOfLastYear = moment(`${currentYear - 1}-01-01`).format('YYYY-MM-DD');
+        const endOfLastYear = moment(`${currentYear - 1}-12-31`).format('YYYY-MM-DD')
+
+        console.log(startOfLastYear);
+        console.log(endOfLastYear);
+
+        const items = await Item.find({
+          status : "Claimed",
+          ListedAt: {
+            $gte: startOfLastYear,
+            $lte: endOfLastYear
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Manually"){
+
+        var sd = moment(startDate).format("YYYY-MM-DD");
+        var ed = moment(endDate).format("YYYY-MM-DD");
+
+        console.log(sd);
+        console.log(ed);
+
+        const items = await Item.find({
+          ItemType : "Claimed",
+          ListedAt : {
+            $gte : sd,
+            $lte : ed
+          }
+        })
+
+        res.status(200).json({
+          items: items,
+        });
+
+      }
     } 
+
+      // --------------------------------------------------- All Items ---------------------------------------------------------------------------------
+
     if(filter === "All Items"){
-      const items = await Item.find();
-      // console.log(items);
-      res.status(200).json({
-        items: items,
-      });
+      if(duration === "All Time"){
+        const items = await Item.find()
+
+        // console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last Week"){
+        const startOfLastWeek = moment().subtract(1, 'weeks').startOf('week').format('YYYY-MM-DD');
+        const endOfLastWeek = moment().subtract(1, 'weeks').endOf('week').format('YYYY-MM-DD');
+
+        console.log(startOfLastWeek);
+        console.log(endOfLastWeek);
+
+        const items = await Item.find({
+          ListedAt: {
+            $gte: startOfLastWeek,
+            $lte: endOfLastWeek
+          }
+        })
+
+        // console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "This Week"){
+        const startOfThisWeek = moment().startOf('week').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfThisWeek);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ListedAt: {
+            $gte: startOfThisWeek,
+            $lte: endOfToday,
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "This Month"){
+        const startOfThisMonth = moment().startOf('month').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfThisMonth);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ListedAt: {
+            $gte: startOfThisMonth,
+            $lte: endOfToday
+          }
+        })
+
+        // console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last Month"){
+        const currentDate = moment();
+        const startOfLast30Days = moment(currentDate).subtract(30, 'days').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfLast30Days);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ListedAt: {
+            $gte: startOfLast30Days,
+            $lte: endOfToday
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last 6 Month"){
+        const currentDate = moment();
+        const startOfLast180Days = moment(currentDate).subtract(180, 'days').format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfLast180Days);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ListedAt: {
+            $gte: startOfLast180Days,
+            $lte: endOfToday
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "This Year"){
+        const currentYear = moment().year();
+        const startOfCurrentYear = moment(`${currentYear}-01-01`).format('YYYY-MM-DD');
+        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+
+        console.log(startOfCurrentYear);
+        console.log(endOfToday);
+
+        const items = await Item.find({
+          ListedAt: {
+            $gte: startOfCurrentYear,
+            $lte: endOfToday
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Last Year"){
+        const currentYear = moment().year();
+        const startOfLastYear = moment(`${currentYear - 1}-01-01`).format('YYYY-MM-DD');
+        const endOfLastYear = moment(`${currentYear - 1}-12-31`).format('YYYY-MM-DD')
+
+        console.log(startOfLastYear);
+        console.log(endOfLastYear);
+
+        const items = await Item.find({
+          ListedAt: {
+            $gte: startOfLastYear,
+            $lte: endOfLastYear
+          }
+        })
+
+        console.log(items);
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+      if(duration === "Manually"){
+
+        var sd = moment(startDate).format("YYYY-MM-DD");
+        var ed = moment(endDate).format("YYYY-MM-DD");
+
+        console.log(sd);
+        console.log(ed);
+
+        const items = await Item.find({
+          ListedAt : {
+            $gte : sd,
+            $lte : ed
+          }
+        })
+
+        res.status(200).json({
+          items: items,
+        });
+
+      }
     } 
   }
   catch(error){

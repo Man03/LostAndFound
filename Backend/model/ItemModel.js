@@ -3,7 +3,7 @@ const moment = require("moment");
 
 var ListedAt = function () {
   var d = new Date();
-  var formattedDate = moment(d).format("DD-MM-YYYY");
+  var formattedDate = moment(d).format("YYYY-MM-DD");
   return formattedDate;
 };
 

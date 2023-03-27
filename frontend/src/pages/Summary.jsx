@@ -11,6 +11,7 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
+import moment from "moment";
 
 function Summary() {
   const [item, setItem] = useState([]);
@@ -55,7 +56,7 @@ function Summary() {
   };
 
   const handleDurationChange = (event) => {
-    setFilter(event.target.value);
+    setDuration(event.target.value);
     if (event.target.value === "Manually") {
       setManual(true);
     } else {
@@ -147,11 +148,12 @@ function Summary() {
                 label="Duration"
                 onChange={handleDurationChange}
               >
-                <MenuItem value={"This Wee"}>This Week</MenuItem>
+                <MenuItem value={"All Time"}>All Time</MenuItem>
+                <MenuItem value={"This Week"}>This Week</MenuItem>
                 <MenuItem value={"Last Week"}>Last Week</MenuItem>
                 <MenuItem value={"This Month"}>This Month</MenuItem>
                 <MenuItem value={"Last Month"}>Last Month</MenuItem>
-                <MenuItem value={"Last 6 Moth"}>Last 6 Month</MenuItem>
+                <MenuItem value={"Last 6 Month"}>Last 6 Months</MenuItem>
                 <MenuItem value={"This Year"}>This Year</MenuItem>
                 <MenuItem value={"Last Year"}>Last Year</MenuItem>
                 <MenuItem value={"Manually"}>Select Manually</MenuItem>
@@ -168,7 +170,7 @@ function Summary() {
                 value={startDate}
                 max={new Date().toISOString().split("T")[0]}
                 onChange={(event) => {
-                  setDuration("");
+                  // setDuration("");
                   setStartDate(event.target.value);
                 }}
                 ref={dateInputRef}
@@ -182,7 +184,7 @@ function Summary() {
                 value={endDate}
                 max={new Date().toISOString().split("T")[0]}
                 onChange={(event) => {
-                  setDuration("");
+                  // setDuration("");
                   setEndDate(event.target.value);
                 }}
                 ref={dateInputRef}
@@ -286,7 +288,7 @@ function Summary() {
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
-                                {itemData.ListedAt}
+                                {moment(itemData.ListedAt).format("DD-MM-YYYY")}
                               </div>
                             </td>
                             <td className="py-3 px-6 text-center">
@@ -356,7 +358,7 @@ function Summary() {
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
-                                {itemData.ListedAt}
+                                {moment(itemData.ListedAt).format("DD-MM-YYYY")}
                               </div>
                             </td>
                             <td className="py-3 px-6 text-center">
@@ -432,7 +434,7 @@ function Summary() {
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
-                                {itemData.ListedAt}
+                                {moment(itemData.ListedAt).format("DD-MM-YYYY")}
                               </div>
                             </td>
                             <td className="py-3 px-6 text-center">
@@ -508,7 +510,7 @@ function Summary() {
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
-                                {itemData.ListedAt}
+                                {moment(itemData.ListedAt).format("DD-MM-YYYY")}
                               </div>
                             </td>
                             <td className="py-3 px-6 text-center">
