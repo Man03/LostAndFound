@@ -37,7 +37,7 @@ function AllUser() {
 
   useEffect(() => {
     axios
-      .post("http://localhost:8000/coordinator/req", {
+      .post("https://lnfbackend.onrender.com/coordinator/req", {
         status: "Active",
       })
       .then((res) => {
@@ -46,7 +46,7 @@ function AllUser() {
       });
 
     axios
-      .post("http://localhost:8000/student/req", { status: "Active" })
+      .post("https://lnfbackend.onrender.com/student/req", { status: "Active" })
       .then((res) => {
         setStudent(res.data.student);
       });
@@ -54,7 +54,7 @@ function AllUser() {
 
   const HandleCoordinatorDelete = async (user) => {
     await axios
-      .post("http://localhost:8000/coordinator/delete", {
+      .post("https://lnfbackend.onrender.com/coordinator/delete", {
         email: user.email,
       })
       .then((res) => {
@@ -66,7 +66,7 @@ function AllUser() {
   };
   const HandleStudentDelete = async (user) => {
     await axios
-      .post("http://localhost:8000/student/delete", {
+      .post("https://lnfbackend.onrender.com/student/delete", {
         email: user.email,
       })
       .then((res) => {

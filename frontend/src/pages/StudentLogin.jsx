@@ -15,7 +15,7 @@ export default function StudentLogin() {
               <p>Login to L&F Helper</p>
               <h6 className="notice-text">Login with DDU Account</h6>
               <a
-                href="http://localhost:8000/auth/google"
+                href="https://lnfbackend.onrender.com/auth/google"
                 type="submit"
                 className="glogo-box"
                 id="glogin-btn"

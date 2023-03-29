@@ -6,7 +6,7 @@ function AllCoordinatorTable(coordinator) {
   const HandleDelete = async (event) => {
     event.preventDefault();
     await axios
-      .post("http://localhost:8000/coordinator/delete", {
+      .post("https://lnfbackend.onrender.com/coordinator/delete", {
         email: coordinator.coordinator.email,
       })
       .then((res) => {

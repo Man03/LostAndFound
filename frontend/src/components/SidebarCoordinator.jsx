@@ -18,7 +18,7 @@ function SideBarCoordinator() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/coordinator/getme", {
+      .get("https://lnfbackend.onrender.com/coordinator/getme", {
         withCredentials: true,
       })
       .then((response) => {

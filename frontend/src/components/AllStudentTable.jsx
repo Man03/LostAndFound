@@ -26,7 +26,7 @@ function AllStudentTable(student) {
   const HandleDelete = async (event, user) => {
     event.preventDefault();
     await axios
-      .post("http://localhost:8000/student/delete", {
+      .post("https://lnfbackend.onrender.com/student/delete", {
         email: user.email,
       })
       .then((res) => {

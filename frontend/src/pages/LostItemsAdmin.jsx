@@ -20,7 +20,7 @@ function LostItemsAdmin() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/coordinator/getLostItems`) // Here i use same route that used in Coordinator
+      .get(`https://lnfbackend.onrender.com/coordinator/getLostItems`) // Here i use same route that used in Coordinator
       .then((res) => {
         const data = res.data.items;
         setItem(data);
@@ -30,7 +30,7 @@ function LostItemsAdmin() {
 
   const ifQueryEmpty = async () => {
     axios
-      .get(`http://localhost:8000/coordinator/getLostItems`) // Here i use same route that used in Coordinator
+      .get(`https://lnfbackend.onrender.com/coordinator/getLostItems`) // Here i use same route that used in Coordinator
       .then((res) => {
         const data = res.data.items;
         setItem(data);
@@ -46,7 +46,7 @@ function LostItemsAdmin() {
     }
     axios
       .get(
-        `http://localhost:8000/coordinator/getLostItemsBySearch?q=${query}` // Here i use same route that used in Coordinator
+        `https://lnfbackend.onrender.com/coordinator/getLostItemsBySearch?q=${query}` // Here i use same route that used in Coordinator
       )
       .then((res) => {
         const data = res.data.items;

@@ -30,7 +30,7 @@ function ListFounditems() {
 
       await axios
         .post(
-          "http://localhost:8000/items/storeFounditems",
+          "https://lnfbackend.onrender.com/items/storeFounditems",
           {
             itemName: itemName,
             description: description,

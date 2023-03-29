@@ -16,7 +16,7 @@ function LoginCoordinator() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/coordinator/dashboard", {
+      .get("https://lnfbackend.onrender.com/coordinator/dashboard", {
         withCredentials: true,
       })
       .then((response) => navigate("/coordinator/dashboard"));
@@ -31,7 +31,7 @@ function LoginCoordinator() {
 
       await axios
         .post(
-          "http://localhost:8000/coordinator/login",
+          "https://lnfbackend.onrender.com/coordinator/login",
           {
             email: email,
             password: password,

@@ -15,7 +15,7 @@ function LoginAdmin() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/admin/dashboard", {
+      .get("https://lnfbackend.onrender.com/admin/dashboard", {
         withCredentials: true,
       })
       .then((response) => navigate("/admin/dashboard"));
@@ -30,7 +30,7 @@ function LoginAdmin() {
 
       await axios
         .post(
-          "http://localhost:8000/admin/login",
+          "https://lnfbackend.onrender.com/admin/login",
           {
             email: email,
             password: password,

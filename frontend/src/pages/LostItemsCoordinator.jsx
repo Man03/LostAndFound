@@ -44,7 +44,7 @@ function LostItemsCoordinator() {
 
   useEffect(() => {
     axios
-      .all([axios.get(`http://localhost:8000/coordinator/getLostItems`)])
+      .all([axios.get(`https://lnfbackend.onrender.com/coordinator/getLostItems`)])
       .then(
         axios.spread((res1) => {
           const dataWithIndex = res1.data.items.map((itemData, index) => ({
@@ -58,7 +58,7 @@ function LostItemsCoordinator() {
 
   const ifQueryEmpty = async () => {
     axios
-      .all([axios.get(`http://localhost:8000/coordinator/getLostItems`)])
+      .all([axios.get(`https://lnfbackend.onrender.com/coordinator/getLostItems`)])
       .then(
         axios.spread((res1) => {
           const dataWithIndex = res1.data.items.map((itemData, index) => ({
@@ -79,7 +79,7 @@ function LostItemsCoordinator() {
     axios
       .all([
         axios.get(
-          `http://localhost:8000/coordinator/getLostItemsBySearch?q=${query}`
+          `https://lnfbackend.onrender.com/coordinator/getLostItemsBySearch?q=${query}`
         ),
       ])
       .then(
@@ -103,7 +103,7 @@ function LostItemsCoordinator() {
     setLoading(true);
     await axios
       .post(
-        "http://localhost:8000/items/updateStatusOfLostItems",
+        "https://lnfbackend.onrender.com/items/updateStatusOfLostItems",
         {
           _id: itemData._id,
         },

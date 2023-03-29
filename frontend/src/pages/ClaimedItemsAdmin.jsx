@@ -20,7 +20,7 @@ function ClaimedItemsAdmin() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/admin/getClaimedItems`) // Here i use same route that used in Coordinator
+      .get(`https://lnfbackend.onrender.com/admin/getClaimedItems`) // Here i use same route that used in Coordinator
       .then((res) => {
         const data = res.data.items;
         setItem(data);
@@ -30,7 +30,7 @@ function ClaimedItemsAdmin() {
 
   const ifQueryEmpty = async () => {
     axios
-      .all([axios.get(`http://localhost:8000/admin/getClaimedItems`)]) // Here i use same route that used in Coordinator
+      .all([axios.get(`https://lnfbackend.onrender.com/admin/getClaimedItems`)]) // Here i use same route that used in Coordinator
       .then(
         axios.spread((res1) => {
           const dataWithIndex = res1.data.items.map((itemData, index) => ({
@@ -51,7 +51,7 @@ function ClaimedItemsAdmin() {
     axios
       .all([
         axios.get(
-          `http://localhost:8000/admin/getClaimedItemsBySearch?q=${query}` // Here i use same route that used in Coordinator
+          `https://lnfbackend.onrender.com/admin/getClaimedItemsBySearch?q=${query}` // Here i use same route that used in Coordinator
         ),
       ])
       .then(

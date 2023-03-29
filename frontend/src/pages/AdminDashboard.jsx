@@ -53,13 +53,13 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   useEffect(() => {
     axios
-      .get("http://localhost:8000/admin/dashboard", {
+      .get("https://lnfbackend.onrender.com/admin/dashboard", {
         withCredentials: true,
       })
       .then((response) => {})
       .catch((err) => navigate("/admin/login"));
     axios
-      .get("http://localhost:8000/admin/getdept", { withCredentials: true })
+      .get("https://lnfbackend.onrender.com/admin/getdept", { withCredentials: true })
       .then((response) => setAll(response.data.depts));
   });
 
@@ -67,7 +67,7 @@ export default function AdminDashboard() {
     event.preventDefault();
     await axios
       .post(
-        "http://localhost:8000/admin/adddept",
+        "https://lnfbackend.onrender.com/admin/adddept",
         {
           department: dept,
         },
@@ -85,7 +85,7 @@ export default function AdminDashboard() {
   const deptDelete = async (event, department) => {
     event.preventDefault();
     await axios
-      .post("http://localhost:8000/admin/deletedept", {
+      .post("https://lnfbackend.onrender.com/admin/deletedept", {
         department: department,
       })
       .then((res) => {

@@ -29,19 +29,19 @@ function CoordinatorDashboard() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/coordinator/dashboard", {
+      .get("https://lnfbackend.onrender.com/coordinator/dashboard", {
         withCredentials: true,
       })
       .then((response) => {})
       .catch((err) => navigate("/coordinator/login"));
     axios
-      .get("http://localhost:8000/coordinator/getme", {
+      .get("https://lnfbackend.onrender.com/coordinator/getme", {
         withCredentials: true,
       })
       .then((response) => {
         setUser(response.data.userName);
       });
-    // fetch("http://localhost:8000/coordinator/getme")
+    // fetch("https://lnfbackend.onrender.com/coordinator/getme")
     //   .then((res) => res.json())
     //   .then((data) => setUserName(data.userName))sss
     //   .catch((err) => console.log(err));

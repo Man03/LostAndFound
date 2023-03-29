@@ -105,7 +105,7 @@ function Summary() {
     setLoading(true);
     event.preventDefault();
     axios
-      .post(`http://localhost:8000/admin/getFilterItems`, {
+      .post(`https://lnfbackend.onrender.com/admin/getFilterItems`, {
         filter: filter,
         duration: duration,
         startDate: startDate,

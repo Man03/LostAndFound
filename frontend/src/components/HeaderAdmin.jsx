@@ -10,7 +10,7 @@ function Header() {
   const handleLogout = async (event) => {
     event.preventDefault();
     await axios
-      .get("http://localhost:8000/admin/logout", {
+      .get("https://lnfbackend.onrender.com/admin/logout", {
         withCredentials: true,
       })
       .then((response) => navigate("/admin/login"));

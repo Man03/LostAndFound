@@ -20,7 +20,7 @@ function MyListingStudent() {
   useEffect(() => {
     axios
       .all([
-        axios.get(`http://localhost:8000/student/getMyListing`, {
+        axios.get(`https://lnfbackend.onrender.com/student/getMyListing`, {
           withCredentials: true,
         }),
       ])
@@ -38,7 +38,7 @@ function MyListingStudent() {
   const ifQueryEmpty = async () => {
     axios
       .all([
-        axios.get(`http://localhost:8000/student/getMyListing`, {
+        axios.get(`https://lnfbackend.onrender.com/student/getMyListing`, {
           withCredentials: true,
         }),
       ])
@@ -62,7 +62,7 @@ function MyListingStudent() {
       axios
         .all([
           axios.get(
-            `http://localhost:8000/student/getMyListingBySearch?q=${query}`,
+            `https://lnfbackend.onrender.com/student/getMyListingBySearch?q=${query}`,
             { withCredentials: true }
           ),
         ])

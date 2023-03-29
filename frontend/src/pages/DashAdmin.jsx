@@ -23,7 +23,7 @@ function DashAdmin() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get(`http://localhost:8000/admin/dash`).then((response) => {
+    axios.get(`https://lnfbackend.onrender.com/admin/dash`).then((response) => {
       setTotalUsers(response.data.totalUsers);
       setTotalClaimedItems(response.data.totalClaimedItems);
       setTotalLostAndFoundItem(response.data.totalLostAndFoundItems);

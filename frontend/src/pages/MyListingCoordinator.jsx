@@ -20,7 +20,7 @@ function MyListingCoordinator() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/coordinator/getMyListing`, {
+      .get(`https://lnfbackend.onrender.com/coordinator/getMyListing`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -32,7 +32,7 @@ function MyListingCoordinator() {
 
   const ifQueryEmpty = async () => {
     axios
-      .get(`http://localhost:8000/coordinator/getMyListing`, {
+      .get(`https://lnfbackend.onrender.com/coordinator/getMyListing`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -49,7 +49,7 @@ function MyListingCoordinator() {
     }
     axios
       .get(
-        `http://localhost:8000/coordinator/getMyListingBySearch?q=${query}`,
+        `https://lnfbackend.onrender.com/coordinator/getMyListingBySearch?q=${query}`,
         { withCredentials: true }
       )
       .then((res) => {
@@ -68,7 +68,7 @@ function MyListingCoordinator() {
     event.preventDefault();
     await axios
       .post(
-        "http://localhost:8000/items/updateStatus",
+        "https://lnfbackend.onrender.com/items/updateStatus",
         {
           itemName: item.itemName,
         },

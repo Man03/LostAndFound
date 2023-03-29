@@ -21,7 +21,7 @@ function AddCoordinator() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/admin/getdept")
+      .get("https://lnfbackend.onrender.com/admin/getdept")
       .then((response) => setAll(response.data.depts), setLoading(false));
   });
 
@@ -43,7 +43,7 @@ function AddCoordinator() {
       // make a POST request to the login route on the back-end server
 
       await axios
-        .post("http://localhost:8000/coordinator/signup", {
+        .post("https://lnfbackend.onrender.com/coordinator/signup", {
           userName: userName,
           email: email,
           department: department,

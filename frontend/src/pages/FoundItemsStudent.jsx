@@ -17,7 +17,7 @@ function FoundItemsStudent() {
 
   useEffect(() => {
     axios
-      .all([axios.get(`http://localhost:8000/coordinator/getFoundItems`)])
+      .all([axios.get(`https://lnfbackend.onrender.com/coordinator/getFoundItems`)])
       .then(
         axios.spread((res1) => {
           const dataWithIndex = res1.data.items.map((itemData, index) => ({
@@ -31,7 +31,7 @@ function FoundItemsStudent() {
 
   const ifQueryEmpty = async () => {
     axios
-      .all([axios.get(`http://localhost:8000/coordinator/getFoundItems`)])
+      .all([axios.get(`https://lnfbackend.onrender.com/coordinator/getFoundItems`)])
       .then(
         axios.spread((res1) => {
           const dataWithIndex = res1.data.items.map((itemData, index) => ({
@@ -52,7 +52,7 @@ function FoundItemsStudent() {
     axios
       .all([
         axios.get(
-          `http://localhost:8000/coordinator/getFoundItemsBySearch?q=${query}`
+          `https://lnfbackend.onrender.com/coordinator/getFoundItemsBySearch?q=${query}`
         ),
       ])
       .then(

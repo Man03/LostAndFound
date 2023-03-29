@@ -25,12 +25,12 @@ function StudentDashboard() {
   // const navigate = useNavigate();
   useEffect(() => {
     axios
-      .get("http://localhost:8000/student/dashboard", {
+      .get("https://lnfbackend.onrender.com/student/dashboard", {
         withCredentials: true,
       })
       .then((response) => {});
     axios
-      .get("http://localhost:8000/student/getme", {
+      .get("https://lnfbackend.onrender.com/student/getme", {
         withCredentials: true,
       })
       .then((response) => {
