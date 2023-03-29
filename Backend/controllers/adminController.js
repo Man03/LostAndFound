@@ -54,9 +54,10 @@ const signupAdmin = asyncHandler(async (req, res) => {
     });
 
     if (admin) {
-      const token = await admin.generateAuthToken();
+      const token = await admin.generateAuthToken(); // Generater Auth Token
       console.log(token);
 
+      // Save User
       await admin.save((err) => {
         if (err) {
           res.status(500).send({ message: err });
@@ -64,13 +65,9 @@ const signupAdmin = asyncHandler(async (req, res) => {
         }
 
         console.log("information of user: ");
-
-        console.log(admin.firstName);
-        console.log(admin.lastName);
-        console.log(admin.email);
-        console.log(admin.token);
       });
 
+      // json response
       res.status(201).json({
         message: "Register successfully",
         _id: admin.id,
@@ -101,8 +98,9 @@ const loginAdmin = asyncHandler(async (req, res) => {
     } else if (user && (await bcrypt.compare(password, user.password))) {
       const token = await user.generateAuthToken();
 
+      // Make jwt in cookie
       res.cookie("jwtokenAdmin", token, {
-        expires: new Date(Date.now() + 86400000),
+        expires: new Date(Date.now() + 1296000000), // For 15 Days
         httpOnly: true,
       });
 
@@ -125,7 +123,7 @@ const loginAdmin = asyncHandler(async (req, res) => {
 
 const logoutAdmin = async (req, res) => {
   try {
-    res.clearCookie("jwtokenAdmin", { path: "/" });
+    res.clearCookie("jwtokenAdmin", { path: "/" }); // learCookies
     res.status(200).send("user logout");
   } catch (error) {
     console.log(error);
@@ -200,6 +198,7 @@ const addDepartment = async (req, res) => {
       department: department,
     });
 
+    // Check - Department already exists or not And then proceed
     if (ckeckDepartment) {
       res.json({ message: "Department already Exists" });
     } else {
@@ -243,86 +242,119 @@ const getdept = async (req, res) => {
   }
 };
 
-// ---------------------------------------ExportAsExcel---------------------------------------------------------------->>>>>>>>>
+// --------------------------------------------------- Get Claimed Items ---------------------------------------------------------------------------------
 
-const exportfile = async (req, res) => {
-  var wb = xlsx.utils.book_new();
-  Item.find({}, { _id: 0 }, (err, data) => {
-    if (err) {
-      console.log("Error : ", err);
+const getClaimedItems = async (req, res) => {
+  try {
+    const items = await Item.find({
+      status: "Claimed",
+    });
+    if (!items) {
+      res.json({ message: "No Items" });
     } else {
-      var temp = JSON.stringify(data); // Convert JSON to Json string
-      temp = JSON.parse(temp); // Convert to object
-      var ws = xlsx.utils.json_to_sheet(temp); // Convert Json Object into sheet of EXCEL
-      xlsx.utils.book_append_sheet(wb, ws, "sheet1"); //Append sheets into wb
-      xlsx.writeFile(
-        //Now creating new file with unique name and writing EXCEL data to it
-        wb,
-        (path1 = path.join(
-          __dirname,
-          "../../",
-          "/datafetcher/",
-          `${Date.now()}` + "test.xlsx"
-        ))
-      );
-      res.download(path1);
+      res.json({ message: "Items Details", items: items });
     }
-  });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-// -------------------------------------------------------- GetItemsByFilter -------------------------------------------------------------------------
+// --------------------------------------------------- Get Claimed Items By Search ---------------------------------------------------------------------------------
 
-const getItemsByFilter = async (req,res) => {
-  try{
-  const { filter,duration,startDate,endDate } = req.body;
+const getClaimedItemsBySearch = async (req, res) => {
+  try {
+    const query = req.query.q; // Get query from frontend
+    const items = await Item.find({
+      status: "Claimed", // only status "CLAIMED"
+
+      // Searching for any word
+      $or: [
+        { itemName: { $regex: new RegExp(query), $options: "i" } },
+        { description: { $regex: new RegExp(query), $options: "i" } },
+        { location: { $regex: new RegExp(query), $options: "i" } },
+        { foundDate: { $regex: new RegExp(query), $options: "i" } },
+        { lostDate: { $regex: new RegExp(query), $options: "i" } },
+        { listedBy: { $regex: new RegExp(query), $options: "i" } },
+        { ListedAt: { $regex: new RegExp(query), $options: "i" } },
+        { ItemType: { $regex: new RegExp(query), $options: "i" } },
+        { claimedAt: { $regex: new RegExp(query), $options: "i" } },
+      ],
+    });
+    if (!items) {
+      res.json({ message: "No Items" });
+    } else {
+      res.json({ message: "Items Details", items: items });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// -------------------------------------------------------- GetItemsByFilter In Summary -------------------------------------------------------------------------
+
+const getItemsByFilter = async (req, res) => {
+  try {
+    const { filter, duration, startDate, endDate } = req.body;
 
     // --------------------------------------------------- Lost Items ---------------------------------------------------------------------------------
 
-    if(filter === "Lost Items"){
-      if(duration === "All Time"){
-        const items = await Item.find({
-          ItemType : "Lost",
-        })
+    if (filter === "Lost Items") {
+      // All time
+      if (duration === "All Time") {
+        const items = await Item.find(
+          {
+            ItemType: "Lost",
+          },
+          { _id: 0, __v: 0 }
+        ).select("-foundDate");
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last Week"){
-        const startOfLastWeek = moment().subtract(1, 'weeks').startOf('week').format('YYYY-MM-DD');
-        const endOfLastWeek = moment().subtract(1, 'weeks').endOf('week').format('YYYY-MM-DD');
 
-        console.log(startOfLastWeek);
-        console.log(endOfLastWeek);
+      // Last week
+      if (duration === "Last Week") {
+        const startOfLastWeek = moment()
+          .subtract(1, "weeks")
+          .startOf("week")
+          .format("YYYY-MM-DD");
+        const endOfLastWeek = moment()
+          .subtract(1, "weeks")
+          .endOf("week")
+          .format("YYYY-MM-DD");
 
-        const items = await Item.find({
-          ItemType : "Lost",
-          ListedAt: {
-            $gte: startOfLastWeek,
-            $lte: endOfLastWeek
-          }
-        })
-
-        // console.log(items);
+        const items = await Item.find(
+          {
+            ItemType: "Lost",
+            ListedAt: {
+              $gte: startOfLastWeek,
+              $lte: endOfLastWeek,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-foundDate");
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "This Week"){
-        const startOfThisWeek = moment().startOf('week').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
 
-        console.log(startOfThisWeek);
-        console.log(endOfToday);
+      // This week
+      if (duration === "This Week") {
+        const startOfThisWeek = moment().startOf("week").format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        const items = await Item.find({
-          ItemType : "Lost",
-          ListedAt: {
-            $gte: startOfThisWeek,
-            $lte: endOfToday,
-          }
-        })
+        const items = await Item.find(
+          {
+            ItemType: "Lost",
+            ListedAt: {
+              $gte: startOfThisWeek,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-foundDate");
 
         console.log(items);
 
@@ -330,145 +362,159 @@ const getItemsByFilter = async (req,res) => {
           items: items,
         });
       }
-      if(duration === "This Month"){
-        const startOfThisMonth = moment().startOf('month').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
 
-        console.log(startOfThisMonth);
-        console.log(endOfToday);
+      // This month
+      if (duration === "This Month") {
+        const startOfThisMonth = moment().startOf("month").format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        const items = await Item.find({
-          ItemType : "Lost",
-          ListedAt: {
-            $gte: startOfThisMonth,
-            $lte: endOfToday
-          }
-        })
-
-        // console.log(items);
+        const items = await Item.find(
+          {
+            ItemType: "Lost",
+            ListedAt: {
+              $gte: startOfThisMonth,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-foundDate");
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last Month"){
+
+      // Last month
+      if (duration === "Last Month") {
         const currentDate = moment();
-        const startOfLast30Days = moment(currentDate).subtract(30, 'days').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+        const startOfLast30Days = moment(currentDate)
+          .subtract(30, "days")
+          .format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        console.log(startOfLast30Days);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          ItemType : "Lost",
-          ListedAt: {
-            $gte: startOfLast30Days,
-            $lte: endOfToday
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            ItemType: "Lost",
+            ListedAt: {
+              $gte: startOfLast30Days,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-foundDate");
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last 6 Month"){
+
+      // Last 6 month
+      if (duration === "Last 6 Month") {
         const currentDate = moment();
-        const startOfLast180Days = moment(currentDate).subtract(180, 'days').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+        const startOfLast180Days = moment(currentDate)
+          .subtract(180, "days")
+          .format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        console.log(startOfLast180Days);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          ItemType : "Lost",
-          ListedAt: {
-            $gte: startOfLast180Days,
-            $lte: endOfToday
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            ItemType: "Lost",
+            ListedAt: {
+              $gte: startOfLast180Days,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-foundDate");
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "This Year"){
+
+      // This year
+      if (duration === "This Year") {
         const currentYear = moment().year();
-        const startOfCurrentYear = moment(`${currentYear}-01-01`).format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+        const startOfCurrentYear = moment(`${currentYear}-01-01`).format(
+          "YYYY-MM-DD"
+        );
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        console.log(startOfCurrentYear);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          ItemType : "Lost",
-          ListedAt: {
-            $gte: startOfCurrentYear,
-            $lte: endOfToday
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            ItemType: "Lost",
+            ListedAt: {
+              $gte: startOfCurrentYear,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-foundDate");
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last Year"){
+
+      // Last year
+      if (duration === "Last Year") {
         const currentYear = moment().year();
-        const startOfLastYear = moment(`${currentYear - 1}-01-01`).format('YYYY-MM-DD');
-        const endOfLastYear = moment(`${currentYear - 1}-12-31`).format('YYYY-MM-DD')
+        const startOfLastYear = moment(`${currentYear - 1}-01-01`).format(
+          "YYYY-MM-DD"
+        );
+        const endOfLastYear = moment(`${currentYear - 1}-12-31`).format(
+          "YYYY-MM-DD"
+        );
 
-        console.log(startOfLastYear);
-        console.log(endOfLastYear);
-
-        const items = await Item.find({
-          ItemType : "Lost",
-          ListedAt: {
-            $gte: startOfLastYear,
-            $lte: endOfLastYear
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            ItemType: "Lost",
+            ListedAt: {
+              $gte: startOfLastYear,
+              $lte: endOfLastYear,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-foundDate");
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Manually"){
 
+      // Manually
+      if (duration === "Manually") {
         var sd = moment(startDate).format("YYYY-MM-DD");
         var ed = moment(endDate).format("YYYY-MM-DD");
 
-        console.log(sd);
-        console.log(ed);
-
-        const items = await Item.find({
-          ItemType : "Lost",
-          ListedAt : {
-            $gte : sd,
-            $lte : ed
-          }
-        })
+        const items = await Item.find(
+          {
+            ItemType: "Lost",
+            ListedAt: {
+              $gte: sd,
+              $lte: ed,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-foundDate");
 
         res.status(200).json({
           items: items,
         });
-
       }
-    } 
+    }
 
-  // --------------------------------------------------- Found Items ---------------------------------------------------------------------------------
+    // --------------------------------------------------- Found Items ---------------------------------------------------------------------------------
 
-    if(filter === "Found Items"){
-      if(duration === "All Time"){
-        const items = await Item.find({
-          ItemType : "Found",
-        })
+    if (filter === "Found Items") {
+      // All time
+      if (duration === "All Time") {
+        const items = await Item.find(
+          {
+            ItemType: "Found",
+          },
+          { _id: 0, __v: 0 }
+        ).select("-lostDate");
 
         console.log(items);
 
@@ -476,551 +522,601 @@ const getItemsByFilter = async (req,res) => {
           items: items,
         });
       }
-      if(duration === "Last Week"){
-        const startOfLastWeek = moment().subtract(1, 'weeks').startOf('week').format('YYYY-MM-DD');
-        const endOfLastWeek = moment().subtract(1, 'weeks').endOf('week').format('YYYY-MM-DD');
 
-        console.log(startOfLastWeek);
-        console.log(endOfLastWeek);
+      // Last week
+      if (duration === "Last Week") {
+        const startOfLastWeek = moment()
+          .subtract(1, "weeks")
+          .startOf("week")
+          .format("YYYY-MM-DD");
+        const endOfLastWeek = moment()
+          .subtract(1, "weeks")
+          .endOf("week")
+          .format("YYYY-MM-DD");
 
-        const items = await Item.find({
-          ItemType : "Found",
-          ListedAt: {
-            $gte: startOfLastWeek,
-            $lte: endOfLastWeek
-          }
-        })
-
-        // console.log(items);
-
-        res.status(200).json({
-          items: items,
-        });
-      }
-      if(duration === "This Week"){
-        const startOfThisWeek = moment().startOf('week').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
-
-        console.log(startOfThisWeek);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          ItemType : "Found",
-          ListedAt: {
-            $gte: startOfThisWeek,
-            $lte: endOfToday,
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            ItemType: "Found",
+            ListedAt: {
+              $gte: startOfLastWeek,
+              $lte: endOfLastWeek,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-lostDate");
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "This Month"){
-        const startOfThisMonth = moment().startOf('month').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
 
-        console.log(startOfThisMonth);
-        console.log(endOfToday);
+      // This week
+      if (duration === "This Week") {
+        const startOfThisWeek = moment().startOf("week").format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        const items = await Item.find({
-          ItemType : "Found",
-          ListedAt: {
-            $gte: startOfThisMonth,
-            $lte: endOfToday
-          }
-        })
-
-        // console.log(items);
+        const items = await Item.find(
+          {
+            ItemType: "Found",
+            ListedAt: {
+              $gte: startOfThisWeek,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-lostDate");
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last Month"){
+
+      // This Month
+      if (duration === "This Month") {
+        const startOfThisMonth = moment().startOf("month").format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
+
+        const items = await Item.find(
+          {
+            ItemType: "Found",
+            ListedAt: {
+              $gte: startOfThisMonth,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-lostDate");
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+
+      // Last Month
+      if (duration === "Last Month") {
         const currentDate = moment();
-        const startOfLast30Days = moment(currentDate).subtract(30, 'days').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+        const startOfLast30Days = moment(currentDate)
+          .subtract(30, "days")
+          .format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        console.log(startOfLast30Days);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          ItemType : "Found",
-          ListedAt: {
-            $gte: startOfLast30Days,
-            $lte: endOfToday
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            ItemType: "Found",
+            ListedAt: {
+              $gte: startOfLast30Days,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-lostDate");
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last 6 Month"){
+
+      // Last 6 month
+      if (duration === "Last 6 Month") {
         const currentDate = moment();
-        const startOfLast180Days = moment(currentDate).subtract(180, 'days').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+        const startOfLast180Days = moment(currentDate)
+          .subtract(180, "days")
+          .format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        console.log(startOfLast180Days);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          ItemType : "Found",
-          ListedAt: {
-            $gte: startOfLast180Days,
-            $lte: endOfToday
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            ItemType: "Found",
+            ListedAt: {
+              $gte: startOfLast180Days,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-lostDate");
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "This Year"){
+
+      // This year
+      if (duration === "This Year") {
         const currentYear = moment().year();
-        const startOfCurrentYear = moment(`${currentYear}-01-01`).format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+        const startOfCurrentYear = moment(`${currentYear}-01-01`).format(
+          "YYYY-MM-DD"
+        );
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        console.log(startOfCurrentYear);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          ItemType : "Found",
-          ListedAt: {
-            $gte: startOfCurrentYear,
-            $lte: endOfToday
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            ItemType: "Found",
+            ListedAt: {
+              $gte: startOfCurrentYear,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-lostDate");
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last Year"){
+
+      // Last year
+      if (duration === "Last Year") {
         const currentYear = moment().year();
-        const startOfLastYear = moment(`${currentYear - 1}-01-01`).format('YYYY-MM-DD');
-        const endOfLastYear = moment(`${currentYear - 1}-12-31`).format('YYYY-MM-DD')
+        const startOfLastYear = moment(`${currentYear - 1}-01-01`).format(
+          "YYYY-MM-DD"
+        );
+        const endOfLastYear = moment(`${currentYear - 1}-12-31`).format(
+          "YYYY-MM-DD"
+        );
 
-        console.log(startOfLastYear);
-        console.log(endOfLastYear);
-
-        const items = await Item.find({
-          ItemType : "Found",
-          ListedAt: {
-            $gte: startOfLastYear,
-            $lte: endOfLastYear
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            ItemType: "Found",
+            ListedAt: {
+              $gte: startOfLastYear,
+              $lte: endOfLastYear,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-lostDate");
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Manually"){
 
+      // Manually
+      if (duration === "Manually") {
         var sd = moment(startDate).format("YYYY-MM-DD");
         var ed = moment(endDate).format("YYYY-MM-DD");
 
-        console.log(sd);
-        console.log(ed);
-
-        const items = await Item.find({
-          ItemType : "Found",
-          ListedAt : {
-            $gte : sd,
-            $lte : ed
-          }
-        })
-
-        res.status(200).json({
-          items: items,
-        });
-
-      }
-    } 
-
-  // --------------------------------------------------- Claimed Items ---------------------------------------------------------------------------------
-
-    if(filter === "Claimed Items"){
-      if(duration === "All Time"){
-        const items = await Item.find({
-          status : "Claimed",
-        })
-
-        // console.log(items);
+        const items = await Item.find(
+          {
+            ItemType: "Found",
+            ListedAt: {
+              $gte: sd,
+              $lte: ed,
+            },
+          },
+          { _id: 0, __v: 0 }
+        ).select("-lostDate");
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last Week"){
-        const startOfLastWeek = moment().subtract(1, 'weeks').startOf('week').format('YYYY-MM-DD');
-        const endOfLastWeek = moment().subtract(1, 'weeks').endOf('week').format('YYYY-MM-DD');
+    }
 
-        console.log(startOfLastWeek);
-        console.log(endOfLastWeek);
+    // --------------------------------------------------- Claimed Items ---------------------------------------------------------------------------------
 
-        const items = await Item.find({
-          status : "Claimed",
-          ListedAt: {
-            $gte: startOfLastWeek,
-            $lte: endOfLastWeek
-          }
-        })
-
-        // console.log(items);
+    if (filter === "Claimed Items") {
+      // All time
+      if (duration === "All Time") {
+        const items = await Item.find(
+          {
+            status: "Claimed",
+          },
+          { _id: 0, __v: 0 }
+        );
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "This Week"){
-        const startOfThisWeek = moment().startOf('week').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
 
-        console.log(startOfThisWeek);
-        console.log(endOfToday);
+      // Last week
+      if (duration === "Last Week") {
+        const startOfLastWeek = moment()
+          .subtract(1, "weeks")
+          .startOf("week")
+          .format("YYYY-MM-DD");
+        const endOfLastWeek = moment()
+          .subtract(1, "weeks")
+          .endOf("week")
+          .format("YYYY-MM-DD");
 
-        const items = await Item.find({
-          status : "Claimed",
-          ListedAt: {
-            $gte: startOfThisWeek,
-            $lte: endOfToday,
-          }
-        })
-
-        console.log(items);
-
-        res.status(200).json({
-          items: items,
-        });
-      }
-      if(duration === "This Month"){
-        const startOfThisMonth = moment().startOf('month').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
-
-        console.log(startOfThisMonth);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          status : "Claimed",
-          ListedAt: {
-            $gte: startOfThisMonth,
-            $lte: endOfToday
-          }
-        })
-
-        // console.log(items);
+        const items = await Item.find(
+          {
+            status: "Claimed",
+            claimedAt: {
+              $gte: startOfLastWeek,
+              $lte: endOfLastWeek,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last Month"){
+
+      // This week
+      if (duration === "This Week") {
+        const startOfThisWeek = moment().startOf("week").format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
+
+        const items = await Item.find(
+          {
+            status: "Claimed",
+            claimedAt: {
+              $gte: startOfThisWeek,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+
+      // This month
+      if (duration === "This Month") {
+        const startOfThisMonth = moment().startOf("month").format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
+
+        const items = await Item.find(
+          {
+            status: "Claimed",
+            claimedAt: {
+              $gte: startOfThisMonth,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+
+      // Last month
+      if (duration === "Last Month") {
         const currentDate = moment();
-        const startOfLast30Days = moment(currentDate).subtract(30, 'days').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+        const startOfLast30Days = moment(currentDate)
+          .subtract(30, "days")
+          .format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        console.log(startOfLast30Days);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          status : "Claimed",
-          ListedAt: {
-            $gte: startOfLast30Days,
-            $lte: endOfToday
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            status: "Claimed",
+            claimedAt: {
+              $gte: startOfLast30Days,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last 6 Month"){
+
+      // Last 6 month
+      if (duration === "Last 6 Month") {
         const currentDate = moment();
-        const startOfLast180Days = moment(currentDate).subtract(180, 'days').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+        const startOfLast180Days = moment(currentDate)
+          .subtract(180, "days")
+          .format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        console.log(startOfLast180Days);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          status : "Claimed",
-          ListedAt: {
-            $gte: startOfLast180Days,
-            $lte: endOfToday
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            status: "Claimed",
+            claimedAt: {
+              $gte: startOfLast180Days,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "This Year"){
+
+      // This year
+      if (duration === "This Year") {
         const currentYear = moment().year();
-        const startOfCurrentYear = moment(`${currentYear}-01-01`).format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+        const startOfCurrentYear = moment(`${currentYear}-01-01`).format(
+          "YYYY-MM-DD"
+        );
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        console.log(startOfCurrentYear);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          status : "Claimed",
-          ListedAt: {
-            $gte: startOfCurrentYear,
-            $lte: endOfToday
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            status: "Claimed",
+            claimedAt: {
+              $gte: startOfCurrentYear,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last Year"){
+
+      // Last year
+      if (duration === "Last Year") {
         const currentYear = moment().year();
-        const startOfLastYear = moment(`${currentYear - 1}-01-01`).format('YYYY-MM-DD');
-        const endOfLastYear = moment(`${currentYear - 1}-12-31`).format('YYYY-MM-DD')
+        const startOfLastYear = moment(`${currentYear - 1}-01-01`).format(
+          "YYYY-MM-DD"
+        );
+        const endOfLastYear = moment(`${currentYear - 1}-12-31`).format(
+          "YYYY-MM-DD"
+        );
 
-        console.log(startOfLastYear);
-        console.log(endOfLastYear);
-
-        const items = await Item.find({
-          status : "Claimed",
-          ListedAt: {
-            $gte: startOfLastYear,
-            $lte: endOfLastYear
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            status: "Claimed",
+            claimedAt: {
+              $gte: startOfLastYear,
+              $lte: endOfLastYear,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Manually"){
 
+      // Manually
+      if (duration === "Manually") {
         var sd = moment(startDate).format("YYYY-MM-DD");
         var ed = moment(endDate).format("YYYY-MM-DD");
 
-        console.log(sd);
-        console.log(ed);
-
-        const items = await Item.find({
-          ItemType : "Claimed",
-          ListedAt : {
-            $gte : sd,
-            $lte : ed
-          }
-        })
-
-        res.status(200).json({
-          items: items,
-        });
-
-      }
-    } 
-
-      // --------------------------------------------------- All Items ---------------------------------------------------------------------------------
-
-    if(filter === "All Items"){
-      if(duration === "All Time"){
-        const items = await Item.find()
-
-        // console.log(items);
+        const items = await Item.find(
+          {
+            ItemType: "Claimed",
+            claimedAt: {
+              $gte: sd,
+              $lte: ed,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last Week"){
-        const startOfLastWeek = moment().subtract(1, 'weeks').startOf('week').format('YYYY-MM-DD');
-        const endOfLastWeek = moment().subtract(1, 'weeks').endOf('week').format('YYYY-MM-DD');
+    }
 
-        console.log(startOfLastWeek);
-        console.log(endOfLastWeek);
+    // --------------------------------------------------- All Items ---------------------------------------------------------------------------------
 
-        const items = await Item.find({
-          ListedAt: {
-            $gte: startOfLastWeek,
-            $lte: endOfLastWeek
-          }
-        })
+    if (filter === "All Items") {
+      // All time
+      if (duration === "All Time") {
+        const items = await Item.find({ _id: 0, v: 0 });
 
-        // console.log(items);
+        res.status(200).json(
+          {
+            items: items,
+          },
+          { _id: 0, __v: 0 }
+        );
+      }
+
+      // Last year
+      if (duration === "Last Week") {
+        const startOfLastWeek = moment()
+          .subtract(1, "weeks")
+          .startOf("week")
+          .format("YYYY-MM-DD");
+        const endOfLastWeek = moment()
+          .subtract(1, "weeks")
+          .endOf("week")
+          .format("YYYY-MM-DD");
+
+        const items = await Item.find(
+          {
+            ListedAt: {
+              $gte: startOfLastWeek,
+              $lte: endOfLastWeek,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "This Week"){
-        const startOfThisWeek = moment().startOf('week').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
 
-        console.log(startOfThisWeek);
-        console.log(endOfToday);
+      // This week
+      if (duration === "This Week") {
+        const startOfThisWeek = moment().startOf("week").format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        const items = await Item.find({
-          ListedAt: {
-            $gte: startOfThisWeek,
-            $lte: endOfToday,
-          }
-        })
-
-        console.log(items);
-
-        res.status(200).json({
-          items: items,
-        });
-      }
-      if(duration === "This Month"){
-        const startOfThisMonth = moment().startOf('month').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
-
-        console.log(startOfThisMonth);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          ListedAt: {
-            $gte: startOfThisMonth,
-            $lte: endOfToday
-          }
-        })
-
-        // console.log(items);
+        const items = await Item.find(
+          {
+            ListedAt: {
+              $gte: startOfThisWeek,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last Month"){
+
+      // This month
+      if (duration === "This Month") {
+        const startOfThisMonth = moment().startOf("month").format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
+
+        const items = await Item.find(
+          {
+            ListedAt: {
+              $gte: startOfThisMonth,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
+
+        res.status(200).json({
+          items: items,
+        });
+      }
+
+      // Last Month
+      if (duration === "Last Month") {
         const currentDate = moment();
-        const startOfLast30Days = moment(currentDate).subtract(30, 'days').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+        const startOfLast30Days = moment(currentDate)
+          .subtract(30, "days")
+          .format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        console.log(startOfLast30Days);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          ListedAt: {
-            $gte: startOfLast30Days,
-            $lte: endOfToday
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            ListedAt: {
+              $gte: startOfLast30Days,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last 6 Month"){
+
+      // Last 6 month
+      if (duration === "Last 6 Month") {
         const currentDate = moment();
-        const startOfLast180Days = moment(currentDate).subtract(180, 'days').format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+        const startOfLast180Days = moment(currentDate)
+          .subtract(180, "days")
+          .format("YYYY-MM-DD");
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        console.log(startOfLast180Days);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          ListedAt: {
-            $gte: startOfLast180Days,
-            $lte: endOfToday
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            ListedAt: {
+              $gte: startOfLast180Days,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "This Year"){
+
+      // This year
+      if (duration === "This Year") {
         const currentYear = moment().year();
-        const startOfCurrentYear = moment(`${currentYear}-01-01`).format('YYYY-MM-DD');
-        const endOfToday = moment().endOf('day').format('YYYY-MM-DD');
+        const startOfCurrentYear = moment(`${currentYear}-01-01`).format(
+          "YYYY-MM-DD"
+        );
+        const endOfToday = moment().endOf("day").format("YYYY-MM-DD");
 
-        console.log(startOfCurrentYear);
-        console.log(endOfToday);
-
-        const items = await Item.find({
-          ListedAt: {
-            $gte: startOfCurrentYear,
-            $lte: endOfToday
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            ListedAt: {
+              $gte: startOfCurrentYear,
+              $lte: endOfToday,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Last Year"){
+
+      // Last year
+      if (duration === "Last Year") {
         const currentYear = moment().year();
-        const startOfLastYear = moment(`${currentYear - 1}-01-01`).format('YYYY-MM-DD');
-        const endOfLastYear = moment(`${currentYear - 1}-12-31`).format('YYYY-MM-DD')
+        const startOfLastYear = moment(`${currentYear - 1}-01-01`).format(
+          "YYYY-MM-DD"
+        );
+        const endOfLastYear = moment(`${currentYear - 1}-12-31`).format(
+          "YYYY-MM-DD"
+        );
 
-        console.log(startOfLastYear);
-        console.log(endOfLastYear);
-
-        const items = await Item.find({
-          ListedAt: {
-            $gte: startOfLastYear,
-            $lte: endOfLastYear
-          }
-        })
-
-        console.log(items);
+        const items = await Item.find(
+          {
+            ListedAt: {
+              $gte: startOfLastYear,
+              $lte: endOfLastYear,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
 
         res.status(200).json({
           items: items,
         });
       }
-      if(duration === "Manually"){
 
+      // Manually
+      if (duration === "Manually") {
         var sd = moment(startDate).format("YYYY-MM-DD");
         var ed = moment(endDate).format("YYYY-MM-DD");
 
-        console.log(sd);
-        console.log(ed);
-
-        const items = await Item.find({
-          ListedAt : {
-            $gte : sd,
-            $lte : ed
-          }
-        })
+        const items = await Item.find(
+          {
+            ListedAt: {
+              $gte: sd,
+              $lte: ed,
+            },
+          },
+          { _id: 0, __v: 0 }
+        );
 
         res.status(200).json({
           items: items,
         });
-
       }
-    } 
-  }
-  catch(error){
+    }
+  } catch (error) {
     console.log(error);
   }
-}
-
+};
 
 module.exports = {
   signupAdmin,
@@ -1030,6 +1126,7 @@ module.exports = {
   addDepartment,
   delDept,
   getdept,
-  exportfile,
   getItemsByFilter,
+  getClaimedItems,
+  getClaimedItemsBySearch,
 };

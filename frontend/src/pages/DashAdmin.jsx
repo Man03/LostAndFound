@@ -1,8 +1,6 @@
 import * as React from "react";
 import axios from "axios";
-// import { experimentalStyled as styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-// import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Unstable_Grid2";
 import { useState, useEffect } from "react";
 import FoundItemIcon from "../Assets/founditem.png";
@@ -11,11 +9,6 @@ import Alluser from "../Assets/totaluser.png";
 import Items from "../Assets/items.png";
 import ClaimedItem from "../Assets/claimed items.png";
 import { ColorRing } from "react-loader-spinner";
-
-// const Item = styled(Paper)(({ theme }) => ({
-//   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#19A1BB",
-//   padding: theme.spacing(2),
-// }));
 
 function DashAdmin() {
   const [totalUsers, setTotalUsers] = useState("");

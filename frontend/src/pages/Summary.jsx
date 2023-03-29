@@ -9,9 +9,10 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import "react-date-range/dist/styles.css"; // main style file
-import "react-date-range/dist/theme/default.css"; // theme css file
 import moment from "moment";
+// import { writeFile } from "xlsx";
+import * as XLSX from "xlsx";
+import { ColorRing } from "react-loader-spinner";
 
 function Summary() {
   const [item, setItem] = useState([]);
@@ -29,6 +30,42 @@ function Summary() {
   const [endDate, setEndDate] = useState();
   const [manual, setManual] = useState(false);
   const dateInputRef = useRef(null);
+  const [loading, setLoading] = useState(false);
+
+  const exportExcel = (itemData) => {
+    // const worksheet = XLSX.utils.json_to_sheet(itemData);
+    // const workbook = XLSX.utils.book_new();
+    // XLSX.utils.book_append_sheet(workbook, worksheet, "Table Data");
+    // XLSX.writeFile(workbook, `Summary-${duration}.xlsx`);
+    const worksheet = XLSX.utils.json_to_sheet(itemData);
+
+    // Convert the worksheet to an array of arrays
+    const aoa = XLSX.utils.sheet_to_json(worksheet, {
+      header: 1,
+      blankrows: false,
+    });
+
+    // Determine the maximum content length for each column
+    const colWidths = aoa.reduce((acc, row) => {
+      row.forEach((cell, i) => {
+        const cellLength = cell ? cell.toString().length : 0;
+        if (!acc[i] || cellLength > acc[i]) {
+          acc[i] = cellLength;
+        }
+      });
+      return acc;
+    }, []);
+
+    // Set the column widths based on the maximum content length
+    worksheet["!cols"] = colWidths.map((width) => ({ width }));
+
+    // Set the first row to bold
+    worksheet["!rows"] = [{ hpx: 20, bold: true }];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Table Data");
+    XLSX.writeFile(workbook, `Summary-${duration}.xlsx`);
+  };
 
   const handleChange = (event) => {
     setFilter(event.target.value);
@@ -65,6 +102,7 @@ function Summary() {
   };
 
   const handleFilter = async (event) => {
+    setLoading(true);
     event.preventDefault();
     axios
       .post(`http://localhost:8000/admin/getFilterItems`, {
@@ -77,6 +115,7 @@ function Summary() {
         console.log(res.data.items);
         const data = res.data.items;
         setItem(data);
+        setLoading(false);
       });
     if (lostItem) {
       resetLostItem(true);
@@ -99,20 +138,6 @@ function Summary() {
       resetClaimedItem(false);
       resetAllItem(true);
     }
-  };
-
-  const exportExcel = async (event) => {
-    event.preventDefault();
-    const response = await axios.get("http://localhost:8000/admin/exportFile", {
-      responseType: "blob",
-    });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `${Date.now()}` + "test.xlsx");
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
   };
 
   return (
@@ -203,7 +228,12 @@ function Summary() {
             />
           </label> */}
         </div>
-        <button className="export-btn" onClick={exportExcel}>
+        <button
+          className="export-btn"
+          onClick={() => {
+            exportExcel(item);
+          }}
+        >
           Export
         </button>
       </div>
@@ -230,308 +260,367 @@ function Summary() {
             <></>
           )}
         </div>
-        <div className="container table">
-          <div className="overflow-x-scroll max-w-[1100px]">
-            <div>
+        {loading ? (
+          <div className="loading-1">
+            <ColorRing
+              visible={true}
+              height="80"
+              width="80"
+              ariaLabel="blocks-loading"
+              wrapperStyle={{}}
+              wrapperClass="blocks-wrapper"
+              colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+            />
+          </div>
+        ) : (
+          <div className="container table">
+            <div className="overflow-x-scroll max-w-[1100px]">
               <div>
-                <div className="shadow-md rounded my-5">
-                  {relostItem ? (
-                    <table className="min-w-max bg-white table-auto">
-                      <thead>
-                        <tr className="border-b bg-gray-200 text-black-600 uppercase text-xs leading-normal">
-                          <th className="py-2 px-5 text-center">Index</th>
-                          <th className="py-2 px-5 text-center">Item Type</th>
-                          <th className="py-3 px-6 text-center">Item name</th>
-                          <th className="py-3 px-6 text-center">Description</th>
-                          <th className="py-3 px-6 text-center">Location</th>
-                          <th className="py-3 px-6 text-center">Lost-Date</th>
-                          <th className="py-3 px-6 text-center">Listed By</th>
-                          <th className="py-3 px-6 text-center">Listed At</th>
-                          <th className="py-3 px-6 text-center">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="text-black-600 text-xs font-light">
-                        {item.map((itemData, index) => (
-                          <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
-                            <td className="py-3 px-6 text-center">
-                              <span className="font-semibold">{index + 1}</span>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.ItemType}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.itemName}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal break-normal break-all max-w-[150px]">
-                                {itemData.description}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.location}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.lostDate}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.listedBy}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {moment(itemData.ListedAt).format("DD-MM-YYYY")}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div>
-                                <p className="status-text font-normal text-red-600">
-                                  {itemData.status}
-                                </p>
-                              </div>
-                            </td>
+                <div>
+                  <div className="shadow-md rounded my-5">
+                    {relostItem ? (
+                      <table className="min-w-max bg-white table-auto">
+                        <thead>
+                          <tr className="border-b bg-gray-200 text-black-600 uppercase text-xs leading-normal">
+                            <th className="py-2 px-5 text-center">Index</th>
+                            <th
+                              className="py-2 px-5 text-center"
+                              // onClick={() => handleSort("ItemType")}
+                            >
+                              Item Type
+                            </th>
+                            <th className="py-3 px-6 text-center">Item name</th>
+                            <th className="py-3 px-6 text-center">
+                              Description
+                            </th>
+                            <th className="py-3 px-6 text-center">Location</th>
+                            <th className="py-3 px-6 text-center">Lost-Date</th>
+                            <th className="py-3 px-6 text-center">Listed By</th>
+                            <th className="py-3 px-6 text-center">Listed At</th>
+                            <th className="py-3 px-6 text-center">Status</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <></>
-                  )}
-                  {refoundItem ? (
-                    <table className="min-w-max bg-white w-full table-auto">
-                      <thead>
-                        <tr className="border-b bg-gray-200 text-black-600 uppercase text-sm leading-normal">
-                          <th className="py-2 px-5 text-center">Index</th>
-                          <th className="py-2 px-5 text-center">Item Type</th>
-                          <th className="py-3 px-6 text-center">Item name</th>
-                          <th className="py-3 px-6 text-center">Description</th>
-                          <th className="py-3 px-6 text-center">Location</th>
-                          <th className="py-3 px-6 text-center">found-Date</th>
-                          <th className="py-3 px-6 text-center">Listed By</th>
-                          <th className="py-3 px-6 text-center">Listed At</th>
-                          <th className="py-3 px-6 text-center">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="text-black-600 text-sm font-light">
-                        {item.map((itemData, index) => (
-                          <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
-                            <td className="py-3 px-6 text-center">
-                              <span className="font-semibold">{index + 1}</span>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.ItemType}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.itemName}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal break-normal break-all max-w-[150px]">
-                                {itemData.description}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.location}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.foundDate}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.listedBy}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {moment(itemData.ListedAt).format("DD-MM-YYYY")}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div>
-                                <p className="status-text font-normal text-red-600">
-                                  {itemData.status}
-                                </p>
-                              </div>
-                            </td>
+                        </thead>
+                        <tbody className="text-black-600 text-xs font-light">
+                          {item.map((itemData, index) => (
+                            <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
+                              <td className="py-3 px-6 text-center">
+                                <span className="font-semibold">
+                                  {index + 1}
+                                </span>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.ItemType}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.itemName}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal break-normal break-all max-w-[150px]">
+                                  {itemData.description}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.location}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.lostDate}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.listedBy}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {moment(itemData.ListedAt).format(
+                                    "DD-MM-YYYY"
+                                  )}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div>
+                                  <p className="status-text font-normal text-red-600">
+                                    {itemData.status}
+                                  </p>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <></>
+                    )}
+                    {refoundItem ? (
+                      <table className="min-w-max bg-white w-full table-auto">
+                        <thead>
+                          <tr className="border-b bg-gray-200 text-black-600 uppercase text-xs leading-normal">
+                            <th className="py-2 px-5 text-center">Index</th>
+                            <th className="py-2 px-5 text-center">Item Type</th>
+                            <th className="py-3 px-6 text-center">Item name</th>
+                            <th className="py-3 px-6 text-center">
+                              Description
+                            </th>
+                            <th className="py-3 px-6 text-center">Location</th>
+                            <th className="py-3 px-6 text-center">
+                              found-Date
+                            </th>
+                            <th className="py-3 px-6 text-center">Listed By</th>
+                            <th className="py-3 px-6 text-center">Listed At</th>
+                            <th className="py-3 px-6 text-center">Status</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <></>
-                  )}
-                  {reclaimedItem ? (
-                    <table className="min-w-max bg-white w-full table-auto">
-                      <thead>
-                        <tr className="border-b bg-gray-200 text-black-600 uppercase text-sm leading-normal">
-                          <th className="py-2 px-5 text-center">Index</th>
-                          <th className="py-2 px-5 text-center">Item Type</th>
-                          <th className="py-3 px-6 text-center">Item name</th>
-                          <th className="py-3 px-6 text-center">Description</th>
-                          <th className="py-3 px-6 text-center">Location</th>
-                          <th className="py-3 px-6 text-center">Lost-Date</th>
-                          <th className="py-3 px-6 text-center">found-Date</th>
-                          <th className="py-3 px-6 text-center">Listed By</th>
-                          <th className="py-3 px-6 text-center">Listed At</th>
-                          <th className="py-3 px-6 text-center">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="text-black-600 text-sm font-light">
-                        {item.map((itemData, index) => (
-                          <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
-                            <td className="py-3 px-6 text-center">
-                              <span className="font-semibold">{index + 1}</span>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.ItemType}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.itemName}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal break-normal break-all max-w-[150px]">
-                                {itemData.description}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.location}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.lostDate}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.foundDate}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.listedBy}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {moment(itemData.ListedAt).format("DD-MM-YYYY")}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div>
-                                <p className="status-text font-normal text-red-600">
-                                  {itemData.status}
-                                </p>
-                              </div>
-                            </td>
+                        </thead>
+                        <tbody className="text-black-600 text-xs font-light">
+                          {item.map((itemData, index) => (
+                            <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
+                              <td className="py-3 px-6 text-center">
+                                <span className="font-semibold">
+                                  {index + 1}
+                                </span>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.ItemType}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.itemName}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal break-normal break-all max-w-[150px]">
+                                  {itemData.description}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.location}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.foundDate}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.listedBy}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {moment(itemData.ListedAt).format(
+                                    "DD-MM-YYYY"
+                                  )}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div>
+                                  <p className="status-text font-normal text-red-600">
+                                    {itemData.status}
+                                  </p>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <></>
+                    )}
+                    {reclaimedItem ? (
+                      <table className="min-w-max bg-white w-full table-auto">
+                        <thead>
+                          <tr className="border-b bg-gray-200 text-black-600 uppercase text-xs leading-normal">
+                            <th className="py-2 px-5 text-center">Index</th>
+                            <th className="py-2 px-5 text-center">Item Type</th>
+                            <th className="py-3 px-6 text-center">Item name</th>
+                            <th className="py-3 px-6 text-center">
+                              Description
+                            </th>
+                            <th className="py-3 px-6 text-center">Location</th>
+                            <th className="py-3 px-6 text-center">Lost-Date</th>
+                            <th className="py-3 px-6 text-center">
+                              found-Date
+                            </th>
+                            <th className="py-3 px-6 text-center">Listed By</th>
+                            <th className="py-3 px-6 text-center">Listed At</th>
+                            <th className="py-3 px-6 text-center">
+                              Claimed At
+                            </th>
+                            <th className="py-3 px-6 text-center">Status</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <></>
-                  )}
-                  {reallItem ? (
-                    <table className="min-w-max bg-white w-full table-auto">
-                      <thead>
-                        <tr className="border-b bg-gray-200 text-black-600 uppercase text-sm leading-normal">
-                          <th className="py-2 px-5 text-center">Index</th>
-                          <th className="py-2 px-5 text-center">Item Type</th>
-                          <th className="py-3 px-6 text-center">Item name</th>
-                          <th className="py-3 px-6 text-center">Description</th>
-                          <th className="py-3 px-6 text-center">Location</th>
-                          <th className="py-3 px-6 text-center">Lost-Date</th>
-                          <th className="py-3 px-6 text-center">found-Date</th>
-                          <th className="py-3 px-6 text-center">Listed By</th>
-                          <th className="py-3 px-6 text-center">Listed At</th>
-                          <th className="py-3 px-6 text-center">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody className="text-black-600 text-sm font-light">
-                        {item.map((itemData, index) => (
-                          <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
-                            <td className="py-3 px-6 text-center">
-                              <span className="font-semibold">{index + 1}</span>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.ItemType}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.itemName}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal break-normal break-all max-w-[150px]">
-                                {itemData.description}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.location}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.lostDate}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.foundDate}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {itemData.listedBy}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div className="font-normal">
-                                {moment(itemData.ListedAt).format("DD-MM-YYYY")}
-                              </div>
-                            </td>
-                            <td className="py-3 px-6 text-center">
-                              <div>
-                                <p className="status-text font-normal text-red-600">
-                                  {itemData.status}
-                                </p>
-                              </div>
-                            </td>
+                        </thead>
+                        <tbody className="text-black-600 text-xs font-light">
+                          {item.map((itemData, index) => (
+                            <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
+                              <td className="py-3 px-6 text-center">
+                                <span className="font-semibold">
+                                  {index + 1}
+                                </span>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.ItemType}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.itemName}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal break-normal break-all max-w-[150px]">
+                                  {itemData.description}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.location}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.lostDate}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.foundDate}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.listedBy}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {moment(itemData.ListedAt).format(
+                                    "DD-MM-YYYY"
+                                  )}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {moment(itemData.claimedAt).format(
+                                    "DD-MM-YYYY"
+                                  )}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div>
+                                  <p className="status-text font-normal text-red-600">
+                                    {itemData.status}
+                                  </p>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <></>
+                    )}
+                    {reallItem ? (
+                      <table className="min-w-max bg-white w-full table-auto">
+                        <thead>
+                          <tr className="border-b bg-gray-200 text-black-600 uppercase text-xs leading-normal">
+                            <th className="py-2 px-5 text-center">Index</th>
+                            <th className="py-2 px-5 text-center">Item Type</th>
+                            <th className="py-3 px-6 text-center">Item name</th>
+                            <th className="py-3 px-6 text-center">
+                              Description
+                            </th>
+                            <th className="py-3 px-6 text-center">Location</th>
+                            <th className="py-3 px-6 text-center">Lost-Date</th>
+                            <th className="py-3 px-6 text-center">
+                              found-Date
+                            </th>
+                            <th className="py-3 px-6 text-center">Listed By</th>
+                            <th className="py-3 px-6 text-center">Listed At</th>
+                            <th className="py-3 px-6 text-center">Status</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <></>
-                  )}
+                        </thead>
+                        <tbody className="text-black-600 text-xs font-light">
+                          {item.map((itemData, index) => (
+                            <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
+                              <td className="py-3 px-6 text-center">
+                                <span className="font-semibold">
+                                  {index + 1}
+                                </span>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.ItemType}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.itemName}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal break-normal break-all max-w-[150px]">
+                                  {itemData.description}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.location}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.lostDate}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.foundDate}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {itemData.listedBy}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div className="font-normal">
+                                  {moment(itemData.ListedAt).format(
+                                    "DD-MM-YYYY"
+                                  )}
+                                </div>
+                              </td>
+                              <td className="py-3 px-6 text-center">
+                                <div>
+                                  <p className="status-text font-normal text-red-600">
+                                    {itemData.status}
+                                  </p>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

@@ -1,35 +1,42 @@
 const Item = require("../model/ItemModel");
 const Coordinator = require("../model/coordinatorModel");
 const Student = require("../model/studentModel");
+const nodemailer = require("../config/nodemailer.config");
 const asyncHandler = require("express-async-handler");
 const { findById } = require("../model/ItemModel");
 const moment = require("moment");
 
+// ----------------------------------------------------------------> Store Found Item ------------------------------------------------------------------------->
+
 const storeFoundItem = asyncHandler(async (req, res) => {
   try {
-    const { itemName, description, location, foundDate } = req.body;
+    const { itemName, description, location, foundDate } = req.body; // Get input
 
-    const coordinator = await Coordinator.findById(req.user._id);
+    const coordinator = await Coordinator.findById(req.user._id); // findind that who is listing
 
+    // Check for null
     if (!itemName || !description || !location || !foundDate) {
       res.status(400).json({ message: "Please add all fields" });
       throw new Error("Please add all field");
     }
 
-    var formattedDate = moment(foundDate).format("DD-MM-YYYY");
+    var formattedDate = moment(foundDate).format("DD-MM-YYYY"); // Formating date
 
+    // Create Item
     const item = await Item.create({
       ItemType: "Found",
       itemName,
       description,
       location,
       lostDate: "-",
-      foundDate : formattedDate,
+      foundDate: formattedDate,
       listedBy: coordinator.userName,
       department: coordinator.department,
       status: "Not claimed",
+      emailOfWhoListed: coordinator.email,
     });
 
+    // Save item
     await item.save((err) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -48,6 +55,7 @@ const storeFoundItem = asyncHandler(async (req, res) => {
         foundDate: item.foundDate,
         listedBy: item.listedBy,
         department: item.department,
+        emailOfWhoListed: item.emailOfWhoListed,
       });
     } else {
       res.status(400);
@@ -58,19 +66,23 @@ const storeFoundItem = asyncHandler(async (req, res) => {
   }
 });
 
+// ----------------------------------------------------------------> Store Lost Item ------------------------------------------------------------------------->
+
 const storeLostItem = asyncHandler(async (req, res) => {
   try {
-    const { itemName, description, location, lostDate } = req.body;
+    const { itemName, description, location, lostDate } = req.body; // Get input
 
-    const student = await Student.findById(req.user.user._id);
+    const student = await Student.findById(req.user.user._id); // Find Who is listing
 
+    // Check for null
     if (!itemName || !description || !location || !lostDate) {
       res.status(400).json({ message: "Please add all fields" });
       throw new Error("Please add all field");
     }
 
-    var formattedDate = moment(lostDate).format("DD-MM-YYYY");
+    var formattedDate = moment(lostDate).format("DD-MM-YYYY"); // Formating Date
 
+    // Create item
     const item = await Item.create({
       ItemType: "Lost",
       itemName: itemName,
@@ -81,8 +93,10 @@ const storeLostItem = asyncHandler(async (req, res) => {
       listedBy: student.userName,
       department: student.department,
       status: "Not found",
+      emailOfWhoListed: student.email,
     });
 
+    // Save item
     await item.save((err) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -101,6 +115,7 @@ const storeLostItem = asyncHandler(async (req, res) => {
         lostDate: item.lostDate,
         listedBy: item.listedBy,
         department: item.department,
+        emailOfWhoListed: item.emailOfWhoListed,
       });
     } else {
       res.status(400);
@@ -134,9 +149,18 @@ const getFoundItemsBySearch = async (req, res) => {
   try {
     const query = req.query.q;
     const items = await Item.find({
-      itemName: { $regex: new RegExp(query), $options: "i" },
       ItemType: "Found",
       status: "Not claimed",
+      // Search any Word
+      $or: [
+        { itemName: { $regex: new RegExp(query), $options: "i" } },
+        { description: { $regex: new RegExp(query), $options: "i" } },
+        { location: { $regex: new RegExp(query), $options: "i" } },
+        { foundDate: { $regex: new RegExp(query), $options: "i" } },
+        { listedBy: { $regex: new RegExp(query), $options: "i" } },
+        { ListedAt: { $regex: new RegExp(query), $options: "i" } },
+        { status: { $regex: new RegExp(query), $options: "i" } },
+      ],
     });
     if (!items) {
       res.json({ message: "No Items" });
@@ -169,11 +193,23 @@ const getLostItems = async (req, res) => {
 
 const getLostItemsBySearch = async (req, res) => {
   try {
-    const query = req.query.q;
+    const query = req.query.q; // Get query from frontend
     const items = await Item.find({
-      itemName: { $regex: new RegExp(query), $options: "i" },
       ItemType: "Lost",
       status: { $in: ["Not claimed", "Not found"] },
+      // Search any Word
+      $or: [
+        { itemName: { $regex: new RegExp(query), $options: "i" } },
+        { description: { $regex: new RegExp(query), $options: "i" } },
+        { location: { $regex: new RegExp(query), $options: "i" } },
+        { lostDate: { $regex: new RegExp(query), $options: "i" } },
+        { listedBy: { $regex: new RegExp(query), $options: "i" } },
+        { ListedAt: { $regex: new RegExp(query), $options: "i" } },
+        { status: { $regex: new RegExp(query), $options: "i" } },
+      ],
+      // itemName: { $regex: new RegExp(query), $options: "i" },
+      // ItemType: "Lost",
+      // status: { $in: ["Not claimed", "Not found"] },
     });
     if (!items) {
       res.json({ message: "No Items" });
@@ -189,25 +225,23 @@ const getLostItemsBySearch = async (req, res) => {
 
 const updateFoundItemStatus = async (req, res) => {
   try {
-    // const updatedItem = await Item.findByIdAndUpdate(
-    //   req.params.id,
-    //   { $set: { status: req.body.status } },
-    //   { new: true }
-    // );
-
     const { _id } = req.body;
 
-    const item = await Item.findById(_id);
+    const item = await Item.findById(_id); // Find item
 
     const coordinator = await Coordinator.findById(req.user._id); //Find Coordinator who updating Status
+
+    var d = new Date();
+    var ClaimedDate = moment(d).format("YYYY-MM-DD"); // For savind when it is claimed
 
     if (!item) {
       res.status(400);
       console.log("Item not found to be update status");
     } else {
       item.status = "Claimed";
-      item.handedBy = coordinator.userName;
-      item.save();
+      item.handedBy = coordinator.userName; // Save from who item is handed
+      item.claimedAt = ClaimedDate; // Save claimed date
+      item.save(); // Save item after update status
     }
 
     return res.json({
@@ -221,30 +255,36 @@ const updateFoundItemStatus = async (req, res) => {
 
 const updateLostItemStatus = async (req, res) => {
   try {
-    // const updatedItem = await Item.findByIdAndUpdate(
-    //   req.params.id,
-    //   { $set: { status: req.body.status } },
-    //   { new: true }
-    // );
-
     const coordinator = await Coordinator.findById(req.user._id); //Find Coordinator who updating Status
 
     const { _id } = req.body;
     const item = await Item.findById(_id);
 
+    var d = new Date();
+    var ClaimedDate = moment(d).format("YYYY-MM-DD");
+
     if (!item) {
       res.status(400);
       console.log("Item not found to be update status");
     } else {
-      if(item.status === "Not found")
-      {
+      if (item.status === "Not found") {
         item.status = "Not claimed";
-      }
-      else{
+        nodemailer.sendItemFoundEmail(
+          item.emailOfWhoListed,
+          item.itemName,
+          item.description,
+          item.location,
+          item.lostDate,
+          item.ListedAt,
+          coordinator.userName,
+          coordinator.department
+        );
+      } else {
         item.status = "Claimed";
         item.handedBy = coordinator.userName;
+        item.claimedAt = ClaimedDate;
       }
-      
+
       item.save();
     }
 

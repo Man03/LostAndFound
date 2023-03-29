@@ -21,8 +21,9 @@ const loginCoordinator = asyncHandler(async (req, res) => {
     } else if (user && (await bcrypt.compare(password, user.password))) {
       const token = await user.generateAuthToken();
 
+      // Create jwt in Cookies
       res.cookie("jwtokenCoordinator", token, {
-        expires: new Date(Date.now() + 86400000),
+        expires: new Date(Date.now() + 1296000000), // For 15 Days
         httpOnly: true,
       });
 
@@ -61,15 +62,13 @@ const signupCoordinator = asyncHandler(async (req, res) => {
       throw new Error("User already exists");
     }
 
-    const forSendPassword = password;
+    const forSendPassword = password; // Copy password for sending mail to Coordinator
 
     // Hash the Password
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     //Create Coordinator
-
     const coordinator = await Coordinator.create({
       userName,
       email,
@@ -82,20 +81,15 @@ const signupCoordinator = asyncHandler(async (req, res) => {
       const token = await coordinator.generateAuthToken();
       console.log(token);
 
+      // Save user
       await coordinator.save((err) => {
         if (err) {
           res.status(500).send({ message: err });
           return;
         }
-
-        console.log("information of user: ");
-
-        console.log(coordinator.userName);
-        console.log(coordinator.email);
-        console.log(coordinator.department);
-        console.log(coordinator.token);
       });
 
+      // Send email to Coordinator for ther password
       nodemailer.sendPasswordMail(
         coordinator.userName,
         forSendPassword,
@@ -124,7 +118,7 @@ const signupCoordinator = asyncHandler(async (req, res) => {
 
 const logoutCoordinator = async (req, res) => {
   try {
-    res.clearCookie("jwtokenCoordinator", { path: "/" });
+    res.clearCookie("jwtokenCoordinator", { path: "/" }); // Clear Cookies (jwt)
     res.status(200).send("user logout");
     console.log("logout finish ");
   } catch (error) {
@@ -132,12 +126,11 @@ const logoutCoordinator = async (req, res) => {
   }
 };
 
-//----------------------------------------->  Get Coordinator Info <----------------------------------------------------------------//
+//----------------------------------------->  Get Coordinator Info Display in user page <----------------------------------------------------------------//
 
 const getCoordinatorInfo = async (req, res) => {
   try {
     const coordinator = await Coordinator.findById(req.user._id);
-    // console.log(coordinator.userName);
     const userName = coordinator.userName;
     res.status(200).json({
       userName,
@@ -147,22 +140,23 @@ const getCoordinatorInfo = async (req, res) => {
   }
 };
 
-//----------------------------------------->  delete Coordinator <----------------------------------------------------------------//
+//----------------------------------------->  delete Coordinator from admin <----------------------------------------------------------------//
 
 const deleteCoordinator = async (req, res) => {
   try {
     // res.clearCookie("jwtokenCoordinator", { path: "/" });
     const { email } = req.body;
 
+    // Find Coordinator by email
     const coordinator = await Coordinator.findOne({ email });
 
     if (!coordinator) {
       res.status(400);
       console.log("Coordinator not found to be deleted");
     }
-    res.clearCookie("jwtokenCoordinator");
     nodemailer.sendDeclineEmail(coordinator.email, coordinator.token);
 
+    // Remove Coordinator
     await coordinator.remove();
 
     return res.status(404).json({ message: "Coordinator deleted" });
@@ -171,7 +165,7 @@ const deleteCoordinator = async (req, res) => {
   }
 };
 
-//----------------------------------------->  get all-Coordinator <----------------------------------------------------------------//
+//----------------------------------------->  get all-Coordinator (For Display to admin) <----------------------------------------------------------------//
 
 const getAllUser = async (req, res) => {
   try {
@@ -192,8 +186,9 @@ const getAllUser = async (req, res) => {
 
 const getMyListing = async (req, res) => {
   try {
-    const coordinator = await Coordinator.findById(req.user._id);
+    const coordinator = await Coordinator.findById(req.user._id); // Find Specific loged-in Coordinator
 
+    // Find their own listed items
     const items = await Items.find({
       ItemType: "Found",
       status: "Not found",
@@ -217,13 +212,23 @@ const getMyListing = async (req, res) => {
 
 const getMyLitingBySearch = async (req, res) => {
   try {
-    const coordinator = await Coordinator.findById(req.user._id);
-    const query = req.query.q;
+    const coordinator = await Coordinator.findById(req.user._id); // Find Specific loged-in Coordinator
+    const query = req.query.q; // Get query from frontend
     const items = await Items.find({
-      itemName: { $regex: new RegExp(query), $options: "i" },
       ItemType: "Found",
-      status: "Not found",  
+      status: "Not found",
       listedBy: coordinator.userName,
+
+      // Search any Word
+      $or: [
+        { itemName: { $regex: new RegExp(query), $options: "i" } },
+        { description: { $regex: new RegExp(query), $options: "i" } },
+        { location: { $regex: new RegExp(query), $options: "i" } },
+        { foundDate: { $regex: new RegExp(query), $options: "i" } },
+        { listedBy: { $regex: new RegExp(query), $options: "i" } },
+        { ListedAt: { $regex: new RegExp(query), $options: "i" } },
+        { status: { $regex: new RegExp(query), $options: "i" } },
+      ],
     });
     if (!items) {
       res.json({ message: "No Items" });

@@ -28,7 +28,7 @@ module.exports = (passport) => {
             userName: profile.displayName,
             email: profile.emails[0].value,
             status: "Active",
-            // image: profile.photos[0].value,  
+            // profilePicture: profile._json.picture,
           });
           await newUser.save();
 

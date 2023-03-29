@@ -20,38 +20,25 @@ function MyListingCoordinator() {
 
   useEffect(() => {
     axios
-      .all([
-        axios.get(`http://localhost:8000/coordinator/getMyListing`, {
-          withCredentials: true,
-        }),
-      ])
-      .then(
-        axios.spread((res1) => {
-          const dataWithIndex = res1.data.items.map((itemData, index) => ({
-            ...itemData,
-            index: index + 1,
-          }));
-          setItem(dataWithIndex);
-        }, setLoading(false))
-      );
+      .get(`http://localhost:8000/coordinator/getMyListing`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        const data = res.data.items;
+        setItem(data);
+        setLoading(false);
+      });
   }, []);
 
   const ifQueryEmpty = async () => {
     axios
-      .all([
-        axios.get(`http://localhost:8000/coordinator/getMyListing`, {
-          withCredentials: true,
-        }),
-      ])
-      .then(
-        axios.spread((res1) => {
-          const dataWithIndex = res1.data.items.map((itemData, index) => ({
-            ...itemData,
-            index: index + 1,
-          }));
-          setItem(dataWithIndex);
-        })
-      );
+      .get(`http://localhost:8000/coordinator/getMyListing`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        const data = res.data.items;
+        setItem(data);
+      });
   };
 
   const handleSearch = async () => {
@@ -61,21 +48,14 @@ function MyListingCoordinator() {
       return;
     }
     axios
-      .all([
-        axios.get(
-          `http://localhost:8000/coordinator/getMyListingBySearch?q=${query}`,
-          { withCredentials: true }
-        ),
-      ])
-      .then(
-        axios.spread((res1) => {
-          const dataWithIndex = res1.data.items.map((itemData, index) => ({
-            ...itemData,
-            index: index + 1,
-          }));
-          setItem(dataWithIndex);
-        })
-      );
+      .get(
+        `http://localhost:8000/coordinator/getMyListingBySearch?q=${query}`,
+        { withCredentials: true }
+      )
+      .then((res) => {
+        const data = res.data.items;
+        setItem(data);
+      });
   };
 
   const handleKeyPress = (event) => {
@@ -184,12 +164,10 @@ function MyListingCoordinator() {
                         </tr>
                       </thead>
                       <tbody className="text-black-600 text-sm font-light">
-                        {item.map((itemData) => (
+                        {item.map((itemData, index) => (
                           <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
                             <td className="py-3 px-6 text-center">
-                              <span className="font-semibold">
-                                {itemData.index}
-                              </span>
+                              <span className="font-semibold">{index + 1}</span>
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">

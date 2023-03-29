@@ -8,10 +8,10 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import { ColorRing } from "react-loader-spinner";
-import moment from "moment";
+const moment = require("moment");
 
-function LostItemsAdmin() {
-  // const navigate = useNavigate();
+function ClaimedItemsAdmin() {
+  //const navigate = useNavigate();
 
   const [item, setItem] = useState([]);
   const [query, setQuery] = useState("");
@@ -20,7 +20,7 @@ function LostItemsAdmin() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8000/coordinator/getLostItems`) // Here i use same route that used in Coordinator
+      .get(`http://localhost:8000/admin/getClaimedItems`) // Here i use same route that used in Coordinator
       .then((res) => {
         const data = res.data.items;
         setItem(data);
@@ -30,12 +30,16 @@ function LostItemsAdmin() {
 
   const ifQueryEmpty = async () => {
     axios
-      .get(`http://localhost:8000/coordinator/getLostItems`) // Here i use same route that used in Coordinator
-      .then((res) => {
-        const data = res.data.items;
-        setItem(data);
-        setLoading(false);
-      });
+      .all([axios.get(`http://localhost:8000/admin/getClaimedItems`)]) // Here i use same route that used in Coordinator
+      .then(
+        axios.spread((res1) => {
+          const dataWithIndex = res1.data.items.map((itemData, index) => ({
+            ...itemData,
+            index: index + 1,
+          }));
+          setItem(dataWithIndex);
+        })
+      );
   };
 
   const handleSearch = async () => {
@@ -45,13 +49,21 @@ function LostItemsAdmin() {
       return;
     }
     axios
-      .get(
-        `http://localhost:8000/coordinator/getLostItemsBySearch?q=${query}` // Here i use same route that used in Coordinator
-      )
-      .then((res) => {
-        const data = res.data.items;
-        setItem(data);
-      });
+      .all([
+        axios.get(
+          `http://localhost:8000/admin/getClaimedItemsBySearch?q=${query}` // Here i use same route that used in Coordinator
+        ),
+      ])
+      .then(
+        axios.spread((res1) => {
+          const dataWithIndex = res1.data.items.map((itemData, index) => ({
+            ...itemData,
+            index: index + 1,
+          }));
+          setItem(dataWithIndex);
+        }),
+        setLoading(false)
+      );
   };
 
   const handleKeyPress = (event) => {
@@ -111,7 +123,7 @@ function LostItemsAdmin() {
       </div>
       <div className="min-h-screen">
         <div className="table-heading">
-          <p className="text-color headings text-3xl">Lost Items</p>
+          <p className="text-color headings text-3xl">Claimed Items</p>
         </div>
         {loading ? (
           <div className="loading-1">
@@ -127,7 +139,7 @@ function LostItemsAdmin() {
           </div>
         ) : (
           <div className="container table">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-scroll max-w-[1100px]">
               <div>
                 <div>
                   <div className="shadow-md rounded my-5">
@@ -135,13 +147,15 @@ function LostItemsAdmin() {
                       <thead>
                         <tr className="border-b bg-gray-200 text-black-600 uppercase text-sm leading-normal">
                           <th className="py-2 px-5 text-center">Index</th>
+                          <th className="py-2 px-5 text-center">Item Type</th>
                           <th className="py-3 px-6 text-center">Item name</th>
                           <th className="py-3 px-6 text-center">Description</th>
                           <th className="py-3 px-6 text-center">Location</th>
+                          <th className="py-3 px-6 text-center">Found-Date</th>
                           <th className="py-3 px-6 text-center">Lost-Date</th>
                           <th className="py-3 px-6 text-center">Listed By</th>
                           <th className="py-3 px-6 text-center">Listed At</th>
-                          <th className="py-3 px-6 text-center">Status</th>
+                          <th className="py-3 px-6 text-center">Claimed At</th>
                         </tr>
                       </thead>
                       <tbody className="text-black-600 text-sm font-light">
@@ -149,6 +163,11 @@ function LostItemsAdmin() {
                           <tr className="border-b border-slate-300 bg-gray-50 hover:bg-gray-100 ">
                             <td className="py-3 px-6 text-center">
                               <span className="font-semibold">{index + 1}</span>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
+                                {itemData.ItemType}
+                              </div>
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
@@ -167,6 +186,11 @@ function LostItemsAdmin() {
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
+                                {itemData.foundDate}
+                              </div>
+                            </td>
+                            <td className="py-3 px-6 text-center">
+                              <div className="font-normal">
                                 {itemData.lostDate}
                               </div>
                             </td>
@@ -177,13 +201,15 @@ function LostItemsAdmin() {
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
-                                {moment(itemData.ListedAt).format("DD-MM-YYYY")}
+                                {itemData.ListedAt}
                               </div>
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div>
-                                <p className="status-text font-normal text-red-600">
-                                  {itemData.status}
+                                <p className="font-normal">
+                                  {moment(itemData.claimedAt).format(
+                                    "DD-MM-YYYY"
+                                  )}
                                 </p>
                               </div>
                             </td>
@@ -202,4 +228,4 @@ function LostItemsAdmin() {
   );
 }
 
-export default LostItemsAdmin;
+export default ClaimedItemsAdmin;

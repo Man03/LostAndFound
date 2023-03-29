@@ -20,6 +20,7 @@ function StudentDashboard() {
   const [founditems, setFounditems] = useState(true);
   const [listlostitems, setlistlostitems] = useState(false);
   const [mylisting, setmylisting] = useState(false);
+  // const [profilePicture, setProfilePicture] = useState();
 
   // const navigate = useNavigate();
   useEffect(() => {
@@ -34,6 +35,7 @@ function StudentDashboard() {
       })
       .then((response) => {
         setUser(response.data.userName);
+        // setProfilePicture(response.data.profilePicture);
       });
   });
 
@@ -49,6 +51,11 @@ function StudentDashboard() {
               <div className="navbar">
                 <div className="navbar-inner">
                   <div className="user">
+                    {/* <img
+                      className="user-profile-photo"
+                      src={profilePicture}
+                      alt="User Profile"
+                    /> */}
                     <FontAwesomeIcon
                       icon={faUserCircle}
                       className="user-icon"

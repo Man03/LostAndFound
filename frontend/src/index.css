@@ -477,6 +477,10 @@ input::placeholder {
 
 /* ---------------------------------------- Sidebar------------------------------------  */
 
+.user-profile-photo {
+  border-radius: 50%;
+}
+
 .admin-text{
   font-weight: bold;
   font-size: x-large;
@@ -542,11 +546,13 @@ input::placeholder {
 .loading{
   margin-left: 650px;
   margin-top: 250px;
+  height: 35px;
 }
 
 .loading-1{
   margin-left: 20px;
   margin-top: 50px;
+  height: 35px;
 }
 
 .slidebar{

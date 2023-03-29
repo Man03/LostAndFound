@@ -16,6 +16,7 @@ import DialogContent from "@mui/material/DialogContent";
 // import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
+import moment from "moment";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -24,6 +25,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function FoundItemsCoordinator() {
   // const navigate = useNavigate();
 
+  const [count, setCount] = useState(0);
   const [item, setItem] = useState([]); // Set item come from backend
   const [query, setQuery] = useState(""); // Set Query for search
   const [showClearIcon, setShowClearIcon] = useState("none"); // For clear searchFeild
@@ -53,7 +55,7 @@ function FoundItemsCoordinator() {
           setItem(dataWithIndex);
         }, setLoading(false))
       );
-  }, []);
+  }, [count]);
 
   const ifQueryEmpty = async () => {
     axios
@@ -99,6 +101,7 @@ function FoundItemsCoordinator() {
   };
 
   const HandleUpdate = async (itemData) => {
+    setLoading(true);
     await axios
       .post(
         "http://localhost:8000/items/updateStatusOfFoundItems",
@@ -108,7 +111,8 @@ function FoundItemsCoordinator() {
         { withCredentials: true }
       )
       .then((res) => {
-        window.location.reload("coordinator/dashboard");
+        setCount(count + 1);
+        setLoading(false);
       })
       .catch((err) => console.log(err));
   };
@@ -232,7 +236,7 @@ function FoundItemsCoordinator() {
                             </td>
                             <td className="py-3 px-6 text-center">
                               <div className="font-normal">
-                                {itemData.ListedAt}
+                                {moment(itemData.ListedAt).format("DD-MM-YYYY")}
                               </div>
                             </td>
                             <td className="py-3 px-6 text-center">

@@ -32,7 +32,7 @@ const deleteStudent = async (req, res) => {
 
 const logoutStudent = async (req, res) => {
   try {
-    res.clearCookie("jwtokenStudent")
+    res.clearCookie("jwtokenStudent");
     res.status(200).send("user logout");
     console.log("logout finish ");
   } catch (error) {
@@ -72,11 +72,11 @@ const getStudentInfo = async (req, res) => {
   }
 };
 
-//----------------------------------------->  My-Listing (Only posts that req by Coordinator) <----------------------------------------------------------------//
+//----------------------------------------->  My-Listing (Only posts that req by Student) <----------------------------------------------------------------//
 
 const getMyListing = async (req, res) => {
   try {
-    const student = await Student.findById(req.user.user._id);  
+    const student = await Student.findById(req.user.user._id);
 
     const items = await Items.find({
       ItemType: "Lost",
@@ -105,10 +105,18 @@ const getMyLitingBySearch = async (req, res) => {
 
     const query = req.query.q;
     const items = await Items.find({
-      itemName: { $regex: new RegExp(query), $options: "i" },
       ItemType: "Lost",
       status: { $in: ["Not claimed", "Not found"] },
       listedBy: student.userName,
+      $or: [
+        { itemName: { $regex: new RegExp(query), $options: "i" } },
+        { description: { $regex: new RegExp(query), $options: "i" } },
+        { location: { $regex: new RegExp(query), $options: "i" } },
+        { lostDate: { $regex: new RegExp(query), $options: "i" } },
+        { listedBy: { $regex: new RegExp(query), $options: "i" } },
+        { ListedAt: { $regex: new RegExp(query), $options: "i" } },
+        { status: { $regex: new RegExp(query), $options: "i" } },
+      ],
     });
     if (!items) {
       res.json({ message: "No Items" });

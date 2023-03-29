@@ -32,6 +32,9 @@ const StudentSchema = mongoose.Schema(
       type: String,
       default: LogedinAt,
     },
+    profilePicture: {
+      type: String,
+    },
   },
   {
     timestamps: true,

@@ -11,7 +11,9 @@ import FoundItemsAdmin from "../pages/FoundItemsAdmin";
 import LostItems from "../pages/LostItemsAdmin";
 import Dasboard from "../pages/DashAdmin";
 import Summary from "../pages/Summary";
+import ClaimedItemsAdmin from "../pages/ClaimedItemsAdmin";
 import { BiUserCheck } from "react-icons/bi";
+import { FaHandshake } from "react-icons/fa";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -40,6 +42,7 @@ export default function AdminDashboard() {
   const [user, setUser] = useState(false);
   const [founditems, setfounditems] = useState(false);
   const [lostitems, setlostitems] = useState(false);
+  const [claimeditems, setClaimeditems] = useState(false);
   const [addCoordinator, setAddCoordinator] = useState(false);
   const [addDept, setAddDept] = useState(false);
   const [summary, setSummary] = useState(false);
@@ -123,6 +126,7 @@ export default function AdminDashboard() {
                           setUser(false);
                           setfounditems(false);
                           setlostitems(false);
+                          setClaimeditems(false);
                           setAddCoordinator(false);
                           setAddDept(false);
                           setSummary(false);
@@ -141,6 +145,7 @@ export default function AdminDashboard() {
                           setUser(true);
                           setfounditems(false);
                           setlostitems(false);
+                          setClaimeditems(false);
                           setAddCoordinator(false);
                           setAddDept(false);
                           setSummary(false);
@@ -159,6 +164,7 @@ export default function AdminDashboard() {
                           setUser(false);
                           setfounditems(false);
                           setlostitems(true);
+                          setClaimeditems(false);
                           setAddCoordinator(false);
                           setAddDept(false);
                           setSummary(false);
@@ -177,6 +183,7 @@ export default function AdminDashboard() {
                           setUser(false);
                           setfounditems(true);
                           setlostitems(false);
+                          setClaimeditems(false);
                           setAddCoordinator(false);
                           setAddDept(false);
                           setSummary(false);
@@ -195,6 +202,26 @@ export default function AdminDashboard() {
                           setUser(false);
                           setfounditems(false);
                           setlostitems(false);
+                          setClaimeditems(true);
+                          setAddCoordinator(false);
+                          setAddDept(false);
+                          setSummary(false);
+                        }}
+                      >
+                        <FaHandshake className="icon" />
+                        <span>Claimed Items</span>
+                      </Link>
+                    </li>
+                    <li className="nav-text">
+                      <Link
+                        to="#"
+                        className="sidebar-text"
+                        onClick={() => {
+                          setDashboard(false);
+                          setUser(false);
+                          setfounditems(false);
+                          setlostitems(false);
+                          setClaimeditems(false);
                           setAddCoordinator(true);
                           setAddDept(false);
                           setSummary(false);
@@ -213,6 +240,7 @@ export default function AdminDashboard() {
                           setUser(false);
                           setfounditems(false);
                           setlostitems(false);
+                          setClaimeditems(false);
                           setAddCoordinator(false);
                           setAddDept(true);
                           setSummary(false);
@@ -231,6 +259,7 @@ export default function AdminDashboard() {
                           setUser(false);
                           setfounditems(false);
                           setlostitems(false);
+                          setClaimeditems(false);
                           setAddCoordinator(false);
                           setAddDept(false);
                           setSummary(true);
@@ -252,6 +281,7 @@ export default function AdminDashboard() {
             {addCoordinator ? <AddCoordinator /> : <></>}
             {founditems ? <FoundItemsAdmin /> : <></>}
             {lostitems ? <LostItems /> : <></>}
+            {claimeditems ? <ClaimedItemsAdmin /> : <></>}
             {dashboard ? <Dasboard /> : <></>}
             {summary ? <Summary /> : <></>}
             {addDept ? (
