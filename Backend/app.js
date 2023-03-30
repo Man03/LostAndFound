@@ -25,7 +25,7 @@ app.use(
   })
 );
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: "https://lost-found-ddu.netlify.app/",
   credentials: true, //access-control-allow-credentials:true
   optionSuccessStatus: 200,
 };
