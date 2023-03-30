@@ -25,9 +25,7 @@ app.use(
   })
 );
 const corsOptions = {
-      origin: '*',
-      credentials: true,
-      optionSuccessStatus: 200
+      origin: 'https://lost-found-ddu.netlify.app',
     }
 app.use(cors(corsOptions))
 app.use(passport.initialize());
