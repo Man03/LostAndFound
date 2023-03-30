@@ -24,7 +24,6 @@ app.use(
     saveUninitialized: false,
   })
 );
-const cors = require('cors');
 app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
