@@ -70,7 +70,7 @@ app.get(
 //     failureMessage: true,
 //   }),
 //   async (req, res) => {
-//     res.redirect("http://localhost:3000/student/dashboard");
+//     res.redirect("https://lost-found-ddu.netlify.app/student/dashboard");
 //   }
 // );
 
@@ -90,7 +90,7 @@ app.get(
       expires: new Date(Date.now() + 86400000),
       httpOnly: true,
     });
-    res.redirect("http://localhost:3000/student/dashboard");
+    res.redirect("https://lost-found-ddu.netlify.app/student/dashboard");
   }
 );
 

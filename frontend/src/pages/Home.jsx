@@ -20,7 +20,7 @@ export default function Home() {
             </p>
           </div>
           <a
-            href="http://localhost:3000/selectRole"
+            href="https://lost-found-ddu.netlify.app/selectRole"
             id="down-get-started-btn"
             className="getStartedText"
           >

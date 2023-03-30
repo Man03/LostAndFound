@@ -39,7 +39,7 @@ function Header() {
             </li> */}
             <li>
               <a
-                href="http://localhost:3000/student/login"
+                href="https://lost-found-ddu.netlify.app/student/login"
                 onClick={handleLogout}
                 className="btn"
               >

@@ -38,6 +38,7 @@ function LoginAdmin() {
           { withCredentials: true }
         )
         .then((response) => {
+          console.log(response);
           if (response.data.message === "Successfully logged in") {
             toast.success("Successfully logged in");
             navigate("/admin/dashboard");
